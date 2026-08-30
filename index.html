@@ -58,7 +58,7 @@ async function loadData(){
   state.payments=await sb("payments?select=*&order=payment_date.desc&limit=100");
   mode.textContent="CLOUD"; mode.style.background="#fff"; mode.style.color="#16823b";
  }catch(e){console.error(e);mode.textContent="BAĞLANTI HATASI";toast("Bulut bağlantısı kurulamadı")}
- renderAll();
+ document.querySelectorAll(".saleRow").forEach(x=>x.remove());renderAll();
 }
 function renderAll(){
  saleCustomer.innerHTML=customerOptions();paymentCustomer.innerHTML=customerOptions();transferProduct.innerHTML=options();
