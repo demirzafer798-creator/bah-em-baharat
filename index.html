@@ -83,6 +83,7 @@ function renderDashboard(){
  statDebt.textContent=money(debt);statSales.textContent=money(sales);statProducts.textContent=state.products.length;statLow.textContent=low;
  recent.innerHTML=state.sales.slice(0,6).map(s=>`<div class="movement"><div><b>Müşteri #${s.customer_id}</b><small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small></div><b>${money(s.total)}</b></div>`).join("")||'<p class="muted">Henüz satış yok.</p>';
 }
+console.log("ÜRÜN SAYISI:", state.products.length);                   
 function addSaleRow(){let d=document.createElement("div");d.className="saleRow";d.innerHTML=`<select class="sprod">${options()}</select><input class="sqty" type="number" step="0.001" min="0" value="1"><select class="sunit"><option>kg</option><option>adet</option></select><button class="remove" onclick="this.parentElement.remove();calcSale()">×</button>`;saleRows.appendChild(d);d.querySelectorAll("input,select").forEach(x=>x.oninput=calcSale);calcSale()}
 function calcSale(){let t=0;document.querySelectorAll(".saleRow").forEach(r=>{let p=state.products[r.querySelector(".sprod").value],q=Number(r.querySelector(".sqty").value||0);t+=(p?.sale_price||0)*q});saleTotal.textContent=money(t)}
 async function upsertStock(product_id,location,delta){
