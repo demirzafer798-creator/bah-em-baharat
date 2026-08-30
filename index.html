@@ -65,7 +65,9 @@ function renderAll(){
     saleCustomer.innerHTML=customerOptions();
     paymentCustomer.innerHTML=customerOptions();
     transferProduct.innerHTML=options();
-
+document.querySelectorAll(".sprod").forEach(x=>{
+    x.innerHTML=options();
+});
     renderDashboard();
     renderCustomers();
     renderStock();
