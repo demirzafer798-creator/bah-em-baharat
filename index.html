@@ -34,7 +34,7 @@ label{display:block;font-size:12px;font-weight:700;color:#58645c;margin:9px 0}in
 <section id="stock" class="page"><div class="sectionHead"><h1>Stok</h1><button class="small" onclick="newStock()">＋ Stok Girişi</button></div><div class="tabs"><button class="active" onclick="stockTab('warehouse')">Depo</button><button onclick="stockTab('vehicle')">Araç</button></div><div class="card"><div id="stockTable"></div></div></section>
 <section id="transfer" class="page"><div class="sectionHead"><h1>Depo → Araç</h1></div><div class="card"><label>Ürün<select id="transferProduct"></select></label><div class="row"><label class="grow">Miktar<input id="transferQty" type="number" step="0.001" min="0"></label><label class="grow">Birim<select id="transferUnit"><option>kg</option><option>adet</option></select></label></div><button class="primary big" onclick="saveTransfer()">ARACA AKTAR</button></div></section>
 <section id="payment" class="page"><div class="sectionHead"><h1>Tahsilat</h1></div><div class="card"><label>Müşteri<select id="paymentCustomer"></select></label><label>Tutar<input id="paymentAmount" type="number" step="0.01" min="0"></label><label>Not<input id="paymentNote" placeholder="Nakit, EFT, havale..."></label><button class="primary big" onclick="savePayment()">TAHSİLATI KAYDET</button></div></section>
-<section id="products" class="page"><div class="sectionHead"><h1>Ürünler</h1></div><div class="card"><input id="productSearch" placeholder="Ürün ara..." oninput="renderProducts()"><div id="productList"></div></div></section>
+<section id="products" class="page"><div class="sectionHead"><h1>Ürünler</h1><button class="primary" onclick="newProduct()">＋ Yeni Ürün</button></div><div class="card"><input id="productSearch" placeholder="Ürün ara..." oninput="renderProducts()"><div id="productList"></div></div></section>
 </main>
 <nav class="bottom"><button onclick="go('dashboard')">⌂<small>Ana</small></button><button onclick="go('sale')">＋<small>Satış</small></button><button onclick="go('customer')">♙<small>Cari</small></button><button onclick="go('stock')">▦<small>Stok</small></button><button onclick="go('products')">☷<small>Ürün</small></button></nav>
 <div id="toast"></div>
@@ -92,13 +92,173 @@ async function saveSale(){
   toast("Satış kaydedildi");saleRows.innerHTML="";await loadData();go("dashboard");
  }catch(e){console.error(e);toast(e.message||"Satış kaydedilemedi")}
 }
-async function newCustomer(){let n=prompt("Müşteri adı:");if(!n)return;try{await sb("customers",{method:"POST",body:JSON.stringify({name:n})});toast("Müşteri eklendi");await loadData()}catch(e){toast("Müşteri eklenemedi")}}
+async function newProduct(){
+  let name=prompt("Ürün adı:");
+  if(!name)return;
+
+  let package_size=prompt("Paket / gramaj (Örn: 40 gr):");
+  if(!package_size)return;
+
+  let price=prompt("Satış fiyatı:");
+  let sale_price=price===""?null:Number(price);
+
+  if(price!=="" && (!Number.isFinite(sale_price)||sale_price<0)){
+    toast("Geçerli bir fiyat girin");
+    return;
+  }
+
+  try{
+    await sb("products",{
+      method:"POST",
+      body:JSON.stringify({
+        name:name.trim(),
+        package_size:package_size.trim(),
+        sale_price:sale_price,
+        active:true
+      })
+    });
+
+    toast("Ürün eklendi");
+    await loadData();
+
+  }catch(e){
+    console.error(e);
+    toast("Ürün eklenemedi");
+  }
+}async function newCustomer(){let n=prompt("Müşteri adı:");if(!n)return;try{await sb("customers",{method:"POST",body:JSON.stringify({name:n})});toast("Müşteri eklendi");await loadData()}catch(e){toast("Müşteri eklenemedi")}}
 function renderCustomers(){customerList.innerHTML=state.customers.map(c=>`<div class="customer"><div><b>${c.name}</b><small>${c.phone||""}</small></div><div><b class="debt">${money(c.balance)}</b><button class="small" onclick="showCustomer(${c.id})">Aç</button></div></div>`).join("")||'<p class="muted">Henüz müşteri yok.</p>'}
 function showCustomer(id){detailId=id;go("customerDetail")}
 async function renderDetail(){if(!detailId)return;let c=state.customers.find(x=>String(x.id)===String(detailId));if(!c)return;detailName.textContent=c.name;try{let l=await sb(`customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc`),bal=l.reduce((a,x)=>a+Number(x.debit||0)-Number(x.credit||0),0);detailBalance.textContent=money(bal);detailMovements.innerHTML=l.map(x=>`<div class="movement"><div><b>${x.description||x.movement_type}</b><small>${new Date(x.movement_date).toLocaleString("tr-TR")}</small></div><b class="${Number(x.debit)>0?'plus':'minus'}">${Number(x.debit)>0?'+':'-'}${money(Number(x.debit||x.credit))}</b></div>`).join("")||'<p class="muted">Hareket yok.</p>'}catch(e){detailMovements.innerHTML='<p class="muted">Cari hareketleri yüklenemedi.</p>'}}
 function stockTab(x){stockLoc=x;document.querySelectorAll(".tabs button").forEach((b,i)=>b.classList.toggle("active",(i===0&&x==="warehouse")||(i===1&&x==="vehicle")));renderStock()}
 function renderStock(){stockTable.innerHTML=state.products.map(p=>{let r=state.stock.find(x=>x.product_id===p.id&&x.location===stockLoc);return `<div class="stockLine"><div><b>${p.name}</b><small>${p.package_size}</small></div><b>${Number(r?.quantity||0).toLocaleString("tr-TR")}</b><span>${p.sale_price==null?"Fiyat yok":money(p.sale_price)}</span></div>`}).join("")}
-async function newStock(){let s=prompt("Ürün numarası (1-"+state.products.length+")?"),i=Number(s)-1;if(!state.products[i])return;let q=Number(prompt("Miktar:"));if(!q)return;let loc=prompt("Yer: warehouse=Depo, vehicle=Araç","warehouse");if(!["warehouse","vehicle"].includes(loc))return;try{await upsertStock(state.products[i].id,loc,q);await sb("stock_movements",{method:"POST",body:JSON.stringify({product_id:state.products[i].id,movement_type:"entry",to_location:loc,quantity:q})});toast("Stok eklendi");await loadData()}catch(e){toast(e.message||"Stok eklenemedi")}}
+async function newStock(){
+  if(!state.products.length){
+    toast("Ürünler henüz yüklenmedi");
+    return;
+  }
+
+  let old=document.getElementById("stockModal");
+  if(old) old.remove();
+
+  let modal=document.createElement("div");
+
+  modal.id="stockModal";
+
+  modal.style.cssText=`
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  `;
+
+  modal.innerHTML=`
+    <div style="
+      background:#fff;
+      width:100%;
+      max-width:450px;
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 10px 40px rgba(0,0,0,.25)
+    ">
+      <h2 style="margin-top:0">Stok Girişi</h2>
+
+      <label>
+        Ürün
+        <select id="newStockProduct">
+          ${state.products.map((p,i)=>`
+            <option value="${i}">
+              ${p.name} — ${p.package_size}
+            </option>
+          `).join("")}
+        </select>
+      </label>
+
+      <label>
+        Miktar
+        <input id="newStockQty"
+               type="number"
+               step="0.001"
+               min="0"
+               placeholder="Örn: 10">
+      </label>
+
+      <label>
+        Yer
+        <select id="newStockLocation">
+          <option value="warehouse">Depo</option>
+          <option value="vehicle">Araç</option>
+        </select>
+      </label>
+
+      <div style="display:flex;gap:10px;margin-top:15px">
+
+        <button
+          style="flex:1"
+          onclick="document.getElementById('stockModal').remove()">
+          İptal
+        </button>
+
+        <button
+          class="primary"
+          style="flex:1"
+          onclick="confirmNewStock()">
+          STOK EKLE
+        </button>
+
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+async function confirmNewStock(){
+  try{
+    let i=Number(document.getElementById("newStockProduct").value);
+    let q=Number(document.getElementById("newStockQty").value);
+    let loc=document.getElementById("newStockLocation").value;
+
+    let p=state.products[i];
+
+    if(!p){
+      toast("Ürün seçilmedi");
+      return;
+    }
+
+    if(!q || q<=0){
+      toast("Miktar girin");
+      return;
+    }
+
+    await upsertStock(p.id,loc,q);
+
+    await sb("stock_movements",{
+      method:"POST",
+      body:JSON.stringify({
+        product_id:p.id,
+        movement_type:"entry",
+        to_location:loc,
+        quantity:q
+      })
+    });
+
+    document.getElementById("stockModal").remove();
+
+    toast("Stok eklendi");
+
+    await loadData();
+
+    stockTab(loc);
+
+  }catch(e){
+    console.error(e);
+    toast(e.message||"Stok eklenemedi");
+  }
+}
 async function saveTransfer(){let i=Number(transferProduct.value),q=Number(transferQty.value);if(!q)return;try{let p=state.products[i];await upsertStock(p.id,"warehouse",-q);await upsertStock(p.id,"vehicle",q);await sb("stock_movements",{method:"POST",body:JSON.stringify({product_id:p.id,movement_type:"transfer",from_location:"warehouse",to_location:"vehicle",quantity:q})});toast("Araç stoğuna aktarıldı");transferQty.value="";await loadData()}catch(e){toast(e.message||"Transfer yapılamadı")}}
 async function savePayment(){let c=state.customers.find(x=>String(x.id)===String(paymentCustomer.value)),a=Number(paymentAmount.value);if(!c||a<=0)return;try{let p=await sb("payments",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({customer_id:c.id,amount:a,payment_method:paymentNote.value})});await sb("customer_ledger",{method:"POST",body:JSON.stringify({customer_id:c.id,movement_type:"payment",description:"Tahsilat",debit:0,credit:a,payment_id:p[0]?.id})});toast("Tahsilat kaydedildi");paymentAmount.value="";paymentNote.value="";await loadData()}catch(e){toast("Tahsilat kaydedilemedi")}}
 function renderProducts(){let q=(productSearch.value||"").toLocaleLowerCase("tr-TR");productList.innerHTML=state.products.filter(p=>(p.name+" "+p.package_size).toLocaleLowerCase("tr-TR").includes(q)).map(p=>`<div class="movement"><div><b>${p.name}</b><small>${p.package_size}</small></div><b>${p.sale_price==null?"Fiyat girilmemiş":money(p.sale_price)}</b></div>`).join("")}
