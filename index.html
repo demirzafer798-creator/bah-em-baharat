@@ -259,7 +259,95 @@ async function confirmNewStock(){
     toast(e.message||"Stok eklenemedi");
   }
 }
-async function saveTransfer(){let i=Number(transferProduct.value),q=Number(transferQty.value);if(!q)return;try{let p=state.products[i];await upsertStock(p.id,"warehouse",-q);await upsertStock(p.id,"vehicle",q);await sb("stock_movements",{method:"POST",body:JSON.stringify({product_id:p.id,movement_type:"transfer",from_location:"warehouse",to_location:"vehicle",quantity:q})});toast("Araç stoğuna aktarıldı");transferQty.value="";await loadData()}catch(e){toast(e.message||"Transfer yapılamadı")}}
+async function saveTransfer(){
+  try{
+    let i=Number(transferProduct.value);
+    let q=Number(transferQty.value);
+
+    if(!q || q<=0){
+      toast("Miktar girin");
+      return;
+    }
+
+    let p=state.products[i];
+
+    if(!p){
+      toast("Ürün seçilmedi");
+      return;
+    }
+
+    // Güncel depo ve araç stoklarını doğrudan Supabase'den al
+    let warehouseRows=await sb(
+      stock?select=*&product_id=eq.${p.id}&location=eq.warehouse
+    );
+
+    let vehicleRows=await sb(
+      stock?select=*&product_id=eq.${p.id}&location=eq.vehicle
+    );
+
+    let warehouse=warehouseRows[0];
+    let vehicle=vehicleRows[0];
+
+    let warehouseQty=Number(warehouse?.quantity||0);
+    let vehicleQty=Number(vehicle?.quantity||0);
+
+    if(warehouseQty<q){
+      toast(Depoda sadece ${warehouseQty} adet var);
+      return;
+    }
+
+    // Önce depodan düş
+    if(warehouse){
+      await sb(stock?id=eq.${warehouse.id},{
+        method:"PATCH",
+        body:JSON.stringify({
+          quantity:warehouseQty-q
+        })
+      });
+    }
+
+    // Sonra araca ekle
+    if(vehicle){
+      await sb(stock?id=eq.${vehicle.id},{
+        method:"PATCH",
+        body:JSON.stringify({
+          quantity:vehicleQty+q
+        })
+      });
+    }else{
+      await sb("stock",{
+        method:"POST",
+        body:JSON.stringify({
+          product_id:p.id,
+          location:"vehicle",
+          quantity:q
+        })
+      });
+    }
+
+    // Hareket kaydı
+    await sb("stock_movements",{
+      method:"POST",
+      body:JSON.stringify({
+        product_id:p.id,
+        movement_type:"transfer",
+        from_location:"warehouse",
+        to_location:"vehicle",
+        quantity:q
+      })
+    });
+
+    transferQty.value="";
+    toast("Araç stoğuna aktarıldı");
+
+    await loadData();
+    stockTab("warehouse");
+
+  }catch(e){
+    console.error(e);
+    toast(e.message||"Transfer yapılamadı");
+  }
+}
 async function savePayment(){let c=state.customers.find(x=>String(x.id)===String(paymentCustomer.value)),a=Number(paymentAmount.value);if(!c||a<=0)return;try{let p=await sb("payments",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({customer_id:c.id,amount:a,payment_method:paymentNote.value})});await sb("customer_ledger",{method:"POST",body:JSON.stringify({customer_id:c.id,movement_type:"payment",description:"Tahsilat",debit:0,credit:a,payment_id:p[0]?.id})});toast("Tahsilat kaydedildi");paymentAmount.value="";paymentNote.value="";await loadData()}catch(e){toast("Tahsilat kaydedilemedi")}}
 function renderProducts(){let q=(productSearch.value||"").toLocaleLowerCase("tr-TR");productList.innerHTML=state.products.filter(p=>(p.name+" "+p.package_size).toLocaleLowerCase("tr-TR").includes(q)).map(p=>`<div class="movement"><div><b>${p.name}</b><small>${p.package_size}</small></div><b>${p.sale_price==null?"Fiyat girilmemiş":money(p.sale_price)}</b></div>`).join("")}
 renderAll();loadData();
