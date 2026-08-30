@@ -1,0 +1,106 @@
+<!doctype html><html lang="tr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#16823b"><title>Bahçem Baharat</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f4f6f5;color:#17221a;padding-bottom:75px}
+.top{background:#16823b;color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}.brand{font-weight:900}.sub{font-size:11px;opacity:.85}.mode{background:#fff;color:#16823b;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:800}
+main{max-width:1000px;margin:auto;padding:14px}.page{display:none}.page.active{display:block}.sectionHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}h1{font-size:22px;margin:8px 0}h2{font-size:17px;margin:4px 0 12px}
+.card{background:#fff;border:1px solid #e2e7e3;border-radius:14px;padding:14px;margin-bottom:12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stats span{font-size:12px;color:#66736a}.stats b{display:block;font-size:19px;margin-top:7px}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}button{border:0;border-radius:10px;padding:11px 13px;background:#e8eee9;color:#17321f;font-weight:700}button.primary{background:#16823b;color:#fff}button.big{width:100%;padding:15px;font-size:16px;margin-top:10px}button.small{padding:8px 10px}button.ghost{background:transparent}button.remove{background:#ffecec;color:#a33;padding:9px}
+label{display:block;font-size:12px;font-weight:700;color:#58645c;margin:9px 0}input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9px;padding:11px;background:#fff;font-size:15px}.row{display:flex;gap:10px}.grow{flex:1}
+.saleRow{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:end;border-bottom:1px solid #eee;padding:7px 0}.total{display:flex;justify-content:space-between;font-size:18px;margin-top:14px;padding-top:12px;border-top:2px solid #ddd}
+.customer{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #eee}.customer:last-child{border:0}.debt{font-weight:900}.detailTop{display:flex;justify-content:space-between;align-items:center}.detailTop b{font-size:24px}
+.movement{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eee}.movement small{display:block;color:#69756d}.plus{color:#b3261e}.minus{color:#19733a}
+.stockLine{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;padding:9px 0;border-bottom:1px solid #eee}.muted{color:#657168;font-size:13px;line-height:1.5}.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button.active{background:#16823b;color:#fff}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:7px;z-index:10}.bottom button{background:transparent;font-size:21px;padding:3px 10px}.bottom small{display:block;font-size:10px}
+#toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#17221a;color:#fff;padding:11px 16px;border-radius:99px;display:none;z-index:20}
+@media(max-width:650px){.grid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:1fr 1fr}.saleRow{grid-template-columns:1fr 75px 85px 40px}.row{flex-direction:column;gap:0}}
+</style></head><body>
+<header class="top"><div><div class="brand">BAHÇEM BAHARAT</div><div class="sub">MUHTEŞEM TAT · STOK & CARİ</div></div><div class="mode" id="mode">BAĞLANIYOR</div></header>
+<main>
+<section id="dashboard" class="page active"><div class="grid stats">
+<div class="card"><span>Toplam Cari</span><b id="statDebt">0,00 TL</b></div><div class="card"><span>Bugünkü Satış</span><b id="statSales">0,00 TL</b></div>
+<div class="card"><span>Ürün Çeşidi</span><b id="statProducts">0</b></div><div class="card"><span>Düşük Stok</span><b id="statLow">0</b></div></div>
+<div class="card"><h2>Hızlı İşlemler</h2><div class="quick"><button onclick="go('sale')">＋ Yeni Satış</button><button onclick="go('customer')">＋ Müşteri</button><button onclick="go('payment')">₺ Tahsilat</button><button onclick="go('transfer')">⇄ Depo → Araç</button></div></div>
+<div class="card"><h2>Son Satışlar</h2><div id="recent"></div></div></section>
+
+<section id="sale" class="page"><div class="sectionHead"><h1>Yeni Satış</h1><button class="ghost" onclick="go('dashboard')">← Ana</button></div>
+<div class="card"><label>Müşteri<select id="saleCustomer"></select></label><div class="row"><label class="grow">Ödeme<select id="salePayment"><option value="cari">Veresiye / Cari</option><option value="cash">Peşin</option></select></label><label class="grow">Stok<select id="saleLocation"><option value="vehicle">Araç</option><option value="warehouse">Depo</option></select></label></div></div>
+<div class="card"><div class="sectionHead"><h2>Ürünler</h2><button class="small" onclick="addSaleRow()">＋ Ürün</button></div><div id="saleRows"></div><div class="total">TOPLAM <b id="saleTotal">0,00 TL</b></div><button class="primary big" onclick="saveSale()">KAYDET</button></div></section>
+
+<section id="customer" class="page"><div class="sectionHead"><h1>Müşteriler & Cariler</h1><button class="primary" onclick="newCustomer()">＋ Müşteri</button></div><div id="customerList" class="card"></div></section>
+<section id="customerDetail" class="page"><div class="sectionHead"><h1 id="detailName">Müşteri</h1><button class="ghost" onclick="go('customer')">← Geri</button></div><div class="card detailTop"><span>Cari Bakiye</span><b id="detailBalance">0,00 TL</b></div><div class="card"><h2>Hareketler</h2><div id="detailMovements"></div></div></section>
+
+<section id="stock" class="page"><div class="sectionHead"><h1>Stok</h1><button class="small" onclick="newStock()">＋ Stok Girişi</button></div><div class="tabs"><button class="active" onclick="stockTab('warehouse')">Depo</button><button onclick="stockTab('vehicle')">Araç</button></div><div class="card"><div id="stockTable"></div></div></section>
+<section id="transfer" class="page"><div class="sectionHead"><h1>Depo → Araç</h1></div><div class="card"><label>Ürün<select id="transferProduct"></select></label><div class="row"><label class="grow">Miktar<input id="transferQty" type="number" step="0.001" min="0"></label><label class="grow">Birim<select id="transferUnit"><option>kg</option><option>adet</option></select></label></div><button class="primary big" onclick="saveTransfer()">ARACA AKTAR</button></div></section>
+<section id="payment" class="page"><div class="sectionHead"><h1>Tahsilat</h1></div><div class="card"><label>Müşteri<select id="paymentCustomer"></select></label><label>Tutar<input id="paymentAmount" type="number" step="0.01" min="0"></label><label>Not<input id="paymentNote" placeholder="Nakit, EFT, havale..."></label><button class="primary big" onclick="savePayment()">TAHSİLATI KAYDET</button></div></section>
+<section id="products" class="page"><div class="sectionHead"><h1>Ürünler</h1></div><div class="card"><input id="productSearch" placeholder="Ürün ara..." oninput="renderProducts()"><div id="productList"></div></div></section>
+</main>
+<nav class="bottom"><button onclick="go('dashboard')">⌂<small>Ana</small></button><button onclick="go('sale')">＋<small>Satış</small></button><button onclick="go('customer')">♙<small>Cari</small></button><button onclick="go('stock')">▦<small>Stok</small></button><button onclick="go('products')">☷<small>Ürün</small></button></nav>
+<div id="toast"></div>
+<script>
+const SB_URL="https://qylarzksgbepwzhmffva.supabase.co";
+const SB_KEY="sb_publishable_izJ80wVySuMYWFGPwakDXA_VYfdmuun";
+const PRODUCT_DATA=[{"name": "Pul Biber Halis I.", "package_size": "40 gr", "sale_price": 22.75}, {"name": "Süper Acı", "package_size": "120 gr", "sale_price": 78.0}, {"name": "İsot", "package_size": "50 gr", "sale_price": 22.75}, {"name": "Acı Toz Biber", "package_size": "50 gr", "sale_price": 22.75}, {"name": "Tatlı Toz Biber", "package_size": "50 gr", "sale_price": 22.75}, {"name": "Kişniş", "package_size": "35 gr", "sale_price": 16.25}, {"name": "Nane", "package_size": "20 gr", "sale_price": 16.25}, {"name": "Karabiber", "package_size": "150 gr", "sale_price": 91.0}, {"name": "Karabiber", "package_size": "40 gr", "sale_price": 32.5}, {"name": "Kekik", "package_size": "15 gr", "sale_price": 16.25}, {"name": "Tarçın Toz", "package_size": "40 gr", "sale_price": 22.75}, {"name": "Kimyon", "package_size": "40 gr", "sale_price": 22.75}, {"name": "Çörek Otu", "package_size": "130 gr", "sale_price": 32.5}, {"name": "Çörek Otu", "package_size": "50 gr", "sale_price": 19.5}, {"name": "Susam Beyaz", "package_size": "50 gr", "sale_price": 19.5}, {"name": "Hindistan Cevizi", "package_size": "20 gr", "sale_price": 16.25}, {"name": "Zencefil", "package_size": "40 gr", "sale_price": 19.5}, {"name": "Zerdeçal", "package_size": "40 gr", "sale_price": 19.5}, {"name": "Limon Tuzu", "package_size": "300 gr", "sale_price": null}, {"name": "Limon Tuzu", "package_size": "55 gr", "sale_price": 19.5}, {"name": "Sumak", "package_size": "40 gr", "sale_price": 19.5}, {"name": "Pasta Süsü", "package_size": "35 gr", "sale_price": 16.25}, {"name": "Galeta Unu", "package_size": "230 gr", "sale_price": 32.5}, {"name": "Karbonat", "package_size": "50 gr", "sale_price": 13.0}, {"name": "Karanfil", "package_size": "10 gr", "sale_price": 19.5}, {"name": "Köri", "package_size": "40 gr", "sale_price": 19.5}, {"name": "Yenibahar", "package_size": "35 gr", "sale_price": 39.0}, {"name": "Ihlamur", "package_size": "40 gr", "sale_price": 81.25}, {"name": "Kekik", "package_size": "300 gr", "sale_price": null}, {"name": "Pul Biber Halis İpek", "package_size": "500 gr", "sale_price": 227.5}, {"name": "Nane", "package_size": "300 gr", "sale_price": null}, {"name": "Pul Biber H. İpek", "package_size": "1 kg", "sale_price": 390.0}, {"name": "Amonyak", "package_size": "30 gr", "sale_price": 19.5}, {"name": "Mahlep", "package_size": "30 gr", "sale_price": 32.5}, {"name": "Mavi Haşhaş", "package_size": "50 gr", "sale_price": 19.5}, {"name": "Çubuk Tarçın", "package_size": "20 gr", "sale_price": 19.5}, {"name": "Köfte Baharatı", "package_size": "40 gr", "sale_price": 19.5}, {"name": "Tavuk Baharatı", "package_size": "40 gr", "sale_price": 19.5}, {"name": "Çemen", "package_size": "30 gr", "sale_price": 19.5}, {"name": "Acı Biber", "package_size": "200 gr", "sale_price": 130.0}];
+let state={products:[],customers:[],stock:[],sales:[],payments:[]},stockLoc="warehouse",detailId=null;
+async function sb(path,opts={}){const h={"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json",...(opts.headers||{})};const r=await fetch(SB_URL+"/rest/v1/"+path,{...opts,headers:h});const t=await r.text();if(!r.ok)throw new Error(t||"HTTP "+r.status);return t?JSON.parse(t):[]}
+function money(n){return Number(n||0).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL"}
+function toast(s){let e=document.getElementById("toast");e.textContent=s;e.style.display="block";setTimeout(()=>e.style.display="none",2200)}
+function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");renderAll();scrollTo(0,0)}
+function options(){return state.products.map((p,i)=>`<option value="${i}">${p.name} — ${p.package_size}${p.sale_price!=null?" — "+money(p.sale_price):""}</option>`).join("")}
+function customerOptions(){return state.customers.map(c=>`<option value="${c.id}">${c.name}</option>`).join("")}
+async function loadData(){
+ try{
+  state.products=await sb("products?select=*&order=id");
+  state.customers=await sb("customers?select=*&order=name");
+  state.stock=await sb("stock?select=*");
+  state.sales=await sb("sales?select=*&order=sale_date.desc&limit=50");
+  state.payments=await sb("payments?select=*&order=payment_date.desc&limit=100");
+  mode.textContent="CLOUD"; mode.style.background="#fff"; mode.style.color="#16823b";
+ }catch(e){console.error(e);mode.textContent="BAĞLANTI HATASI";toast("Bulut bağlantısı kurulamadı")}
+ renderAll();
+}
+function renderAll(){
+ saleCustomer.innerHTML=customerOptions();paymentCustomer.innerHTML=customerOptions();transferProduct.innerHTML=options();
+ renderDashboard();renderCustomers();renderStock();renderProducts();renderDetail();
+ if(!saleRows.querySelector(".saleRow"))addSaleRow();
+}
+function renderDashboard(){
+ let debt=0; state.customers.forEach(c=>debt+=Number(c.balance||0));
+ let today=new Date().toISOString().slice(0,10),sales=state.sales.filter(s=>s.sale_date?.slice(0,10)===today).reduce((a,s)=>a+Number(s.total||0),0);
+ let low=state.products.filter(p=>state.stock.filter(x=>x.product_id===p.id).reduce((a,x)=>a+Number(x.quantity||0),0)<2).length;
+ statDebt.textContent=money(debt);statSales.textContent=money(sales);statProducts.textContent=state.products.length;statLow.textContent=low;
+ recent.innerHTML=state.sales.slice(0,6).map(s=>`<div class="movement"><div><b>Müşteri #${s.customer_id}</b><small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small></div><b>${money(s.total)}</b></div>`).join("")||'<p class="muted">Henüz satış yok.</p>';
+}
+function addSaleRow(){let d=document.createElement("div");d.className="saleRow";d.innerHTML=`<select class="sprod">${options()}</select><input class="sqty" type="number" step="0.001" min="0" value="1"><select class="sunit"><option>kg</option><option>adet</option></select><button class="remove" onclick="this.parentElement.remove();calcSale()">×</button>`;saleRows.appendChild(d);d.querySelectorAll("input,select").forEach(x=>x.oninput=calcSale);calcSale()}
+function calcSale(){let t=0;document.querySelectorAll(".saleRow").forEach(r=>{let p=state.products[r.querySelector(".sprod").value],q=Number(r.querySelector(".sqty").value||0);t+=(p?.sale_price||0)*q});saleTotal.textContent=money(t)}
+async function upsertStock(product_id,location,delta){
+ let rows=state.stock.filter(x=>x.product_id===product_id&&x.location===location);
+ if(rows.length){let next=Number(rows[0].quantity||0)+delta;if(next<0)throw new Error("Yetersiz stok");await sb(`stock?id=eq.${rows[0].id}`,{method:"PATCH",body:JSON.stringify({quantity:next})})}
+ else {if(delta<0)throw new Error("Yetersiz stok");await sb("stock",{method:"POST",body:JSON.stringify({product_id,location,quantity:delta})})}
+}
+async function saveSale(){
+ try{
+  let c=state.customers.find(x=>String(x.id)===String(saleCustomer.value));if(!c){toast("Önce müşteri ekleyin");return}
+  let items=[],total=0,loc=saleLocation.value;
+  document.querySelectorAll(".saleRow").forEach(r=>{let p=state.products[r.querySelector(".sprod").value],q=Number(r.querySelector(".sqty").value||0),u=r.querySelector(".sunit").value;if(q>0&&p){items.push({p,q,u});total+=(p.sale_price||0)*q}});
+  if(!items.length){toast("Ürün ekleyin");return}
+  for(const it of items){let row=state.stock.find(x=>x.product_id===it.p.id&&x.location===loc);if(!row||Number(row.quantity)<it.q)throw new Error(`${it.p.name} için stok yetersiz`)}
+  let ss=await sb("sales",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({customer_id:c.id,payment_type:salePayment.value,location:loc,total})}),sale=ss[0];
+  for(const it of items){await sb("sale_items",{method:"POST",body:JSON.stringify({sale_id:sale.id,product_id:it.p.id,quantity:it.q,unit:it.u,unit_price:it.p.sale_price||0,total:(it.p.sale_price||0)*it.q})});await upsertStock(it.p.id,loc,-it.q);await sb("stock_movements",{method:"POST",body:JSON.stringify({product_id:it.p.id,movement_type:"sale",from_location:loc,quantity:it.q,notes:"Satış #"+sale.id})})}
+  if(salePayment.value==="cari")await sb("customer_ledger",{method:"POST",body:JSON.stringify({customer_id:c.id,movement_type:"sale",description:"Satış #"+sale.id,debit:total,credit:0,sale_id:sale.id})});
+  toast("Satış kaydedildi");saleRows.innerHTML="";await loadData();go("dashboard");
+ }catch(e){console.error(e);toast(e.message||"Satış kaydedilemedi")}
+}
+async function newCustomer(){let n=prompt("Müşteri adı:");if(!n)return;try{await sb("customers",{method:"POST",body:JSON.stringify({name:n})});toast("Müşteri eklendi");await loadData()}catch(e){toast("Müşteri eklenemedi")}}
+function renderCustomers(){customerList.innerHTML=state.customers.map(c=>`<div class="customer"><div><b>${c.name}</b><small>${c.phone||""}</small></div><div><b class="debt">${money(c.balance)}</b><button class="small" onclick="showCustomer(${c.id})">Aç</button></div></div>`).join("")||'<p class="muted">Henüz müşteri yok.</p>'}
+function showCustomer(id){detailId=id;go("customerDetail")}
+async function renderDetail(){if(!detailId)return;let c=state.customers.find(x=>String(x.id)===String(detailId));if(!c)return;detailName.textContent=c.name;try{let l=await sb(`customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc`),bal=l.reduce((a,x)=>a+Number(x.debit||0)-Number(x.credit||0),0);detailBalance.textContent=money(bal);detailMovements.innerHTML=l.map(x=>`<div class="movement"><div><b>${x.description||x.movement_type}</b><small>${new Date(x.movement_date).toLocaleString("tr-TR")}</small></div><b class="${Number(x.debit)>0?'plus':'minus'}">${Number(x.debit)>0?'+':'-'}${money(Number(x.debit||x.credit))}</b></div>`).join("")||'<p class="muted">Hareket yok.</p>'}catch(e){detailMovements.innerHTML='<p class="muted">Cari hareketleri yüklenemedi.</p>'}}
+function stockTab(x){stockLoc=x;document.querySelectorAll(".tabs button").forEach((b,i)=>b.classList.toggle("active",(i===0&&x==="warehouse")||(i===1&&x==="vehicle")));renderStock()}
+function renderStock(){stockTable.innerHTML=state.products.map(p=>{let r=state.stock.find(x=>x.product_id===p.id&&x.location===stockLoc);return `<div class="stockLine"><div><b>${p.name}</b><small>${p.package_size}</small></div><b>${Number(r?.quantity||0).toLocaleString("tr-TR")}</b><span>${p.sale_price==null?"Fiyat yok":money(p.sale_price)}</span></div>`}).join("")}
+async function newStock(){let s=prompt("Ürün numarası (1-"+state.products.length+")?"),i=Number(s)-1;if(!state.products[i])return;let q=Number(prompt("Miktar:"));if(!q)return;let loc=prompt("Yer: warehouse=Depo, vehicle=Araç","warehouse");if(!["warehouse","vehicle"].includes(loc))return;try{await upsertStock(state.products[i].id,loc,q);await sb("stock_movements",{method:"POST",body:JSON.stringify({product_id:state.products[i].id,movement_type:"entry",to_location:loc,quantity:q})});toast("Stok eklendi");await loadData()}catch(e){toast(e.message||"Stok eklenemedi")}}
+async function saveTransfer(){let i=Number(transferProduct.value),q=Number(transferQty.value);if(!q)return;try{let p=state.products[i];await upsertStock(p.id,"warehouse",-q);await upsertStock(p.id,"vehicle",q);await sb("stock_movements",{method:"POST",body:JSON.stringify({product_id:p.id,movement_type:"transfer",from_location:"warehouse",to_location:"vehicle",quantity:q})});toast("Araç stoğuna aktarıldı");transferQty.value="";await loadData()}catch(e){toast(e.message||"Transfer yapılamadı")}}
+async function savePayment(){let c=state.customers.find(x=>String(x.id)===String(paymentCustomer.value)),a=Number(paymentAmount.value);if(!c||a<=0)return;try{let p=await sb("payments",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({customer_id:c.id,amount:a,payment_method:paymentNote.value})});await sb("customer_ledger",{method:"POST",body:JSON.stringify({customer_id:c.id,movement_type:"payment",description:"Tahsilat",debit:0,credit:a,payment_id:p[0]?.id})});toast("Tahsilat kaydedildi");paymentAmount.value="";paymentNote.value="";await loadData()}catch(e){toast("Tahsilat kaydedilemedi")}}
+function renderProducts(){let q=(productSearch.value||"").toLocaleLowerCase("tr-TR");productList.innerHTML=state.products.filter(p=>(p.name+" "+p.package_size).toLocaleLowerCase("tr-TR").includes(q)).map(p=>`<div class="movement"><div><b>${p.name}</b><small>${p.package_size}</small></div><b>${p.sale_price==null?"Fiyat girilmemiş":money(p.sale_price)}</b></div>`).join("")}
+renderAll();loadData();
+</script></body></html>
