@@ -57,13 +57,14 @@ async function loadData(){
   state.sales=await sb("sales?select=*&order=sale_date.desc&limit=50");
   state.payments=await sb("payments?select=*&order=payment_date.desc&limit=100");
   mode.textContent="CLOUD"; mode.style.background="#fff"; mode.style.color="#16823b";
- }catch(e){console.error(e);mode.textContent="BAĞLANTI HATASI";toast("Bulut bağlantısı kurulamadı")}
+ }catch(e){console.error(e);mode.textContent="BAĞLANTI HATASI";toast("Bulut bağlantısı kurulamadı");return;}
  document.querySelectorAll(".saleRow").forEach(x=>x.remove());renderAll();
 }
 function renderAll(){
  saleCustomer.innerHTML=customerOptions();paymentCustomer.innerHTML=customerOptions();transferProduct.innerHTML=options();
  renderDashboard();renderCustomers();renderStock();renderProducts();renderDetail();
- if(!saleRows.querySelector(".saleRow"))addSaleRow();
+ if(!saleRows.querySelector(".saleRow") && state.products.length){
+  addSaleRow();
 }
 function renderDashboard(){
  let debt=0; state.customers.forEach(c=>debt+=Number(c.balance||0));
