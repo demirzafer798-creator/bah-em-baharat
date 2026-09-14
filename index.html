@@ -82,6 +82,81 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
 .saleRow{grid-template-columns:1fr 75px 85px 40px}
 .row{flex-direction:column;gap:0}
 }
+/* ANA EKRAN GÖRÜNÜMÜ */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:15px 0;
+}
+
+.grid .card{
+  background:#fff;
+  border:1px solid #e5e5e5;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.grid .card span{
+  display:block;
+  font-size:13px;
+  color:#777;
+  margin-bottom:8px;
+}
+
+.grid .card b{
+  display:block;
+  font-size:20px;
+  font-weight:700;
+}
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.quick button{
+  min-height:44px;
+  border:1px solid #ddd;
+  border-radius:9px;
+  background:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.quick button:hover{
+  background:#f3f3f3;
+}
+
+#recent{
+  min-height:40px;
+}
+
+.movement{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 4px;
+  border-bottom:1px solid #eee;
+}
+
+.movement small{
+  display:block;
+  color:#888;
+  margin-top:4px;
+}
+
+@media(max-width:700px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .quick{
+    grid-template-columns:repeat(2,1fr);
+  }
+}                                                                                                          
 </style>
 </head>
 
