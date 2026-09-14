@@ -47,8 +47,8 @@ async function sb(path,opts={}){const h={"apikey":SB_KEY,"Authorization":"Bearer
 function money(n){return Number(n||0).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL"}
 function toast(s){let e=document.getElementById("toast");e.textContent=s;e.style.display="block";setTimeout(()=>e.style.display="none",2200)}
 function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");renderAll();scrollTo(0,0)}
-function options(){return state.products.map((p,i)=><option value="${i}">${p.name}</option>).join("")}
-function customerOptions(){return state.customers.map(c=><option value="${c.id}">${c.name}</option>).join("")}
+function options(){return state.products.map((p,i)=>"<option value=\""+i+"\">"+p.name+"</option>").join("")}
+function customerOptions(){return state.customers.map(c=>"<option value=\""+c.id+"\">"+c.name+"</option>").join("")}
 async function loadData(){
  try{
   state.products=await sb("products?select=*&order=id");
