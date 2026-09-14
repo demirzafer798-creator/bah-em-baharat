@@ -601,58 +601,54 @@ addSaleRow();
 
 function renderDashboard(){
 
-let debt=0;
+  let debt=0;
 
-state.customers.forEach(
-c=>{
-debt+=Number(c.balance||0);
-}
-);
+  state.customers.forEach(c=>{
+    debt+=Number(c.balance||0);
+  });
 
-const today=new Date().toISOString().slice(0,10);
+  const today=new Date().toISOString().slice(0,10);
 
-const sales=state.sales
-.filter(
-s=>s.sale_date?.slice(0,10)===today
-)
-.reduce(
-(a,s)=>a+Number(s.total||0),
-0
-);
+  const sales=state.sales
+    .filter(s=>
+      s.sale_date?.slice(0,10)===today
+    )
+    .reduce(
+      (a,s)=>a+Number(s.total||0),
+      0
+    );
 
-const low=state.products.filter(
-p=>
-state.stock
-.filter(x=>String(x.product_id)===String(p.id))
-.reduce(
-(a,x)=>a+Number(x.quantity||0),
-0
-)<2
-).length;
+  const low=state.products.filter(
+    p=>
+      state.stock
+        .filter(x=>
+          String(x.product_id)===String(p.id)
+        )
+        .reduce(
+          (a,x)=>a+Number(x.quantity||0),
+          0
+        )<2
+  ).length;
 
-statDebt.textContent=money(debt);
-statSales.textContent=money(sales);
-statProducts.textContent=state.products.length;
-statLow.textContent=low;
+  statDebt.textContent=money(debt);
+  statSales.textContent=money(sales);
+  statProducts.textContent=state.products.length;
+  statLow.textContent=low;
 
-
-recent.innerHTML=state.sales
-.slice(0,6)
-.map(
-s=>`
-<div class="movement">
-<div>
-<b>Müşteri #${s.customer_id}</b>
-<small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small>
-</div>
-<b>${money(s.total)}</b>
-</div>
-`
-)
-.join("")
-||
-'<p class="muted">Henüz satış yok.</p>';
-
+  recent.innerHTML=state.sales
+    .slice(0,6)
+    .map(s=>`
+      <div class="movement">
+        <div>
+          <b>Müşteri #${s.customer_id}</b>
+          <small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small>
+        </div>
+        <b>${money(s.total)}</b>
+      </div>
+    `)
+    .join("")
+    ||
+    '<p class="muted">Henüz satış yok.</p>';
 }
 
 
