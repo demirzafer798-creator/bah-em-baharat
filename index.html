@@ -156,6 +156,38 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
   .quick{
     grid-template-columns:repeat(2,1fr);
   }
+}
+.grid.stats{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:12px !important;
+}
+
+.grid.stats .card{
+  background:#fff;
+  border:1px solid #e5e5e5;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.grid.stats .card span{
+  display:block;
+  color:#777;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.grid.stats .card b{
+  display:block;
+  font-size:20px;
+  font-weight:700;
+}
+
+@media(max-width:650px){
+  .grid.stats{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
 }                                                                                                          
 </style>
 </head>
