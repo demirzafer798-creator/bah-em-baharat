@@ -410,29 +410,41 @@ const detailMovements=document.getElementById("detailMovements");
 
 
 async function sb(path,opts={}){
+  const headers={
+    "apikey":SB_KEY,
+    "Content-Type":"application/json",
+    ...(opts.headers||{})
+  };
 
-const headers={
-"apikey":SB_KEY,
-"Content-Type":"application/json",
-...(opts.headers||{})
-};
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),8000);
 
-const r=await fetch(
-SB_URL+"/rest/v1/"+path,
-{
-...opts,
-headers
-}
-);
+  try{
+    const r=await fetch(
+      SB_URL+"/rest/v1/"+path,
+      {
+        ...opts,
+        headers,
+        signal:controller.signal
+      }
+    );
 
-const t=await r.text();
+    const t=await r.text();
 
-if(!r.ok){
-throw new Error(t||"HTTP "+r.status);
-}
+    if(!r.ok){
+      throw new Error(t||"HTTP "+r.status);
+    }
 
-return t?JSON.parse(t):[];
+    return t?JSON.parse(t):[];
 
+  }catch(e){
+    if(e.name==="AbortError"){
+      throw new Error("Supabase bağlantısı 8 saniyede yanıt vermedi");
+    }
+    throw e;
+  }finally{
+    clearTimeout(timer);
+  }
 }
 
 
