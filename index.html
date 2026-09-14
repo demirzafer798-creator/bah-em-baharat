@@ -74,9 +74,9 @@ document.querySelectorAll(".sprod").forEach(x=>{
     renderProducts();
     renderDetail();
 
-    if(state.products.length && !saleRows.querySelector(".saleRow")){
-        addSaleRow();
-    }
+ if(state.products.length){
+  if(!document.querySelector("#saleRows .saleRow")) addSaleRow();
+}
 }
 function renderDashboard(){
  let debt=0; state.customers.forEach(c=>debt+=Number(c.balance||0));
