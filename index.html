@@ -1257,18 +1257,43 @@ renderStock();
 
 
 function renderStock(){
-  stockTable.innerHTML=state.products.map(p=>{
-    let rows=state.stock.filter(x=>String(x.product_id)===String(p.id)&&x.location===stockLoc);
-    let r=rows.length
-      ? {...rows[0],quantity:rows.reduce((s,x)=>s+Number(x.quantity||0),0)}
-      : null;
 
-    return `<div class="stockLine">
-      <div>${p.name}<small>${p.package_size||""}</small></div>
-      <div>${r?Number(r.quantity||0):0}</div>
-      <div>${p.sale_price==null?"Fiyat yok":money(p.sale_price)}</div>
-    </div>`;
+  stockTable.innerHTML=state.products.map(p=>{
+
+    const rows=state.stock.filter(
+      x=>
+        String(x.product_id)===String(p.id) &&
+        x.location===stockLoc
+    );
+
+    const quantity=rows.reduce(
+      (sum,x)=>sum+Number(x.quantity||0),
+      0
+    );
+
+    return `
+      <div class="stockRow">
+
+        <div>
+          <b>${p.name}</b>
+          <small>${p.package_size||""}</small>
+        </div>
+
+        <div>
+          <b>${quantity}</b>
+        </div>
+
+        <div>
+          ${p.sale_price==null
+            ?"Fiyat yok"
+            :money(p.sale_price)}
+        </div>
+
+      </div>
+    `;
+
   }).join("");
+
 }
 
 
