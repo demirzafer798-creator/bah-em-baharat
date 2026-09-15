@@ -1840,46 +1840,101 @@ toast("Tahsilat kaydedilemedi");
 
 function renderProducts(){
 
-const q=
-(
-productSearch.value||""
-).toLocaleLowerCase("tr-TR");
+  const q =
+    (productSearch?.value || "")
+    .toLocaleLowerCase("tr-TR");
 
+  productList.innerHTML =
+    state.products
+    .filter(p =>
+      (p.name + " " + p.package_size)
+      .toLocaleLowerCase("tr-TR")
+      .includes(q)
+    )
+    .map(p => `
+      <div class="movement">
 
-productList.innerHTML=
-state.products
-.filter(
-p=>
-(
-p.name+" "+p.package_size
-)
-.toLocaleLowerCase("tr-TR")
-.includes(q)
-)
-.map(
-p=>
-`
-<div class="movement">
-<div>
-<b>${p.name}</b>
-<small>${p.package_size}</small>
-</div>
+        <div>
+          <b>${p.name}</b>
+          <small>${p.package_size || ""}</small>
+        </div>
 
-<b>
-${
-p.sale_price==null ?
-"Fiyat girilmemiş" :
-money(p.sale_price)
+        <div>
+          <b>
+            ${p.sale_price == null
+              ? "Fiyat girilmemiş"
+              : money(p.sale_price)}
+          </b>
+
+          <button
+            class="small"
+            onclick="editProductPrice(${p.id})">
+            Fiyat Değiştir
+          </button>
+        </div>
+
+      </div>
+    `)
+    .join("")
+    ||
+    '<p class="muted">Ürün bulunamadı.</p>';
 }
-</b>
+  async function editProductPrice(id){
 
-</div>
-`
-)
-.join("")
-||
-'<p class="muted">Ürün bulunamadı.</p>';
+  const p =
+    state.products.find(
+      x => String(x.id) === String(id)
+    );
 
+  if(!p) return;
+
+  const value =
+    prompt(
+      p.name +
+      " (" +
+      (p.package_size || "") +
+      ")\n\nYeni satış fiyatı:",
+      p.sale_price ?? ""
+    );
+
+  if(value === null) return;
+
+  const price =
+    Number(
+      String(value)
+      .replace(",", ".")
+    );
+
+  if(!Number.isFinite(price) || price < 0){
+    toast("Geçerli bir fiyat girin");
+    return;
+  }
+
+  try{
+
+    await sb(
+      "products?id=eq." + id,
+      {
+        method:"PATCH",
+        body:JSON.stringify({
+          sale_price:price
+        })
+      }
+    );
+
+    toast("Fiyat güncellendi");
+
+    await loadData();
+
+  }catch(e){
+
+    console.error(e);
+
+    toast(
+      e.message ||
+      "Fiyat güncellenemedi"
+    );
+  }
 }
 
 
