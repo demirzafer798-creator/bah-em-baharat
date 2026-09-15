@@ -1200,7 +1200,7 @@ async function renderDetail(){
 
     // Cari hareketleri al
     let ledger = await sb(
-      customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc
+      'customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc'
     );
 
     // Cari bakiye SADECE ledger üzerinden hesaplanır
@@ -1217,7 +1217,7 @@ async function renderDetail(){
 
     // Müşterinin bütün satışlarını al
     let sales = await sb(
-      sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc
+      'sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc'
     );
 
 
