@@ -1881,32 +1881,99 @@ function renderProducts(){
 }
   async function editProductPrice(id){
 
-  const p =
-    state.products.find(
-      x => String(x.id) === String(id)
-    );
+  const p = state.products.find(
+    x => String(x.id) === String(id)
+  );
 
   if(!p) return;
 
-  const value =
-    prompt(
+  const action = prompt(
+    "ÜRÜN İŞLEMİ\n\n" +
+    "1 = Ürünü Düzenle\n" +
+    "2 = Ürünü Sil\n\n" +
+    "Seçiminiz:"
+  );
+
+  if(action === null) return;
+
+  if(action === "2"){
+
+    const ok = confirm(
       p.name +
       " (" +
       (p.package_size || "") +
-      ")\n\nYeni satış fiyatı:",
-      p.sale_price ?? ""
+      ")\n\nBu ürünü silmek istediğinize emin misiniz?"
     );
 
-  if(value === null) return;
+    if(!ok) return;
 
-  const price =
-    Number(
-      String(value)
-      .replace(",", ".")
-    );
+    try{
 
-  if(!Number.isFinite(price) || price < 0){
-    toast("Geçerli bir fiyat girin");
+      await sb(
+        "products?id=eq." + id,
+        {
+          method:"PATCH",
+          body:JSON.stringify({
+            active:false
+          })
+        }
+      );
+
+      toast("Ürün silindi");
+
+      await loadData();
+
+    }catch(e){
+
+      console.error(e);
+
+      toast(
+        e.message ||
+        "Ürün silinemedi"
+      );
+    }
+
+    return;
+  }
+
+  if(action !== "1"){
+    toast("1 veya 2 girin");
+    return;
+  }
+
+  const name = prompt(
+    "Ürün adı:",
+    p.name || ""
+  );
+
+  if(name === null) return;
+
+  const packageSize = prompt(
+    "Paket / gramaj:",
+    p.package_size || ""
+  );
+
+  if(packageSize === null) return;
+
+  const priceValue = prompt(
+    "Satış fiyatı:",
+    p.sale_price ?? ""
+  );
+
+  if(priceValue === null) return;
+
+  const price = Number(
+    String(priceValue).replace(",", ".")
+  );
+
+  if(
+    !name.trim() ||
+    !packageSize.trim() ||
+    !Number.isFinite(price) ||
+    price < 0
+  ){
+
+    toast("Bilgileri kontrol edin");
     return;
   }
 
@@ -1917,12 +1984,14 @@ function renderProducts(){
       {
         method:"PATCH",
         body:JSON.stringify({
+          name:name.trim(),
+          package_size:packageSize.trim(),
           sale_price:price
         })
       }
     );
 
-    toast("Fiyat güncellendi");
+    toast("Ürün güncellendi");
 
     await loadData();
 
@@ -1932,7 +2001,7 @@ function renderProducts(){
 
     toast(
       e.message ||
-      "Fiyat güncellenemedi"
+      "Ürün güncellenemedi"
     );
   }
 }
