@@ -1846,6 +1846,7 @@ function renderProducts(){
 
   productList.innerHTML =
     state.products
+    .filter(p => p.active !== false)
     .filter(p =>
       (p.name + " " + p.package_size)
       .toLocaleLowerCase("tr-TR")
