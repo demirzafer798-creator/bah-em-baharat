@@ -1156,27 +1156,137 @@ toast("Müşteri eklenemedi");
 
 function renderCustomers(){
 
-customerList.innerHTML=
-state.customers
-.map(
-c=>
-"<div class=\"customer\">"+
-"<div>"+
-"<b>"+c.name+"</b>"+
-"<small>"+(c.phone||"")+"</small>"+
-"</div>"+
-"<div>"+
-"<b class=\"debt\">"+
-money(c.balance)+
-"</b>"+
-"<button class=\"small\" onclick=\"showCustomer("+c.id+")\">Aç</button>"+
-"</div>"+
-"</div>"
-)
-.join("")
-||
-'<p class="muted">Henüz müşteri yok.</p>';
+  customerList.innerHTML =
+    state.customers
+    .filter(c => c.active !== false)
+    .map(c =>
 
+      "<div class=\"customer\">" +
+
+        "<div>" +
+          "<b>" + c.name + "</b>" +
+          "<small>" + (c.phone || "") + "</small>" +
+        "</div>" +
+
+        "<div>" +
+
+          "<b class=\"debt\">" +
+            money(c.balance) +
+          "</b>" +
+
+          "<button class=\"small\" onclick=\"showCustomer(" + c.id + ")\">" +
+            "Aç" +
+          "</button>" +
+
+          "<button class=\"small\" onclick=\"editCustomer(" + c.id + ")\">" +
+            "Düzenle" +
+          "</button>" +
+
+          "<button class=\"small remove\" onclick=\"deleteCustomer(" + c.id + ")\">" +
+            "Sil" +
+          "</button>" +
+
+        "</div>" +
+
+      "</div>"
+
+    )
+    .join("") ||
+
+    '<p class="muted">Henüz müşteri yok.</p>';
+}
+
+
+async function editCustomer(id){
+
+  const c = state.customers.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!c) return;
+
+  const name = prompt(
+    "Müşteri adı:",
+    c.name || ""
+  );
+
+  if(name === null) return;
+
+  if(!name.trim()){
+    toast("Müşteri adı boş olamaz");
+    return;
+  }
+
+  try{
+
+    await sb(
+      "customers?id=eq." + id,
+      {
+        method:"PATCH",
+        body:JSON.stringify({
+          name:name.trim()
+        })
+      }
+    );
+
+    toast("Müşteri güncellendi");
+
+    await loadData();
+
+  }catch(e){
+
+    console.error(e);
+
+    toast(
+      e.message ||
+      "Müşteri güncellenemedi"
+    );
+
+  }
+}
+
+
+async function deleteCustomer(id){
+
+  const c = state.customers.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!c) return;
+
+  const ok = confirm(
+    c.name +
+    "\n\nBu müşteriyi silmek istediğinize emin misiniz?"
+  );
+
+  if(!ok) return;
+
+  try{
+
+    await sb(
+      "customers?id=eq." + id,
+      {
+        method:"PATCH",
+        body:JSON.stringify({
+          active:false
+        })
+      }
+    );
+
+    toast("Müşteri silindi");
+
+    await loadData();
+
+  }catch(e){
+
+    console.error(e);
+
+    toast(
+      e.message ||
+      "Müşteri silinemedi"
+    );
+
+  }
 }
 
 
