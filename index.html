@@ -1267,6 +1267,17 @@ async function deleteCustomer(id){
             }
         );
 
+        // Gerçekten silinmiş mi kontrol et
+        const kontrol = await sb(
+            "customers?id=eq." + id
+        );
+
+        if(kontrol && kontrol.length > 0){
+            throw new Error(
+                "Müşteri veritabanından silinemedi."
+            );
+        }
+
         toast("Müşteri silindi");
 
         await loadData();
