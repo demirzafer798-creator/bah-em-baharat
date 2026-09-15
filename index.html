@@ -811,52 +811,52 @@ saleTotal.textContent=money(t);
 
 async function upsertStock(product_id,location,delta){
 
-const rows=state.stock.filter(
-x=>
-String(x.product_id)===String(product_id) &&
-x.location===location
-);
+  const rows=await sb(
+    "stock?product_id=eq."+encodeURIComponent(product_id)+"&location=eq."+encodeURIComponent(location),
+    {
+      method:"GET"
+    }
+  );
 
-if(rows.length){
+  if(rows.length){
 
-const row=rows[0];
+    const row=rows[0];
 
-const next=
-Number(row.quantity||0)+delta;
+    const next=Number(row.quantity||0)+Number(delta);
 
-if(next<0){
-throw new Error("Yetersiz stok");
-}
+    if(next<0){
+      throw new Error("Yetersiz stok");
+    }
 
-await sb(
-"stock?id=eq."+row.id,
-{
-method:"PATCH",
-body:JSON.stringify({
-quantity:next
-})
-}
-);
+    await sb(
+      "stock?id=eq."+row.id,
+      {
+        method:"PATCH",
+        body:JSON.stringify({
+          quantity:next
+        })
+      }
+    );
 
-}else{
+  }else{
 
-if(delta<0){
-throw new Error("Yetersiz stok");
-}
+    if(Number(delta)<0){
+      throw new Error("Yetersiz stok");
+    }
 
-await sb(
-"stock",
-{
-method:"POST",
-body:JSON.stringify({
-product_id,
-location,
-quantity:delta
-})
-}
-);
+    await sb(
+      "stock",
+      {
+        method:"POST",
+        body:JSON.stringify({
+          product_id:product_id,
+          location:location,
+          quantity:Number(delta)
+        })
+      }
+    );
 
-}
+  }
 
 }
 
