@@ -1188,7 +1188,7 @@ async function renderDetail(){
 
   if(!detailId) return;
 
-  const c = state.customers.find(
+  let c = state.customers.find(
     x => String(x.id) === String(detailId)
   );
 
@@ -1198,13 +1198,13 @@ async function renderDetail(){
 
   try{
 
-    const l = await sb(
-      "customer_ledger?select=*&customer_id=eq." +
-      c.id +
-      "&order=movement_date.desc"
+    // Cari hareketleri al
+    let ledger = await sb(
+      customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc
     );
 
-    const bal = l.reduce(
+    // Cari bakiye SADECE ledger üzerinden hesaplanır
+    let balance = ledger.reduce(
       (a,x) =>
         a +
         Number(x.debit || 0) -
@@ -1212,116 +1212,143 @@ async function renderDetail(){
       0
     );
 
-    detailBalance.textContent = money(bal);
+    detailBalance.textContent = money(balance);
 
-    let html = "";
 
-    for(const x of l){
+    // Müşterinin bütün satışlarını al
+    let sales = await sb(
+      sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc
+    );
 
-      if(
-        x.movement_type === "sale" &&
-        x.sale_id
-      ){
 
-        const items = await sb(
-          "sale_items?select=*&sale_id=eq." +
-          x.sale_id
+    let movements = [];
+
+
+    // SATIŞLARI DETAYA EKLE
+    for(const sale of sales){
+
+      let items = await sb(
+        sale_items?select=*&sale_id=eq.${sale.id}
+      );
+
+      let productText = items.map(item => {
+
+        let product = state.products.find(
+          p => String(p.id) === String(item.product_id)
         );
 
-        let itemHtml = "";
+        return (
+          (product?.name || "Ürün") +
+          " x " +
+          Number(item.quantity || 0).toLocaleString("tr-TR") +
+          " " +
+          (item.unit || "")
+        );
 
-        for(const item of items){
+      }).join(" • ");
 
-          const product = state.products.find(
-            p =>
-              String(p.id) ===
-              String(item.product_id)
-          );
 
-          const productName =
-  product
-    ? (product.package_size || "") + " — " + product.name
-    : "Ürün";
+      movements.push({
 
-          itemHtml +=
-            "<div style='padding:6px 0;border-top:1px solid #eee;font-size:13px'>" +
-              "<b>" + productName + "</b>" +
-              "<div>" +
-                Number(item.quantity || 0).toLocaleString("tr-TR") +
-                " " +
-                (item.unit || "") +
-                " × " +
-                money(item.unit_price || 0) +
-                " = " +
-                "<b>" + money(item.total || 0) + "</b>" +
-              "</div>" +
-            "</div>";
-        }
+        date: sale.sale_date,
 
-        html +=
-          "<div class='movement'>" +
-            "<div style='width:100%'>" +
+        html: `
+          <div class="movement">
 
-              "<div style='display:flex;justify-content:space-between;align-items:center'>" +
+            <div>
 
-                "<div>" +
-                  "<b>Satış #" + x.sale_id + "</b>" +
-                  "<small>" +
-                    new Date(x.movement_date).toLocaleString("tr-TR") +
-                  "</small>" +
-                "</div>" +
+              <b>
+                ${sale.payment_type === "cash"
+                  ? "Peşin Satış"
+                  : "Cari Satış"} #${sale.id}
+              </b>
 
-                "<b class='plus'>" +
-                  "+" + money(Number(x.debit || 0)) +
-                "</b>" +
+              <small>
+                ${productText}
+              </small>
 
-              "</div>" +
+              <small>
+                ${new Date(sale.sale_date)
+                  .toLocaleString("tr-TR")}
+              </small>
 
-              "<div style='margin-top:8px;padding:8px;background:#f8f9fa;border-radius:8px'>" +
-                (
-                  itemHtml ||
-                  "<small>Ürün detayı bulunamadı.</small>"
-                ) +
-              "</div>" +
+            </div>
 
-            "</div>" +
-          "</div>";
+            <b>
+              ${money(sale.total)}
+            </b>
 
-      }else{
+          </div>
+        `
 
-        html +=
-          "<div class='movement'>" +
-            "<div>" +
-              "<b>" +
-                (x.description || x.movement_type) +
-              "</b>" +
-              "<small>" +
-                new Date(x.movement_date).toLocaleString("tr-TR") +
-              "</small>" +
-            "</div>" +
+      });
 
-            "<b class='" +
-              (Number(x.debit) > 0 ? "plus" : "minus") +
-            "'>" +
-              (Number(x.debit) > 0 ? "+" : "-") +
-              money(Number(x.debit || x.credit || 0)) +
-            "</b>" +
-
-          "</div>";
-      }
     }
 
+
+    // TAHSİLAT VE DİĞER CARİ HAREKETLERİ EKLE
+    ledger.forEach(x => {
+
+      // Satış kayıtlarını yukarıdan zaten ekledik
+      if(x.movement_type === "sale") return;
+
+      movements.push({
+
+        date: x.movement_date,
+
+        html: `
+          <div class="movement">
+
+            <div>
+
+              <b>
+                ${x.description || x.movement_type}
+              </b>
+
+              <small>
+                ${new Date(x.movement_date)
+                  .toLocaleString("tr-TR")}
+              </small>
+
+            </div>
+
+            <b class="${Number(x.debit) > 0 ? "plus" : "minus"}">
+
+              ${Number(x.debit) > 0 ? "+" : "-"}
+              ${money(Number(x.debit || x.credit))}
+
+            </b>
+
+          </div>
+        `
+
+      });
+
+    }
+
+
+    // Tarihe göre sırala
+    movements.sort(
+      (a,b) =>
+        new Date(b.date) - new Date(a.date)
+    );
+
+
     detailMovements.innerHTML =
-      html ||
-      "<p class='muted'>Hareket yok.</p>";
+      movements.map(x => x.html).join("")
+      ||
+      '<p class="muted">Hareket yok.</p>';
+
 
   }catch(e){
 
     console.error(e);
 
     detailMovements.innerHTML =
-      "<p class='muted'>Cari hareketleri yüklenemedi.</p>";
+      '<p class="muted">Cari hareketleri yüklenemedi.</p>';
+
   }
+
 }
 
 function stockTab(x){
