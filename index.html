@@ -1245,45 +1245,41 @@ async function editCustomer(id){
 
 async function deleteCustomer(id){
 
-  const c = state.customers.find(
-    x => String(x.id) === String(id)
-  );
-
-  if(!c) return;
-
-  const ok = confirm(
-    c.name +
-    "\n\nBu müşteriyi silmek istediğinize emin misiniz?"
-  );
-
-  if(!ok) return;
-
-  try{
-
-    await sb(
-      "customers?id=eq." + id,
-      {
-        method:"PATCH",
-        body:JSON.stringify({
-          active:false
-        })
-      }
+    const c = state.customers.find(
+        x => String(x.id) === String(id)
     );
 
-    toast("Müşteri silindi");
+    if(!c) return;
 
-    await loadData();
-
-  }catch(e){
-
-    console.error(e);
-
-    toast(
-      e.message ||
-      "Müşteri silinemedi"
+    const ok = confirm(
+        c.name +
+        "\n\nBu müşteriyi silmek istediğinize emin misiniz?"
     );
 
-  }
+    if(!ok) return;
+
+    try{
+
+        await sb(
+            "customers?id=eq." + id,
+            {
+                method:"DELETE"
+            }
+        );
+
+        toast("Müşteri silindi");
+
+        await loadData();
+
+    }catch(e){
+
+        console.error(e);
+
+        toast(
+            e.message ||
+            "Müşteri silinemedi"
+        );
+    }
 }
 
 
