@@ -1539,78 +1539,111 @@ e.message ||
 
 async function saveTransfer(){
 
-const i=
-Number(transferProduct.value);
+  const i = Number(
+    transferProduct.value
+  );
 
-const q=
-Number(
-document.getElementById("transferQty").value
-);
+  const q = Number(
+    document.getElementById("transferQty").value
+  );
 
-if(!q){
-toast("Miktar girin");
-return;
-}
+  const direction =
+    document.getElementById("transferDirection").value;
 
-try{
+  if(!q || q <= 0){
+    toast("Miktar girin");
+    return;
+  }
 
-const p=state.products[i];
+  try{
 
-if(!p){
-toast("Ürün seçilmedi");
-return;
-}
+    const p = state.products[i];
 
+    if(!p){
+      toast("Ürün seçilmedi");
+      return;
+    }
 
-await upsertStock(
-p.id,
-"warehouse",
--q
-);
+    if(direction === "toVehicle"){
 
+      // DEPO → ARAÇ
+      await upsertStock(
+        p.id,
+        "warehouse",
+        -q
+      );
 
-await upsertStock(
-p.id,
-"vehicle",
-q
-);
+      await upsertStock(
+        p.id,
+        "vehicle",
+        q
+      );
 
+      await sb(
+        "stock_movements",
+        {
+          method:"POST",
+          body:JSON.stringify({
+            product_id:p.id,
+            movement_type:"transfer",
+            from_location:"warehouse",
+            to_location:"vehicle",
+            quantity:q
+          })
+        }
+      );
 
-await sb(
-"stock_movements",
-{
-method:"POST",
-body:JSON.stringify({
-product_id:p.id,
-movement_type:"transfer",
-from_location:"warehouse",
-to_location:"vehicle",
-quantity:q
-})
-}
-);
+      toast("Araç stoğuna aktarıldı");
 
+    }else if(direction === "toWarehouse"){
 
-toast("Araç stoğuna aktarıldı");
+      // ARAÇ → DEPO
+      await upsertStock(
+        p.id,
+        "vehicle",
+        -q
+      );
 
-document.getElementById(
-"transferQty"
-).value="";
+      await upsertStock(
+        p.id,
+        "warehouse",
+        q
+      );
 
+      await sb(
+        "stock_movements",
+        {
+          method:"POST",
+          body:JSON.stringify({
+            product_id:p.id,
+            movement_type:"transfer",
+            from_location:"vehicle",
+            to_location:"warehouse",
+            quantity:q
+          })
+        }
+      );
 
-await loadData();
+      toast("Depo stoğuna aktarıldı");
 
-}catch(e){
+    }
 
-console.error(e);
+    document.getElementById(
+      "transferQty"
+    ).value = "";
 
-toast(
-e.message ||
-"Transfer yapılamadı"
-);
+    await loadData();
 
-}
+  }catch(e){
 
+    console.error(e);
+
+    toast(
+      e.message ||
+      "Transfer yapılamadı"
+    );
+
+  }
 }
 
 
