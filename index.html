@@ -1217,18 +1217,18 @@ async function editCustomer(id){
     return;
   }
 
-  try{
+ try{
 
-    await sb(
-      "customers?id=eq." + id,
-      {
-        method:"DELETE"
-      }
-    );
+  await sb(
+    "customers?id=eq." + id,
+    {
+      method:"DELETE"
+    }
+  );
 
-    toast("Müşteri silinemedi");
+  toast("Müşteri silindi");
 
-    await loadData();
+  await loadData();
 
   }catch(e){
 
