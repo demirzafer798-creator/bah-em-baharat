@@ -1185,62 +1185,145 @@ go("customerDetail");
 
 async function renderDetail(){
 
-if(!detailId)return;
+  if(!detailId) return;
 
-const c=state.customers.find(
-x=>String(x.id)===String(detailId)
-);
+  let c = state.customers.find(
+    x => String(x.id) === String(detailId)
+  );
 
-if(!c)return;
+  if(!c) return;
 
-detailName.textContent=c.name;
+  detailName.textContent = c.name;
 
-try{
+  try{
 
-const l=await sb(
-"customer_ledger?select=*&customer_id=eq."+
-c.id+
-"&order=movement_date.desc"
-);
+    let l = await sb(
+      customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc
+    );
 
-const bal=l.reduce(
-(a,x)=>
-a+
-Number(x.debit||0)-
-Number(x.credit||0),
-0
-);
+    let bal = l.reduce(
+      (a,x) =>
+        a +
+        Number(x.debit || 0) -
+        Number(x.credit || 0),
+      0
+    );
 
-detailBalance.textContent=money(bal);
+    detailBalance.textContent = money(bal);
 
-detailMovements.innerHTML=
-l.map(
-x=>
-`
-<div class="movement">
-<div>
-<b>${x.description||x.movement_type}</b>
-<small>${new Date(x.movement_date).toLocaleString("tr-TR")}</small>
-</div>
-<b class="${Number(x.debit)>0?'plus':'minus'}">
-${Number(x.debit)>0?'+':'-'}${money(Number(x.debit||x.credit))}
-</b>
-</div>
-`
-)
-.join("")
-||
-'<p class="muted">Hareket yok.</p>';
+    let html = "";
 
-}catch(e){
+    for(const x of l){
 
-console.error(e);
+      // SATIŞ
+      if(
+        x.movement_type === "sale" &&
+        x.sale_id
+      ){
 
-detailMovements.innerHTML=
-'<p class="muted">Cari hareketleri yüklenemedi.</p>';
+        let items = await sb(
+          sale_items?select=*&sale_id=eq.${x.sale_id}
+        );
 
-}
+        let itemHtml = "";
 
+        for(const item of items){
+
+          let product = state.products.find(
+            p => String(p.id) === String(item.product_id)
+          );
+
+          let productName =
+            product?.name ||
+            "Ürün";
+
+          itemHtml += `
+            <div style="
+              padding:6px 0;
+              border-top:1px solid #eee;
+              font-size:13px;
+            ">
+              <b>${productName}</b>
+              <div>
+                ${Number(item.quantity || 0).toLocaleString("tr-TR")}
+                ${item.unit || ""}
+                ×
+                ${money(item.unit_price || 0)}
+                =
+                <b>${money(item.total || 0)}</b>
+              </div>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="movement">
+            <div style="width:100%">
+
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+              ">
+                <div>
+                  <b>Satış #${x.sale_id}</b>
+                  <small>
+                    ${new Date(x.movement_date)
+                      .toLocaleString("tr-TR")}
+                  </small>
+                </div>
+
+                <b class="plus">
+                  +${money(Number(x.debit || 0))}
+                </b>
+              </div>
+
+              <div style="
+                margin-top:8px;
+                padding:8px;
+                background:#f8f9fa;
+                border-radius:8px;
+              ">
+                ${itemHtml || "<small>Ürün detayı bulunamadı.</small>"}
+              </div>
+
+            </div>
+          </div>
+        `;
+
+      }else{
+
+        // TAHSİLAT VE DİĞER HAREKETLER
+        html += `
+          <div class="movement">
+            <div>
+              <b>${x.description || x.movement_type}</b>
+              <small>
+                ${new Date(x.movement_date)
+                  .toLocaleString("tr-TR")}
+              </small>
+            </div>
+
+            <b class="${Number(x.debit) > 0 ? "plus" : "minus"}">
+              ${Number(x.debit) > 0 ? "+" : "-"}
+              ${money(Number(x.debit || x.credit || 0))}
+            </b>
+          </div>
+        `;
+      }
+    }
+
+    detailMovements.innerHTML =
+      html ||
+      '<p class="muted">Hareket yok.</p>';
+
+  }catch(e){
+
+    console.error(e);
+
+    detailMovements.innerHTML =
+      '<p class="muted">Cari hareketleri yüklenemedi.</p>';
+  }
 }
 
 
