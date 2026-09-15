@@ -1228,7 +1228,7 @@ async function renderDetail(){
     for(const sale of sales){
 
       let items = await sb(
-        sale_items?select=*&sale_id=eq.${sale.id}
+        'sale_items?select=*&sale_id=eq.${sale.id}'
       );
 
       let productText = items.map(item => {
