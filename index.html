@@ -1922,6 +1922,7 @@ function renderProducts(){
       toast("Ürün silindi");
 
       await loadData();
+      renderProducts();
 
     }catch(e){
 
