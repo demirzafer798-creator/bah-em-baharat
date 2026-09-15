@@ -320,11 +320,13 @@ TOPLAM
 <button class="small" onclick="newStock()">＋ Stok Girişi</button>
 </div>
 
-<div class="tabs">
-<button class="active" onclick="stockTab('warehouse')">Depo</button>
-<button onclick="stockTab('vehicle')">Araç</button>
-</div>
 
+<div class="tabs">
+  <button class="active" onclick="stockTab('warehouse')">Depo</button>
+  <button onclick="stockTab('vehicle')">Araç</button>
+  <button onclick="stockTab('raw')">Hammadde</button>
+  <button onclick="go('production')">Üretim</button>
+</div>
 <div class="card">
 <div id="stockTable"></div>
 </div>
