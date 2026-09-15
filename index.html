@@ -335,14 +335,14 @@ TOPLAM
 <section id="transfer" class="page">
 
 <div class="sectionHead">
-<h1>Depo → Araç</h1>
+<h1 id="transferTitle">Depo → Araç</h1>
 </div>
 
 <div class="card">
 
 <label>
 Yön
-<select id="transferDirection">
+<select id="transferDirection" onchange="updateTransferDirection()">  
 <option value="toVehicle">Depo → Araç</option>
 <option value="toWarehouse">Araç → Depo</option>
 </select>
@@ -370,7 +370,7 @@ Birim
 
 </div>
 
-<button class="primary big" onclick="saveTransfer()">ARACA AKTAR</button>
+<button id="transferButton" class="primary big" onclick="saveTransfer()">ARACA AKTAR</button>
 
 </div>
 </section>
@@ -1536,7 +1536,29 @@ e.message ||
 
 }
 
+function updateTransferDirection(){
 
+  const direction =
+    document.getElementById("transferDirection").value;
+
+  const title =
+    document.getElementById("transferTitle");
+
+  const button =
+    document.getElementById("transferButton");
+
+  if(direction === "toWarehouse"){
+
+    title.textContent = "Araç → Depo";
+    button.textContent = "DEPOYA AKTAR";
+
+  }else{
+
+    title.textContent = "Depo → Araç";
+    button.textContent = "ARACA AKTAR";
+
+  }
+}
 async function saveTransfer(){
 
   const i = Number(
