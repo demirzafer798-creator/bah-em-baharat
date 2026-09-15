@@ -606,7 +606,7 @@ scrollTo(0,0);
 
 function options(){
   return state.products.map((p,i)=>
-    <option value="${i}">${p.package_size || ""} — ${p.name}${p.sale_price!=null?" — "+money(p.sale_price):""}</option>
+    <option value="${i}">${p.package_size || ""} — ${p.name}${p.sale_price!=null ? " — " + money(p.sale_price) : ""}</option>
   ).join("");
 }
 
