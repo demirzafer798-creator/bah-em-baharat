@@ -1183,51 +1183,7 @@ go("customerDetail");
 }
 
 
-async function renderDetail(){
 
-  if(!detailId) return;
-
-  let c = state.customers.find(
-    x => String(x.id) === String(detailId)
-  );
-
-  if(!c) return;
-
-  detailName.textContent = c.name;
-
-  try{
-
-    let l = await sb(
-      customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc
-    );
-
-    let bal = l.reduce(
-      (a,x) =>
-        a +
-        Number(x.debit || 0) -
-        Number(x.credit || 0),
-      0
-    );
-
-    detailBalance.textContent = money(bal);
-
-    let html = "";
-
-    for(const x of l){
-
-      // SATIŞ
-      if(
-        x.movement_type === "sale" &&
-        x.sale_id
-      ){
-
-        let items = await sb(
-          sale_items?select=*&sale_id=eq.${x.sale_id}
-        );
-
-        let itemHtml = "";
-
-        for(const item of …
 async function renderDetail(){
 
   if(!detailId) return;
@@ -1365,7 +1321,6 @@ async function renderDetail(){
       "<p class='muted'>Cari hareketleri yüklenemedi.</p>";
   }
 }
-
 
 function stockTab(x){
 
