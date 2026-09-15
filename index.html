@@ -1222,14 +1222,11 @@ async function editCustomer(id){
     await sb(
       "customers?id=eq." + id,
       {
-        method:"PATCH",
-        body:JSON.stringify({
-          name:name.trim()
-        })
+        method:"DELETE"
       }
     );
 
-    toast("Müşteri güncellendi");
+    toast("Müşteri silinemedi");
 
     await loadData();
 
