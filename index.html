@@ -605,14 +605,9 @@ scrollTo(0,0);
 
 
 function options(){
-
-return state.products.map(
-(p,i)=>
-"<option value=\""+i+"\">"+
-p.name+
-"</option>"
-).join("");
-
+  return state.products.map((p,i)=>
+    <option value="${i}">${p.package_size || ""} — ${p.name}${p.sale_price!=null?" — "+money(p.sale_price):""}</option>
+  ).join("");
 }
 
 
@@ -1239,7 +1234,9 @@ async function renderDetail(){
           );
 
           const productName =
-            product ? product.name : "Ürün";
+  product
+    ? (product.package_size || "") + " — " + product.name
+    : "Ürün";
 
           itemHtml +=
             "<div style='padding:6px 0;border-top:1px solid #eee;font-size:13px'>" +
