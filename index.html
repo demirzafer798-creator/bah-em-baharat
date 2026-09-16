@@ -1255,7 +1255,7 @@ async function renderDetail(){
 
     // Müşterinin bütün satışlarını al
     let sales = await sb(
-      'sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc'
+      `sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc`
     );
 
 
@@ -1362,7 +1362,7 @@ async function renderDetail(){
 
       });
 
-    }
+    });
 
 
     // Tarihe göre sırala
