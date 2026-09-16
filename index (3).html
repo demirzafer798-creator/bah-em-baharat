@@ -183,8 +183,7 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
   }
   .quick{
     grid-template-columns:repeat(2,1fr) !important;
-}                        
-}
+}                                                                                                          
 </style>
 </head>
 
@@ -317,100 +316,18 @@ TOPLAM
 <section id="stock" class="page">
 
 <div class="sectionHead">
-
-  <h1>Stok</h1>
-
-  <div style="display:flex;gap:6px;flex-wrap:wrap">
-
-    <button class="small" onclick="newStock()">
-      ＋ Stok Girişi
-    </button>
-
-    <button class="small" onclick="newRawMaterial()">
-      ＋ Hammadde
-    </button>
-
-  </div>
-
+<h1>Stok</h1>
+<button class="small" onclick="newStock()">＋ Stok Girişi</button>
 </div>
-</div>
-
 
 <div class="tabs">
-  <button class="active" onclick="stockTab('warehouse')">Depo</button>
-  <button onclick="stockTab('vehicle')">Araç</button>
-  <button onclick="stockTab('raw')">Hammadde</button>
-  <button onclick="stockTab('production')">Üretim</button>
+<button class="active" onclick="stockTab('warehouse')">Depo</button>
+<button onclick="stockTab('vehicle')">Araç</button>
 </div>
+
 <div class="card">
 <div id="stockTable"></div>
 </div>
-</section>
-<section id="production" class="page">
-
-<div class="sectionHead">
-  <h1>Üretim</h1>
-  <button class="ghost" onclick="go('stock')">← Stok</button>
-</div>
-
-<div class="card">
-
-<h2>Hammadde → Ürün Üretimi</h2>
-
-<p class="muted">
-Örneğin 25 kg pul biber hammaddesinden 100 adet 40 gr pul biber
-üretirseniz hammaddeden 4 kg düşer, depo stoğuna 100 adet ürün eklenir.
-</p>
-
-<label>
-Hammadde
-<select id="productionRawProduct"></select>
-</label>
-
-<label>
-Üretilecek Ürün
-<select id="productionProduct"></select>
-</label>
-
-<div class="row">
-
-<label class="grow">
-Üretilecek Adet
-<input
-  id="productionQty"
-  type="number"
-  min="1"
-  step="1"
-  placeholder="Örn: 100">
-</label>
-
-<label class="grow">
-Paket Gramajı
-<input
-  id="productionGram"
-  type="number"
-  min="1"
-  step="1"
-  placeholder="Örn: 40">
-</label>
-
-</div>
-
-<div class="card" style="background:#f4f8f5;margin-top:15px">
-  <b>Hammadde tüketimi</b>
-  <div id="productionInfo" class="muted">
-    Üretim miktarı girildiğinde hesaplanır.
-  </div>
-</div>
-
-<button
-  class="primary big"
-  onclick="saveProduction()">
-  ÜRETİMİ KAYDET
-</button>
-
-</div>
-
 
 </section>
 
@@ -572,12 +489,11 @@ const PRODUCT_DATA=[
 
 let state={
 products:[],
-rawMaterials:[],
 customers:[],
 stock:[],
 sales:[],
 payments:[]
-}
+};
 
 let stockLoc="warehouse";
 let detailId=null;
@@ -587,20 +503,6 @@ const mode=document.getElementById("mode");
 const saleCustomer=document.getElementById("saleCustomer");
 const paymentCustomer=document.getElementById("paymentCustomer");
 const transferProduct=document.getElementById("transferProduct");
-const productionRawProduct =
-  document.getElementById("productionRawProduct");
-
-const productionProduct =
-  document.getElementById("productionProduct");
-
-const productionQty =
-  document.getElementById("productionQty");
-
-const productionGram =
-  document.getElementById("productionGram");
-
-const productionInfo =
-  document.getElementById("productionInfo");  
 const saleRows=document.getElementById("saleRows");
 const saleTotal=document.getElementById("saleTotal");
 const customerList=document.getElementById("customerList");
@@ -736,10 +638,6 @@ state.products=await sb(
 "products?select=*&order=id"
 );
 
-state.rawMaterials=await sb(
-"raw_materials?select=*&order=name"
-);
-
 state.customers=await sb(
 "customers?select=*&order=name"
 );
@@ -788,31 +686,6 @@ saleCustomer.innerHTML=customerOptions();
 paymentCustomer.innerHTML=customerOptions();
 
 transferProduct.innerHTML=options();
-if(productionRawProduct){
-
-  productionRawProduct.innerHTML =
-    state.rawMaterials.map(function(r,i){
-      return `
-        <option value="${i}">
-          ${r.name} — ${r.quantity} ${r.unit || "kg"}
-        </option>
-      `;
-    }).join("");
-
-}
-
-if(productionProduct){
-
-  productionProduct.innerHTML =
-    state.products.map(function(p,i){
-      return `
-        <option value="${i}">
-          ${p.name} — ${p.package_size}
-        </option>
-      `;
-    }).join("");
-
-}  
 
 document.querySelectorAll(".sprod").forEach(
 x=>{
@@ -873,25 +746,19 @@ function renderDashboard(){
   statLow.textContent=low;
 
   recent.innerHTML=state.sales
-  .slice(0,6)
-  .map(s=>{
-    const customer = state.customers.find(
-      c => String(c.id) === String(s.customer_id)
-    );
-
-    return `
+    .slice(0,6)
+    .map(s=>`
       <div class="movement">
         <div>
-          <b>${customer?.name || "Müşteri #" + s.customer_id}</b>
+          <b>Müşteri #${s.customer_id}</b>
           <small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small>
         </div>
         <b>${money(s.total)}</b>
       </div>
-    `;
-  })
-  .join("")
-  ||
-  '<p class="muted">Henüz satış yok.</p>';
+    `)
+    .join("")
+    ||
+    '<p class="muted">Henüz satış yok.</p>';
 }
 
 
@@ -950,76 +817,55 @@ saleTotal.textContent=money(t);
 }
 
 
-async function upsertStock(product_id, location, delta) {
-  const rows = await sb(
-    "stock?product_id=eq." +
-    encodeURIComponent(product_id) +
-    "&location=eq." +
-    encodeURIComponent(location)
+async function upsertStock(product_id,location,delta){
+
+  const rows=await sb(
+    "stock?product_id=eq."+encodeURIComponent(product_id)+"&location=eq."+encodeURIComponent(location),
+    {
+      method:"GET"
+    }
   );
 
-  if (!Array.isArray(rows)) {
-    throw new Error("Stok bilgisi okunamadı");
-  }
+  if(rows.length){
 
-  if (rows.length) {
-    const row = rows[0];
+    const row=rows[0];
 
-    const next =
-      Number(row.quantity || 0) +
-      Number(delta);
+    const next=Number(row.quantity||0)+Number(delta);
 
-    if (next < 0) {
+    if(next<0){
       throw new Error("Yetersiz stok");
     }
 
-    const result = await sb(
-      "stock?id=eq." +
-      encodeURIComponent(row.id),
+    await sb(
+      "stock?id=eq."+row.id,
       {
-        method: "PATCH",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          quantity: next
+        method:"PATCH",
+        body:JSON.stringify({
+          quantity:next
         })
       }
     );
 
-    if (!Array.isArray(result) || result.length === 0) {
-      throw new Error(
-        "Ürün stoğu güncellenemedi"
-      );
-    }
+  }else{
 
-  } else {
-
-    if (Number(delta) < 0) {
+    if(Number(delta)<0){
       throw new Error("Yetersiz stok");
     }
 
-    const result = await sb(
+    await sb(
       "stock",
       {
-        method: "POST",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          product_id: product_id,
-          location: location,
-          quantity: Number(delta)
+        method:"POST",
+        body:JSON.stringify({
+          product_id:product_id,
+          location:location,
+          quantity:Number(delta)
         })
       }
     );
 
-    if (!Array.isArray(result) || result.length === 0) {
-      throw new Error(
-        "Yeni ürün stoğu oluşturulamadı"
-      );
-    }
   }
+
 }
 
 
@@ -1267,9 +1113,6 @@ toast("Ürün eklenemedi");
 }
 
 }
-  
-
-
 
 
 async function newCustomer(){
@@ -1307,235 +1150,27 @@ toast("Müşteri eklenemedi");
 
 function renderCustomers(){
 
-  customerList.innerHTML =
-    state.customers
-    .filter(c => c.active !== false)
-    .map(c =>
+customerList.innerHTML=
+state.customers
+.map(
+c=>
+"<div class=\"customer\">"+
+"<div>"+
+"<b>"+c.name+"</b>"+
+"<small>"+(c.phone||"")+"</small>"+
+"</div>"+
+"<div>"+
+"<b class=\"debt\">"+
+money(c.balance)+
+"</b>"+
+"<button class=\"small\" onclick=\"showCustomer("+c.id+")\">Aç</button>"+
+"</div>"+
+"</div>"
+)
+.join("")
+||
+'<p class="muted">Henüz müşteri yok.</p>';
 
-      "<div class=\"customer\">" +
-
-        "<div>" +
-          "<b>" + c.name + "</b>" +
-          "<small>" + (c.phone || "") + "</small>" +
-        "</div>" +
-
-        "<div>" +
-
-          "<b class=\"debt\">" +
-            money(c.balance) +
-          "</b>" +
-
-          "<button class=\"small\" onclick=\"showCustomer(" + c.id + ")\">" +
-            "Aç" +
-          "</button>" +
-
-          "<button class=\"small\" onclick=\"editCustomer(" + c.id + ")\">" +
-            "Düzenle" +
-          "</button>" +
-
-          "<button class=\"small remove\" onclick=\"deleteCustomer(" + c.id + ")\">" +
-            "Sil" +
-          "</button>" +
-
-        "</div>" +
-
-      "</div>"
-
-    )
-    .join("") ||
-
-    '<p class="muted">Henüz müşteri yok.</p>';
-}
-
-
-async function editCustomer(id){
-
-  const c = state.customers.find(
-    x => String(x.id) === String(id)
-  );
-
-  if(!c){
-    toast("Müşteri bulunamadı");
-    return;
-  }
-
-  const name = prompt(
-    "Müşteri adı:",
-    c.name || ""
-  );
-
-  if(name === null) return;
-
-  const newName = name.trim();
-
-  if(!newName){
-    toast("Müşteri adı boş olamaz");
-    return;
-  }
-
-  const phone = prompt(
-    "Telefon:",
-    c.phone || ""
-  );
-
-  if(phone === null) return;
-
-  const newPhone = phone.trim();
-
-  try{
-
-    console.log("MÜŞTERİ GÜNCELLEME");
-    console.log("ID:", c.id);
-    console.log("ESKİ İSİM:", c.name);
-    console.log("YENİ İSİM:", newName);
-
-    /*
-      MÜŞTERİYİ GÜNCELLE
-    */
-    const result = await sb(
-      "customers?id=eq." +
-      encodeURIComponent(String(c.id)),
-      {
-        method:"PATCH",
-        headers:{
-          "Prefer":"return=representation"
-        },
-        body:JSON.stringify({
-          name:newName,
-          phone:newPhone
-        })
-      }
-    );
-
-    console.log("PATCH SONUCU:", result);
-
-    /*
-      Supabase'in döndürdüğü kayıt yoksa
-      ama hata da vermediyse RLS/izin problemi
-      olma ihtimali yüksek.
-    */
-    if(!result || result.length === 0){
-
-      /*
-        Şimdi doğrudan tekrar okuyalım
-      */
-      const verify = await sb(
-        "customers?select=id,name,phone&id=eq." +
-        encodeURIComponent(String(c.id))
-      );
-
-      console.log("KONTROL SONUCU:", verify);
-
-      if(
-        verify &&
-        verify.length &&
-        verify[0].name === newName
-      ){
-
-        toast("Müşteri güncellendi");
-
-        const index = state.customers.findIndex(
-          x => String(x.id) === String(c.id)
-        );
-
-        if(index !== -1){
-          state.customers[index] = verify[0];
-        }
-
-        renderCustomers();
-
-        saleCustomer.innerHTML =
-          customerOptions();
-
-        paymentCustomer.innerHTML =
-          customerOptions();
-
-        return;
-      }
-
-      throw new Error(
-        "Müşteri güncelleme yetkisi çalışmıyor. Supabase UPDATE politikası kontrol edilmeli."
-      );
-    }
-
-    /*
-      Başarılı güncelleme
-    */
-    const updated = result[0];
-
-    const index = state.customers.findIndex(
-      x => String(x.id) === String(c.id)
-    );
-
-    if(index !== -1){
-      state.customers[index] = updated;
-    }
-
-    renderCustomers();
-
-    saleCustomer.innerHTML =
-      customerOptions();
-
-    paymentCustomer.innerHTML =
-      customerOptions();
-
-    if(
-      detailId &&
-      String(detailId) === String(c.id)
-    ){
-      detailName.textContent =
-        updated.name;
-    }
-
-    toast("Müşteri başarıyla güncellendi");
-
-  }catch(e){
-
-    console.error(
-      "MÜŞTERİ GÜNCELLEME HATASI:",
-      e
-    );
-
-    toast(
-      e.message ||
-      "Müşteri güncellenemedi"
-    );
-
-  }
-
-}
-
-async function deleteCustomer(id){
-  const c = state.customers.find(
-    x => String(x.id) === String(id)
-  );
-
-  if(!c) return;
-
-  const ok = confirm(
-    c.name + "\n\nBu müşteriyi silmek istediğinize emin misiniz?"
-  );
-
-  if(!ok) return;
-
-  try{
-    await sb(
-      "customers?id=eq." + id,
-      {
-        method:"DELETE"
-      }
-    );
-
-    toast("Müşteri silindi");
-    await loadData();
-
-  }catch(e){
-    console.error(e);
-    toast(
-      e.message ||
-      "Müşteri silinemedi"
-    );
-  }
 }
 
 
@@ -1565,7 +1200,7 @@ async function renderDetail(){
 
     // Cari hareketleri al
     let ledger = await sb(
-      `customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc`
+      customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc
     );
 
     // Cari bakiye SADECE ledger üzerinden hesaplanır
@@ -1582,7 +1217,7 @@ async function renderDetail(){
 
     // Müşterinin bütün satışlarını al
     let sales = await sb(
-      `sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc`
+      'sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc'
     );
 
 
@@ -1593,7 +1228,7 @@ async function renderDetail(){
     for(const sale of sales){
 
       let items = await sb(
-        `sale_items?select=*&sale_id=eq.${sale.id}`
+        sale_items?select=*&sale_id=eq.${sale.id}
       );
 
       let productText = items.map(item => {
@@ -1689,7 +1324,7 @@ async function renderDetail(){
 
       });
 
-    });
+    }
 
 
     // Tarihe göre sırala
@@ -1718,751 +1353,198 @@ async function renderDetail(){
 
 function stockTab(x){
 
-  stockLoc = x;
-  const entryButton =
-  document.getElementById("stockEntryButton");
+stockLoc=x;
 
-if(entryButton){
+document
+.querySelectorAll(".tabs button")
+.forEach(
+(b,i)=>
+b.classList.toggle(
+"active",
+(i===0&&x==="warehouse") ||
+(i===1&&x==="vehicle")
+)
+);
 
-  if(x === "raw"){
+renderStock();
 
-    entryButton.textContent =
-      "＋ Hammadde Girişi";
-
-  }else if(x === "production"){
-
-    entryButton.textContent =
-      "＋ Stok Girişi";
-
-  }else{
-
-    entryButton.textContent =
-      "＋ Stok Girişi";
-
-  }
-
-}
-
-  const buttons =
-    document.querySelectorAll(".tabs button");
-
-  buttons.forEach(button => {
-    button.classList.remove("active");
-  });
-
-  if(x === "warehouse"){
-    buttons[0]?.classList.add("active");
-  }
-
-  if(x === "vehicle"){
-    buttons[1]?.classList.add("active");
-  }
-
-  if(x === "raw"){
-    buttons[2]?.classList.add("active");
-  }
-
-  if(x === "production"){
-    buttons[3]?.classList.add("active");
-  }
-
-  /*
-    ÜRETİM SEKMESİ
-    Ayrı sayfaya gitmek yerine
-    aynı stok ekranında üretim bölümünü gösteriyoruz.
-  */
-
-  const stockTable = document.getElementById("stockTable");
-
-  if(x === "production"){
-
-    stockTable.innerHTML = `
-      <div class="card">
-
-        <h2>Hammadde → Ürün Üretimi</h2>
-
-        <p class="muted">
-          Örneğin 25 kg pul biber hammaddesinden
-          100 adet 40 gr pul biber üretirseniz
-          hammaddeden 4 kg düşer ve depoya
-          100 adet ürün eklenir.
-        </p>
-
-        <label>
-          Hammadde
-          <select id="productionRawProduct">
-            ${
-              state.rawMaterials.map(function(r,i){
-                return `
-                  <option value="${i}">
-                    ${r.name} — ${r.quantity} ${r.unit || "kg"}
-                  </option>
-                `;
-              }).join("")
-            }
-          </select>
-        </label>
-
-        <label>
-          Üretilecek Ürün
-          <select id="productionProduct">
-            ${
-              state.products.map(function(p,i){
-                return `
-                  <option value="${i}">
-                    ${p.name} — ${p.package_size}
-                  </option>
-                `;
-              }).join("")
-            }
-          </select>
-        </label>
-
-        <div class="row">
-
-          <label class="grow">
-            Üretilecek Adet
-            <input
-              id="productionQty"
-              type="number"
-              min="1"
-              step="1"
-              placeholder="Örn: 100"
-            >
-          </label>
-
-          <label class="grow">
-            Paket Gramajı
-            <input
-              id="productionGram"
-              type="number"
-              min="1"
-              step="1"
-              placeholder="Örn: 40"
-            >
-          </label>
-
-        </div>
-
-        <div
-          class="card"
-          style="background:#f4f8f5;margin-top:15px"
-        >
-          <b>Hammadde tüketimi</b>
-
-          <div
-            id="productionInfo"
-            class="muted"
-          >
-            Üretim miktarı girildiğinde hesaplanır.
-          </div>
-
-        </div>
-
-        <button
-          class="primary big"
-          onclick="saveProduction()"
-        >
-          ÜRETİMİ KAYDET
-        </button>
-
-      </div>
-    `;
-
-    const qty =
-      document.getElementById("productionQty");
-
-    const gram =
-      document.getElementById("productionGram");
-
-    if(qty){
-      qty.addEventListener("input", calculateProduction);
-    }
-
-    if(gram){
-      gram.addEventListener("input", calculateProduction);
-    }
-
-    return;
-  }
-
-  renderStock();
 }
 
 
 function renderStock(){
 
-  /*
-    HAMMADDE EKRANI
-  */
+  stockTable.innerHTML=state.products.map(p=>{
 
-  if(stockLoc === "raw"){
+    const rows=state.stock.filter(
+      x=>
+        String(x.product_id)===String(p.id) &&
+        x.location===stockLoc
+    );
 
-    if(!state.rawMaterials.length){
+    const quantity=rows.reduce(
+      (sum,x)=>sum+Number(x.quantity||0),
+      0
+    );
 
-      stockTable.innerHTML =
-        '<p class="muted">Henüz hammadde yok.</p>';
+    return `
+      <div class="stockRow">
 
-      return;
-
-    }
-
-    stockTable.innerHTML =
-      state.rawMaterials.map(raw => {
-
-        const quantity =
-          Number(raw.quantity || 0);
-
-        return `
-          <div class="stockRow">
-
-            <div>
-              <b>${raw.name}</b>
-              <small>Hammadde</small>
-            </div>
-
-            <div>
-              <b>
-                ${quantity.toLocaleString(
-                  "tr-TR",
-                  {
-                    minimumFractionDigits:0,
-                    maximumFractionDigits:3
-                  }
-                )}
-              </b>
-            </div>
-
-            <div>
-              ${raw.unit || "kg"}
-            </div>
-
-          </div>
-        `;
-
-      }).join("");
-
-    return;
-  }
-
-
-  /*
-    DEPO / ARAÇ EKRANI
-  */
-
-  stockTable.innerHTML =
-    state.products.map(p => {
-
-      const rows =
-        state.stock.filter(
-          x =>
-            String(x.product_id) === String(p.id) &&
-            x.location === stockLoc
-        );
-
-      const quantity =
-        rows.reduce(
-          (sum,x) =>
-            sum + Number(x.quantity || 0),
-          0
-        );
-
-      return `
-        <div class="stockRow">
-
-          <div>
-            <b>${p.name}</b>
-            <small>
-              ${p.package_size || ""}
-            </small>
-          </div>
-
-          <div>
-            <b>
-              ${quantity.toLocaleString(
-                "tr-TR",
-                {
-                  maximumFractionDigits:3
-                }
-              )}
-            </b>
-          </div>
-
-          <div>
-            ${
-              p.sale_price == null
-              ? "Fiyat yok"
-              : money(p.sale_price)
-            }
-          </div>
-
+        <div>
+          <b>${p.name}</b>
+          <small>${p.package_size||""}</small>
         </div>
-      `;
 
-    }).join("");
+        <div>
+          <b>${quantity}</b>
+        </div>
+
+        <div>
+          ${p.sale_price==null
+            ?"Fiyat yok"
+            :money(p.sale_price)}
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
 
 }
 
 
 async function newStock(){
 
-  /*
-    HAMMADDE SEKmesindeysek
-    hammadde girişi aç
-  */
+if(!state.products.length){
 
-  if(stockLoc === "raw"){
+toast("Ürünler henüz yüklenmedi");
 
-    const old =
-      document.getElementById("rawStockModal");
-
-    if(old) old.remove();
-
-    const modal =
-      document.createElement("div");
-
-    modal.id = "rawStockModal";
-
-    modal.style.cssText = `
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.45);
-      z-index:100;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-    `;
-
-    modal.innerHTML = `
-      <div style="
-        background:#fff;
-        width:100%;
-        max-width:450px;
-        border-radius:16px;
-        padding:20px;
-      ">
-
-        <h2 style="margin-top:0">
-          Hammadde Girişi
-        </h2>
-
-        <label>
-          Hammadde
-
-          <select id="rawEntryProduct">
-
-            ${
-              state.rawMaterials.map((r,i)=>`
-                <option value="${i}">
-                  ${r.name}
-                </option>
-              `).join("")
-            }
-
-          </select>
-
-        </label>
-
-        <label>
-          Miktar
-
-          <input
-            id="rawEntryQty"
-            type="number"
-            min="0"
-            step="0.001"
-            placeholder="Örn: 25"
-          >
-
-        </label>
-
-        <label>
-          Birim
-
-          <select id="rawEntryUnit">
-            <option value="kg">kg</option>
-            <option value="gr">gr</option>
-          </select>
-
-        </label>
-
-        <div style="
-          display:flex;
-          gap:10px;
-          margin-top:15px;
-        ">
-
-          <button
-            style="flex:1"
-            onclick="
-              document
-                .getElementById('rawStockModal')
-                .remove()
-            "
-          >
-            İptal
-          </button>
-
-          <button
-            class="primary"
-            style="flex:1"
-            onclick="confirmRawEntry()"
-          >
-            HAMMADDE EKLE
-          </button>
-
-        </div>
-
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    return;
-  }
-
-  /*
-    NORMAL ÜRÜN STOK GİRİŞİ
-  */
-
-  if(!state.products.length){
-
-    toast("Ürünler henüz yüklenmedi");
-
-    return;
-  }
-
-  const old =
-    document.getElementById("stockModal");
-
-  if(old){
-    old.remove();
-  }
-
-  const modal =
-    document.createElement("div");
-
-  modal.id = "stockModal";
-
-  modal.style.cssText = `
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.45);
-    z-index:100;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  `;
-
-  modal.innerHTML = `
-    <div style="
-      background:#fff;
-      width:100%;
-      max-width:450px;
-      border-radius:16px;
-      padding:20px;
-    ">
-
-      <h2 style="margin-top:0">
-        Stok Girişi
-      </h2>
-
-      <label>
-        Ürün
-
-        <select id="newStockProduct">
-
-          ${
-            state.products.map((p,i)=>`
-              <option value="${i}">
-                ${p.name} — ${p.package_size}
-              </option>
-            `).join("")
-          }
-
-        </select>
-
-      </label>
-
-      <label>
-        Miktar
-
-        <input
-          id="newStockQty"
-          type="number"
-          step="0.001"
-          min="0"
-          placeholder="Örn: 10"
-        >
-
-      </label>
-
-      <label>
-        Yer
-
-        <select id="newStockLocation">
-
-          <option value="warehouse">
-            Depo
-          </option>
-
-          <option value="vehicle">
-            Araç
-          </option>
-
-        </select>
-
-      </label>
-
-      <div style="
-        display:flex;
-        gap:10px;
-        margin-top:15px;
-      ">
-
-        <button
-          style="flex:1"
-          onclick="
-            document
-              .getElementById('stockModal')
-              .remove()
-          "
-        >
-          İptal
-        </button>
-
-        <button
-          class="primary"
-          style="flex:1"
-          onclick="confirmNewStock()"
-        >
-          STOK EKLE
-        </button>
-
-      </div>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-}
-  async function newRawMaterial(){
-
-  const name = prompt("Hammadde adı:");
-
-  if(name === null) return;
-
-  if(!name.trim()){
-
-    toast("Hammadde adı boş olamaz");
-
-    return;
-  }
-
-
-  const qty = Number(
-    prompt("Miktar (kg):", "1")
-  );
-
-  if(!Number.isFinite(qty) || qty <= 0){
-
-    toast("Geçerli bir miktar girin");
-
-    return;
-  }
-
-
-  try{
-
-    const existing = state.rawMaterials.find(
-      r =>
-        String(r.name || "")
-          .trim()
-          .toLocaleLowerCase("tr-TR")
-        ===
-        name.trim()
-          .toLocaleLowerCase("tr-TR")
-    );
-
-
-    if(existing){
-
-      const newQty =
-        Number(existing.quantity || 0) + qty;
-
-
-      await sb(
-        "raw_materials?id=eq." +
-        encodeURIComponent(existing.id),
-        {
-          method:"PATCH",
-
-          body:JSON.stringify({
-            quantity:newQty,
-            unit:"kg"
-          })
-        }
-      );
-
-      toast(
-        name.trim() +
-        " stoğuna " +
-        qty +
-        " kg eklendi"
-      );
-
-    }else{
-
-      await sb(
-        "raw_materials",
-        {
-          method:"POST",
-
-          body:JSON.stringify({
-            name:name.trim(),
-            quantity:qty,
-            unit:"kg"
-          })
-        }
-      );
-
-      toast(
-        name.trim() +
-        " hammaddesi eklendi"
-      );
-
-    }
-
-
-    await loadData();
-
-    stockTab("raw");
-
-
-  }catch(e){
-
-    console.error(
-      "HAMMADDE HATASI:",
-      e
-    );
-
-    toast(
-      e.message ||
-      "Hammadde kaydedilemedi"
-    );
-
-  }
+return;
 
 }
-  async function confirmRawEntry(){
 
-  try{
 
-    const index =
-      Number(
-        document.getElementById(
-          "rawEntryProduct"
-        ).value
-      );
+const old=
+document.getElementById("stockModal");
 
-    const qty =
-      Number(
-        document.getElementById(
-          "rawEntryQty"
-        ).value
-      );
+if(old){
+old.remove();
+}
 
-    const unit =
-      document.getElementById(
-        "rawEntryUnit"
-      ).value;
 
-    const raw =
-      state.rawMaterials[index];
+const modal=
+document.createElement("div");
 
-    if(!raw){
+modal.id="stockModal";
 
-      toast("Hammadde seçin");
+modal.style.cssText=`
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+z-index:100;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+`;
 
-      return;
-    }
 
-    if(!qty || qty <= 0){
+modal.innerHTML=`
 
-      toast("Miktar girin");
+<div style="
+background:#fff;
+width:100%;
+max-width:450px;
+border-radius:16px;
+padding:20px;
+box-shadow:0 10px 40px rgba(0,0,0,.25)
+">
 
-      return;
-    }
+<h2 style="margin-top:0">
+Stok Girişi
+</h2>
 
-    /*
-      Eğer gr girilmişse kg'a çevir
-    */
+<label>
+Ürün
 
-    let addKg = qty;
+<select id="newStockProduct">
 
-    if(unit === "gr"){
-      addKg = qty / 1000;
-    }
+${state.products.map(
+(p,i)=>
+`
+<option value="${i}">
+${p.name} — ${p.package_size}
+</option>
+`
+).join("")}
 
-    const current =
-      Number(raw.quantity || 0);
+</select>
 
-    const next =
-      current + addKg;
+</label>
 
-    await sb(
-      "raw_materials?id=eq." + raw.id,
-      {
-        method:"PATCH",
 
-        body:JSON.stringify({
-          quantity:next,
-          unit:"kg"
-        })
-      }
-    );
+<label>
+Miktar
 
-    /*
-      Hammadde giriş hareketi
-    */
+<input
+id="newStockQty"
+type="number"
+step="0.001"
+min="0"
+placeholder="Örn: 10">
 
-    toast(
-      raw.name +
-      " stoğuna " +
-      addKg.toLocaleString("tr-TR", {
-        maximumFractionDigits:3
-      }) +
-      " kg eklendi"
-    );
+</label>
 
-    const modal =
-      document.getElementById(
-        "rawStockModal"
-      );
 
-    if(modal){
-      modal.remove();
-    }
+<label>
+Yer
 
-    await loadData();
+<select id="newStockLocation">
 
-    stockTab("raw");
+<option value="warehouse">
+Depo
+</option>
 
-  }catch(e){
+<option value="vehicle">
+Araç
+</option>
 
-    console.error(
-      "HAMMADDE GİRİŞ HATASI:",
-      e
-    );
+</select>
 
-    toast(
-      e.message ||
-      "Hammadde eklenemedi"
-    );
+</label>
 
-  }
+
+<div style="
+display:flex;
+gap:10px;
+margin-top:15px
+">
+
+<button
+style="flex:1"
+onclick="document.getElementById('stockModal').remove()">
+
+İptal
+
+</button>
+
+
+<button
+class="primary"
+style="flex:1"
+onclick="confirmNewStock()">
+
+STOK EKLE
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+
+document.body.appendChild(modal);
 
 }
 
@@ -2582,202 +1664,6 @@ function updateTransferDirection(){
     title.textContent = "Depo → Araç";
     button.textContent = "ARACA AKTAR";
 
-  }
-}
-function calculateProduction(){
-
-  const qtyInput = document.getElementById("productionQty");
-  const gramInput = document.getElementById("productionGram");
-  const info = document.getElementById("productionInfo");
-
-  if (!qtyInput || !gramInput || !info) return;
-
-  const qty = Number(
-    String(qtyInput.value || "").replace(",", ".")
-  );
-
-  const gram = Number(
-    String(gramInput.value || "").replace(",", ".")
-  );
-
-  if (qty <= 0 || gram <= 0) {
-    info.textContent =
-      "Üretim miktarı girildiğinde hesaplanır.";
-    return;
-  }
-
-  const kg = (qty * gram) / 1000;
-
-  info.innerHTML =
-    `${qty.toLocaleString("tr-TR")} adet × ` +
-    `${gram.toLocaleString("tr-TR")} gr = ` +
-    `<b>${kg.toLocaleString("tr-TR", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 3
-    })} kg</b> hammadde tüketilecek.`;
-}
-  if(productionQty){
-  productionQty.addEventListener(
-    "input",
-    calculateProduction
-  );
-}
-
-if(productionGram){
-  productionGram.addEventListener(
-    "input",
-    calculateProduction
-  );
-}
-  calculateProduction();
-  async function saveProduction(){
-  try {
-    // Elemanları her tıklamada yeniden bul
-    const rawSelect = document.getElementById("productionRawProduct");
-    const productSelect = document.getElementById("productionProduct");
-    const qtyInput = document.getElementById("productionQty");
-    const gramInput = document.getElementById("productionGram");
-
-    if (!rawSelect || !productSelect || !qtyInput || !gramInput) {
-      throw new Error("Üretim alanları bulunamadı");
-    }
-
-    const rawIndex = Number(rawSelect.value);
-    const productIndex = Number(productSelect.value);
-
-    const qty = Number(String(qtyInput.value).replace(",", "."));
-    const gram = Number(String(gramInput.value).replace(",", "."));
-
-    const raw = state.rawMaterials[rawIndex];
-    const product = state.products[productIndex];
-
-    console.log("ÜRETİM:", {
-      raw,
-      product,
-      qty,
-      gram
-    });
-
-    if (!raw) {
-      toast("Hammadde seçin");
-      return;
-    }
-
-    if (!product) {
-      toast("Üretilecek ürünü seçin");
-      return;
-    }
-
-    if (!qty || qty <= 0) {
-      toast("Üretilecek adet girin");
-      return;
-    }
-
-    if (!gram || gram <= 0) {
-      toast("Paket gramajını girin");
-      return;
-    }
-
-    // Tüketilecek hammadde kg
-    const consumed = (qty * gram) / 1000;
-    const current = Number(raw.quantity || 0);
-
-    if (current < consumed) {
-      toast(
-        "Yetersiz hammadde! " +
-        raw.name +
-        " mevcut: " +
-        current +
-        " " +
-        (raw.unit || "kg")
-      );
-      return;
-    }
-
-    // 1. HAMMADDE STOĞUNDAN DÜŞ
-    const rawResult = await sb(
-      "raw_materials?id=eq." + encodeURIComponent(raw.id),
-      {
-        method: "PATCH",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          quantity: current - consumed
-        })
-      }
-    );
-
-    console.log("HAMMADDE GÜNCELLEME:", rawResult);
-
-    if (!Array.isArray(rawResult) || rawResult.length === 0) {
-      throw new Error(
-        "Hammadde stoğu güncellenemedi. Supabase UPDATE/RLS politikasını kontrol edin."
-      );
-    }
-
-    // 2. ÜRÜNÜ DEPO STOĞUNA EKLE
-    await upsertStock(
-      product.id,
-      "warehouse",
-      qty
-    );
-
-    // 3. ÜRETİM HAREKETİNİ KAYDET
-    const movementResult = await sb(
-      "stock_movements",
-      {
-        method: "POST",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          product_id: product.id,
-          movement_type: "production",
-          to_location: "warehouse",
-          quantity: qty,
-          notes:
-            "Üretim: " +
-            qty +
-            " adet × " +
-            gram +
-            " gr | " +
-            consumed +
-            " kg " +
-            raw.name +
-            " hammaddesi tüketildi"
-        })
-      }
-    );
-
-    console.log("ÜRETİM HAREKETİ:", movementResult);
-
-    if (!Array.isArray(movementResult) || movementResult.length === 0) {
-      console.warn("stock_movements kayıt döndürmedi:", movementResult);
-    }
-
-    // 4. BAŞARILI
-    toast(
-      qty +
-      " adet " +
-      product.name +
-      " üretimi kaydedildi"
-    );
-
-    qtyInput.value = "";
-    gramInput.value = "";
-
-    calculateProduction();
-
-    // Verileri yeniden çek
-    await loadData();
-
-    // Üretim ekranında kal
-    stockTab("production");
-
-  } catch (e) {
-    console.error("ÜRETİM HATASI:", e);
-    toast(e.message || "Üretim kaydedilemedi");
   }
 }
 async function saveTransfer(){
