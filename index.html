@@ -318,9 +318,19 @@ TOPLAM
 
 <div class="sectionHead">
 <h1>Stok</h1>
-<button class="small" id="stockEntryButton" onclick="newStock()">
+
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+
+<button class="small" onclick="newStock()">
 ＋ Stok Girişi
 </button>
+
+<button class="small" onclick="newRawMaterial()">
+＋ Hammadde
+</button>
+
+</div>
+
 </div>
 
 
@@ -1232,6 +1242,267 @@ console.error(e);
 toast("Ürün eklenemedi");
 
 }
+
+}
+  async function newRawMaterial(){
+
+  const old = document.getElementById("rawModal");
+
+  if(old){
+    old.remove();
+  }
+
+  const modal = document.createElement("div");
+
+  modal.id = "rawModal";
+
+  modal.style.cssText = `
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:#fff;
+      width:100%;
+      max-width:450px;
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 10px 40px rgba(0,0,0,.25);
+    ">
+
+      <h2 style="margin-top:0">
+        Hammadde Girişi
+      </h2>
+
+      <label>
+        Hammadde
+
+        <input
+          id="rawName"
+          list="rawNameList"
+          placeholder="Örn: Pul Biber"
+          autocomplete="off"
+        >
+
+        <datalist id="rawNameList">
+          ${
+            state.rawMaterials.map(r =>
+              <option value="${r.name}"></option>
+            ).join("")
+          }
+        </datalist>
+
+      </label>
+
+      <label>
+        Miktar
+
+        <input
+          id="rawQty"
+          type="number"
+          step="0.001"
+          min="0"
+          placeholder="Örn: 25"
+        >
+
+      </label>
+
+      <label>
+        Birim
+
+        <select id="rawUnit">
+          <option value="kg">kg</option>
+          <option value="gr">gr</option>
+          <option value="adet">adet</option>
+        </select>
+      </label>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+      ">
+
+        <button
+          style="flex:1"
+          onclick="
+            document.getElementById('rawModal').remove()
+          "
+        >
+          İptal
+        </button>
+
+        <button
+          class="primary"
+          style="flex:1"
+          onclick="confirmRawMaterial()"
+        >
+          HAMMADDE EKLE
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  setTimeout(() => {
+    document.getElementById("rawName")?.focus();
+  },100);
+
+}
+
+
+async function confirmRawMaterial(){
+
+  const name =
+    document.getElementById("rawName")?.value.trim();
+
+  const qty =
+    Number(
+      document.getElementById("rawQty")?.value || 0
+    );
+
+  const unit =
+    document.getElementById("rawUnit")?.value || "kg";
+
+
+  if(!name){
+
+    toast("Hammadde adını girin");
+
+    return;
+  }
+
+
+  if(!qty || qty <= 0){
+
+    toast("Miktar girin");
+
+    return;
+  }
+
+
+  try{
+
+    /*
+      Aynı isimde hammadde var mı?
+    */
+
+    const existing =
+      state.rawMaterials.find(
+        r =>
+          String(r.name || "")
+            .trim()
+            .toLocaleLowerCase("tr-TR")
+          ===
+          name
+            .trim()
+            .toLocaleLowerCase("tr-TR")
+      );
+
+
+    /*
+      VARSA STOĞUNA EKLE
+    */
+
+    if(existing){
+
+      const oldQty =
+        Number(existing.quantity || 0);
+
+      const newQty =
+        oldQty + qty;
+
+
+      await sb(
+        "raw_materials?id=eq." +
+        encodeURIComponent(existing.id),
+        {
+          method:"PATCH",
+
+          body:JSON.stringify({
+            quantity:newQty,
+            unit:unit
+          })
+        }
+      );
+
+
+      toast(
+        name +
+        " stoğuna " +
+        qty +
+        " " +
+        unit +
+        " eklendi"
+      );
+
+    }
+
+
+    /*
+      YOKSA YENİ HAMMADDE OLUŞTUR
+    */
+
+    else{
+
+      await sb(
+        "raw_materials",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            name:name,
+            quantity:qty,
+            unit:unit
+          })
+        }
+      );
+
+
+      toast(
+        name +
+        " hammaddesi eklendi"
+      );
+
+    }
+
+
+    const modal =
+      document.getElementById("rawModal");
+
+    if(modal){
+      modal.remove();
+    }
+
+
+    await loadData();
+
+    stockTab("raw");
+
+
+  }catch(e){
+
+    console.error(
+      "HAMMADDE GİRİŞ HATASI:",
+      e
+    );
+
+    toast(
+      e.message ||
+      "Hammadde kaydedilemedi"
+    );
+
+  }
 
 }
 
