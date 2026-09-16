@@ -183,49 +183,19 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
   }
   .quick{
     grid-template-columns:repeat(2,1fr) !important;
-  }
+}                        
 }
-
-/* GİRİŞ EKRANI */
-#loginScreen{position:fixed;inset:0;background:#f4f6f5;display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
-#loginBox{width:min(420px,100%);background:#fff;border:1px solid #e2e7e3;border-radius:18px;padding:26px;box-shadow:0 8px 30px rgba(0,0,0,.10)}
-#loginBox h1{color:#16823b;font-size:26px;text-align:center;margin:0 0 4px}
-#loginBox .loginSub{text-align:center;color:#657168;font-size:13px;margin-bottom:20px}
-#loginBox label{margin:12px 0}
-#loginBox button{width:100%;margin-top:8px}
-#loginError{display:none;background:#ffecec;color:#a33;border-radius:9px;padding:10px;margin-top:12px;font-size:13px}
-#logoutBtn{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);padding:7px 10px;font-size:12px;margin-left:8px}
-#appShell[hidden]{display:none !important}
-#loginScreen[hidden]{display:none !important}
-
 </style>
 </head>
 
 <body>
 
-<div id="loginScreen">
-  <div id="loginBox">
-    <h1>BAHÇEM BAHARAT</h1>
-    <div class="loginSub">Stok · Cari · Satış Sistemi</div>
-    <form id="loginForm">
-      <label>E-posta<input id="loginEmail" type="email" autocomplete="username" required placeholder="E-posta adresiniz"></label>
-      <label>Şifre<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Şifreniz"></label>
-      <button class="primary big" type="submit" id="loginButton">GİRİŞ YAP</button>
-      <div id="loginError"></div>
-    </form>
-  </div>
-</div>
-
-<div id="appShell" hidden>
 <header class="top">
 <div>
 <div class="brand">BAHÇEM BAHARAT</div>
 <div class="sub">MUHTEŞEM TAT · STOK & CARİ</div>
 </div>
-<div style="display:flex;align-items:center">
-  <div class="mode" id="mode">BAĞLANIYOR</div>
-  <button id="logoutBtn" onclick="logout()">ÇIKIŞ</button>
-</div>
+<div class="mode" id="mode">BAĞLANIYOR</div>
 </header>
 
 <main>
@@ -347,18 +317,100 @@ TOPLAM
 <section id="stock" class="page">
 
 <div class="sectionHead">
-<h1>Stok</h1>
-<button class="small" onclick="newStock()">＋ Stok Girişi</button>
+
+  <h1>Stok</h1>
+
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+
+    <button class="small" onclick="newStock()">
+      ＋ Stok Girişi
+    </button>
+
+    <button class="small" onclick="newRawMaterial()">
+      ＋ Hammadde
+    </button>
+
+  </div>
+
 </div>
+</div>
+
 
 <div class="tabs">
-<button class="active" onclick="stockTab('warehouse')">Depo</button>
-<button onclick="stockTab('vehicle')">Araç</button>
+  <button class="active" onclick="stockTab('warehouse')">Depo</button>
+  <button onclick="stockTab('vehicle')">Araç</button>
+  <button onclick="stockTab('raw')">Hammadde</button>
+  <button onclick="stockTab('production')">Üretim</button>
 </div>
-
 <div class="card">
 <div id="stockTable"></div>
 </div>
+</section>
+<section id="production" class="page">
+
+<div class="sectionHead">
+  <h1>Üretim</h1>
+  <button class="ghost" onclick="go('stock')">← Stok</button>
+</div>
+
+<div class="card">
+
+<h2>Hammadde → Ürün Üretimi</h2>
+
+<p class="muted">
+Örneğin 25 kg pul biber hammaddesinden 100 adet 40 gr pul biber
+üretirseniz hammaddeden 4 kg düşer, depo stoğuna 100 adet ürün eklenir.
+</p>
+
+<label>
+Hammadde
+<select id="productionRawProduct"></select>
+</label>
+
+<label>
+Üretilecek Ürün
+<select id="productionProduct"></select>
+</label>
+
+<div class="row">
+
+<label class="grow">
+Üretilecek Adet
+<input
+  id="productionQty"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Örn: 100">
+</label>
+
+<label class="grow">
+Paket Gramajı
+<input
+  id="productionGram"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Örn: 40">
+</label>
+
+</div>
+
+<div class="card" style="background:#f4f8f5;margin-top:15px">
+  <b>Hammadde tüketimi</b>
+  <div id="productionInfo" class="muted">
+    Üretim miktarı girildiğinde hesaplanır.
+  </div>
+</div>
+
+<button
+  class="primary big"
+  onclick="saveProduction()">
+  ÜRETİMİ KAYDET
+</button>
+
+</div>
+
 
 </section>
 
@@ -520,11 +572,12 @@ const PRODUCT_DATA=[
 
 let state={
 products:[],
+rawMaterials:[],
 customers:[],
 stock:[],
 sales:[],
 payments:[]
-};
+}
 
 let stockLoc="warehouse";
 let detailId=null;
@@ -534,6 +587,20 @@ const mode=document.getElementById("mode");
 const saleCustomer=document.getElementById("saleCustomer");
 const paymentCustomer=document.getElementById("paymentCustomer");
 const transferProduct=document.getElementById("transferProduct");
+const productionRawProduct =
+  document.getElementById("productionRawProduct");
+
+const productionProduct =
+  document.getElementById("productionProduct");
+
+const productionQty =
+  document.getElementById("productionQty");
+
+const productionGram =
+  document.getElementById("productionGram");
+
+const productionInfo =
+  document.getElementById("productionInfo");  
 const saleRows=document.getElementById("saleRows");
 const saleTotal=document.getElementById("saleTotal");
 const customerList=document.getElementById("customerList");
@@ -551,11 +618,9 @@ const detailMovements=document.getElementById("detailMovements");
 
 
 async function sb(path,opts={}){
-  const token=localStorage.getItem("bahcem_access_token");
   const headers={
     "apikey":SB_KEY,
     "Content-Type":"application/json",
-    ...(token ? {"Authorization":"Bearer "+token} : {}),
     ...(opts.headers||{})
   };
 
@@ -573,11 +638,6 @@ async function sb(path,opts={}){
     );
 
     const t=await r.text();
-
-    if(r.status===401){
-      logout();
-      throw new Error("Oturum süresi doldu. Lütfen tekrar giriş yapın.");
-    }
 
     if(!r.ok){
       throw new Error(t||"HTTP "+r.status);
@@ -676,6 +736,10 @@ state.products=await sb(
 "products?select=*&order=id"
 );
 
+state.rawMaterials=await sb(
+"raw_materials?select=*&order=name"
+);
+
 state.customers=await sb(
 "customers?select=*&order=name"
 );
@@ -724,6 +788,31 @@ saleCustomer.innerHTML=customerOptions();
 paymentCustomer.innerHTML=customerOptions();
 
 transferProduct.innerHTML=options();
+if(productionRawProduct){
+
+  productionRawProduct.innerHTML =
+    state.rawMaterials.map(function(r,i){
+      return `
+        <option value="${i}">
+          ${r.name} — ${r.quantity} ${r.unit || "kg"}
+        </option>
+      `;
+    }).join("");
+
+}
+
+if(productionProduct){
+
+  productionProduct.innerHTML =
+    state.products.map(function(p,i){
+      return `
+        <option value="${i}">
+          ${p.name} — ${p.package_size}
+        </option>
+      `;
+    }).join("");
+
+}  
 
 document.querySelectorAll(".sprod").forEach(
 x=>{
@@ -784,19 +873,25 @@ function renderDashboard(){
   statLow.textContent=low;
 
   recent.innerHTML=state.sales
-    .slice(0,6)
-    .map(s=>`
+  .slice(0,6)
+  .map(s=>{
+    const customer = state.customers.find(
+      c => String(c.id) === String(s.customer_id)
+    );
+
+    return `
       <div class="movement">
         <div>
-          <b>Müşteri #${s.customer_id}</b>
+          <b>${customer?.name || "Müşteri #" + s.customer_id}</b>
           <small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small>
         </div>
         <b>${money(s.total)}</b>
       </div>
-    `)
-    .join("")
-    ||
-    '<p class="muted">Henüz satış yok.</p>';
+    `;
+  })
+  .join("")
+  ||
+  '<p class="muted">Henüz satış yok.</p>';
 }
 
 
@@ -855,55 +950,76 @@ saleTotal.textContent=money(t);
 }
 
 
-async function upsertStock(product_id,location,delta){
-
-  const rows=await sb(
-    "stock?product_id=eq."+encodeURIComponent(product_id)+"&location=eq."+encodeURIComponent(location),
-    {
-      method:"GET"
-    }
+async function upsertStock(product_id, location, delta) {
+  const rows = await sb(
+    "stock?product_id=eq." +
+    encodeURIComponent(product_id) +
+    "&location=eq." +
+    encodeURIComponent(location)
   );
 
-  if(rows.length){
-
-    const row=rows[0];
-
-    const next=Number(row.quantity||0)+Number(delta);
-
-    if(next<0){
-      throw new Error("Yetersiz stok");
-    }
-
-    await sb(
-      "stock?id=eq."+row.id,
-      {
-        method:"PATCH",
-        body:JSON.stringify({
-          quantity:next
-        })
-      }
-    );
-
-  }else{
-
-    if(Number(delta)<0){
-      throw new Error("Yetersiz stok");
-    }
-
-    await sb(
-      "stock",
-      {
-        method:"POST",
-        body:JSON.stringify({
-          product_id:product_id,
-          location:location,
-          quantity:Number(delta)
-        })
-      }
-    );
-
+  if (!Array.isArray(rows)) {
+    throw new Error("Stok bilgisi okunamadı");
   }
 
+  if (rows.length) {
+    const row = rows[0];
+
+    const next =
+      Number(row.quantity || 0) +
+      Number(delta);
+
+    if (next < 0) {
+      throw new Error("Yetersiz stok");
+    }
+
+    const result = await sb(
+      "stock?id=eq." +
+      encodeURIComponent(row.id),
+      {
+        method: "PATCH",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          quantity: next
+        })
+      }
+    );
+
+    if (!Array.isArray(result) || result.length === 0) {
+      throw new Error(
+        "Ürün stoğu güncellenemedi"
+      );
+    }
+
+  } else {
+
+    if (Number(delta) < 0) {
+      throw new Error("Yetersiz stok");
+    }
+
+    const result = await sb(
+      "stock",
+      {
+        method: "POST",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          product_id: product_id,
+          location: location,
+          quantity: Number(delta)
+        })
+      }
+    );
+
+    if (!Array.isArray(result) || result.length === 0) {
+      throw new Error(
+        "Yeni ürün stoğu oluşturulamadı"
+      );
+    }
+  }
 }
 
 
@@ -1151,6 +1267,9 @@ toast("Ürün eklenemedi");
 }
 
 }
+  
+
+
 
 
 async function newCustomer(){
@@ -1188,27 +1307,235 @@ toast("Müşteri eklenemedi");
 
 function renderCustomers(){
 
-customerList.innerHTML=
-state.customers
-.map(
-c=>
-"<div class=\"customer\">"+
-"<div>"+
-"<b>"+c.name+"</b>"+
-"<small>"+(c.phone||"")+"</small>"+
-"</div>"+
-"<div>"+
-"<b class=\"debt\">"+
-money(c.balance)+
-"</b>"+
-"<button class=\"small\" onclick=\"showCustomer("+c.id+")\">Aç</button>"+
-"</div>"+
-"</div>"
-)
-.join("")
-||
-'<p class="muted">Henüz müşteri yok.</p>';
+  customerList.innerHTML =
+    state.customers
+    .filter(c => c.active !== false)
+    .map(c =>
 
+      "<div class=\"customer\">" +
+
+        "<div>" +
+          "<b>" + c.name + "</b>" +
+          "<small>" + (c.phone || "") + "</small>" +
+        "</div>" +
+
+        "<div>" +
+
+          "<b class=\"debt\">" +
+            money(c.balance) +
+          "</b>" +
+
+          "<button class=\"small\" onclick=\"showCustomer(" + c.id + ")\">" +
+            "Aç" +
+          "</button>" +
+
+          "<button class=\"small\" onclick=\"editCustomer(" + c.id + ")\">" +
+            "Düzenle" +
+          "</button>" +
+
+          "<button class=\"small remove\" onclick=\"deleteCustomer(" + c.id + ")\">" +
+            "Sil" +
+          "</button>" +
+
+        "</div>" +
+
+      "</div>"
+
+    )
+    .join("") ||
+
+    '<p class="muted">Henüz müşteri yok.</p>';
+}
+
+
+async function editCustomer(id){
+
+  const c = state.customers.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!c){
+    toast("Müşteri bulunamadı");
+    return;
+  }
+
+  const name = prompt(
+    "Müşteri adı:",
+    c.name || ""
+  );
+
+  if(name === null) return;
+
+  const newName = name.trim();
+
+  if(!newName){
+    toast("Müşteri adı boş olamaz");
+    return;
+  }
+
+  const phone = prompt(
+    "Telefon:",
+    c.phone || ""
+  );
+
+  if(phone === null) return;
+
+  const newPhone = phone.trim();
+
+  try{
+
+    console.log("MÜŞTERİ GÜNCELLEME");
+    console.log("ID:", c.id);
+    console.log("ESKİ İSİM:", c.name);
+    console.log("YENİ İSİM:", newName);
+
+    /*
+      MÜŞTERİYİ GÜNCELLE
+    */
+    const result = await sb(
+      "customers?id=eq." +
+      encodeURIComponent(String(c.id)),
+      {
+        method:"PATCH",
+        headers:{
+          "Prefer":"return=representation"
+        },
+        body:JSON.stringify({
+          name:newName,
+          phone:newPhone
+        })
+      }
+    );
+
+    console.log("PATCH SONUCU:", result);
+
+    /*
+      Supabase'in döndürdüğü kayıt yoksa
+      ama hata da vermediyse RLS/izin problemi
+      olma ihtimali yüksek.
+    */
+    if(!result || result.length === 0){
+
+      /*
+        Şimdi doğrudan tekrar okuyalım
+      */
+      const verify = await sb(
+        "customers?select=id,name,phone&id=eq." +
+        encodeURIComponent(String(c.id))
+      );
+
+      console.log("KONTROL SONUCU:", verify);
+
+      if(
+        verify &&
+        verify.length &&
+        verify[0].name === newName
+      ){
+
+        toast("Müşteri güncellendi");
+
+        const index = state.customers.findIndex(
+          x => String(x.id) === String(c.id)
+        );
+
+        if(index !== -1){
+          state.customers[index] = verify[0];
+        }
+
+        renderCustomers();
+
+        saleCustomer.innerHTML =
+          customerOptions();
+
+        paymentCustomer.innerHTML =
+          customerOptions();
+
+        return;
+      }
+
+      throw new Error(
+        "Müşteri güncelleme yetkisi çalışmıyor. Supabase UPDATE politikası kontrol edilmeli."
+      );
+    }
+
+    /*
+      Başarılı güncelleme
+    */
+    const updated = result[0];
+
+    const index = state.customers.findIndex(
+      x => String(x.id) === String(c.id)
+    );
+
+    if(index !== -1){
+      state.customers[index] = updated;
+    }
+
+    renderCustomers();
+
+    saleCustomer.innerHTML =
+      customerOptions();
+
+    paymentCustomer.innerHTML =
+      customerOptions();
+
+    if(
+      detailId &&
+      String(detailId) === String(c.id)
+    ){
+      detailName.textContent =
+        updated.name;
+    }
+
+    toast("Müşteri başarıyla güncellendi");
+
+  }catch(e){
+
+    console.error(
+      "MÜŞTERİ GÜNCELLEME HATASI:",
+      e
+    );
+
+    toast(
+      e.message ||
+      "Müşteri güncellenemedi"
+    );
+
+  }
+
+}
+
+async function deleteCustomer(id){
+  const c = state.customers.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!c) return;
+
+  const ok = confirm(
+    c.name + "\n\nBu müşteriyi silmek istediğinize emin misiniz?"
+  );
+
+  if(!ok) return;
+
+  try{
+    await sb(
+      "customers?id=eq." + id,
+      {
+        method:"DELETE"
+      }
+    );
+
+    toast("Müşteri silindi");
+    await loadData();
+
+  }catch(e){
+    console.error(e);
+    toast(
+      e.message ||
+      "Müşteri silinemedi"
+    );
+  }
 }
 
 
@@ -1391,198 +1718,751 @@ async function renderDetail(){
 
 function stockTab(x){
 
-stockLoc=x;
+  stockLoc = x;
+  const entryButton =
+  document.getElementById("stockEntryButton");
 
-document
-.querySelectorAll(".tabs button")
-.forEach(
-(b,i)=>
-b.classList.toggle(
-"active",
-(i===0&&x==="warehouse") ||
-(i===1&&x==="vehicle")
-)
-);
+if(entryButton){
 
-renderStock();
+  if(x === "raw"){
 
+    entryButton.textContent =
+      "＋ Hammadde Girişi";
+
+  }else if(x === "production"){
+
+    entryButton.textContent =
+      "＋ Stok Girişi";
+
+  }else{
+
+    entryButton.textContent =
+      "＋ Stok Girişi";
+
+  }
+
+}
+
+  const buttons =
+    document.querySelectorAll(".tabs button");
+
+  buttons.forEach(button => {
+    button.classList.remove("active");
+  });
+
+  if(x === "warehouse"){
+    buttons[0]?.classList.add("active");
+  }
+
+  if(x === "vehicle"){
+    buttons[1]?.classList.add("active");
+  }
+
+  if(x === "raw"){
+    buttons[2]?.classList.add("active");
+  }
+
+  if(x === "production"){
+    buttons[3]?.classList.add("active");
+  }
+
+  /*
+    ÜRETİM SEKMESİ
+    Ayrı sayfaya gitmek yerine
+    aynı stok ekranında üretim bölümünü gösteriyoruz.
+  */
+
+  const stockTable = document.getElementById("stockTable");
+
+  if(x === "production"){
+
+    stockTable.innerHTML = `
+      <div class="card">
+
+        <h2>Hammadde → Ürün Üretimi</h2>
+
+        <p class="muted">
+          Örneğin 25 kg pul biber hammaddesinden
+          100 adet 40 gr pul biber üretirseniz
+          hammaddeden 4 kg düşer ve depoya
+          100 adet ürün eklenir.
+        </p>
+
+        <label>
+          Hammadde
+          <select id="productionRawProduct">
+            ${
+              state.rawMaterials.map(function(r,i){
+                return `
+                  <option value="${i}">
+                    ${r.name} — ${r.quantity} ${r.unit || "kg"}
+                  </option>
+                `;
+              }).join("")
+            }
+          </select>
+        </label>
+
+        <label>
+          Üretilecek Ürün
+          <select id="productionProduct">
+            ${
+              state.products.map(function(p,i){
+                return `
+                  <option value="${i}">
+                    ${p.name} — ${p.package_size}
+                  </option>
+                `;
+              }).join("")
+            }
+          </select>
+        </label>
+
+        <div class="row">
+
+          <label class="grow">
+            Üretilecek Adet
+            <input
+              id="productionQty"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Örn: 100"
+            >
+          </label>
+
+          <label class="grow">
+            Paket Gramajı
+            <input
+              id="productionGram"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Örn: 40"
+            >
+          </label>
+
+        </div>
+
+        <div
+          class="card"
+          style="background:#f4f8f5;margin-top:15px"
+        >
+          <b>Hammadde tüketimi</b>
+
+          <div
+            id="productionInfo"
+            class="muted"
+          >
+            Üretim miktarı girildiğinde hesaplanır.
+          </div>
+
+        </div>
+
+        <button
+          class="primary big"
+          onclick="saveProduction()"
+        >
+          ÜRETİMİ KAYDET
+        </button>
+
+      </div>
+    `;
+
+    const qty =
+      document.getElementById("productionQty");
+
+    const gram =
+      document.getElementById("productionGram");
+
+    if(qty){
+      qty.addEventListener("input", calculateProduction);
+    }
+
+    if(gram){
+      gram.addEventListener("input", calculateProduction);
+    }
+
+    return;
+  }
+
+  renderStock();
 }
 
 
 function renderStock(){
 
-  stockTable.innerHTML=state.products.map(p=>{
+  /*
+    HAMMADDE EKRANI
+  */
 
-    const rows=state.stock.filter(
-      x=>
-        String(x.product_id)===String(p.id) &&
-        x.location===stockLoc
-    );
+  if(stockLoc === "raw"){
 
-    const quantity=rows.reduce(
-      (sum,x)=>sum+Number(x.quantity||0),
-      0
-    );
+    if(!state.rawMaterials.length){
 
-    return `
-      <div class="stockRow">
+      stockTable.innerHTML =
+        '<p class="muted">Henüz hammadde yok.</p>';
 
-        <div>
-          <b>${p.name}</b>
-          <small>${p.package_size||""}</small>
+      return;
+
+    }
+
+    stockTable.innerHTML =
+      state.rawMaterials.map(raw => {
+
+        const quantity =
+          Number(raw.quantity || 0);
+
+        return `
+          <div class="stockRow">
+
+            <div>
+              <b>${raw.name}</b>
+              <small>Hammadde</small>
+            </div>
+
+            <div>
+              <b>
+                ${quantity.toLocaleString(
+                  "tr-TR",
+                  {
+                    minimumFractionDigits:0,
+                    maximumFractionDigits:3
+                  }
+                )}
+              </b>
+            </div>
+
+            <div>
+              ${raw.unit || "kg"}
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+
+    return;
+  }
+
+
+  /*
+    DEPO / ARAÇ EKRANI
+  */
+
+  stockTable.innerHTML =
+    state.products.map(p => {
+
+      const rows =
+        state.stock.filter(
+          x =>
+            String(x.product_id) === String(p.id) &&
+            x.location === stockLoc
+        );
+
+      const quantity =
+        rows.reduce(
+          (sum,x) =>
+            sum + Number(x.quantity || 0),
+          0
+        );
+
+      return `
+        <div class="stockRow">
+
+          <div>
+            <b>${p.name}</b>
+            <small>
+              ${p.package_size || ""}
+            </small>
+          </div>
+
+          <div>
+            <b>
+              ${quantity.toLocaleString(
+                "tr-TR",
+                {
+                  maximumFractionDigits:3
+                }
+              )}
+            </b>
+          </div>
+
+          <div>
+            ${
+              p.sale_price == null
+              ? "Fiyat yok"
+              : money(p.sale_price)
+            }
+          </div>
+
         </div>
+      `;
 
-        <div>
-          <b>${quantity}</b>
-        </div>
-
-        <div>
-          ${p.sale_price==null
-            ?"Fiyat yok"
-            :money(p.sale_price)}
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
+    }).join("");
 
 }
 
 
 async function newStock(){
 
-if(!state.products.length){
+  /*
+    HAMMADDE SEKmesindeysek
+    hammadde girişi aç
+  */
 
-toast("Ürünler henüz yüklenmedi");
+  if(stockLoc === "raw"){
 
-return;
+    const old =
+      document.getElementById("rawStockModal");
+
+    if(old) old.remove();
+
+    const modal =
+      document.createElement("div");
+
+    modal.id = "rawStockModal";
+
+    modal.style.cssText = `
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    `;
+
+    modal.innerHTML = `
+      <div style="
+        background:#fff;
+        width:100%;
+        max-width:450px;
+        border-radius:16px;
+        padding:20px;
+      ">
+
+        <h2 style="margin-top:0">
+          Hammadde Girişi
+        </h2>
+
+        <label>
+          Hammadde
+
+          <select id="rawEntryProduct">
+
+            ${
+              state.rawMaterials.map((r,i)=>`
+                <option value="${i}">
+                  ${r.name}
+                </option>
+              `).join("")
+            }
+
+          </select>
+
+        </label>
+
+        <label>
+          Miktar
+
+          <input
+            id="rawEntryQty"
+            type="number"
+            min="0"
+            step="0.001"
+            placeholder="Örn: 25"
+          >
+
+        </label>
+
+        <label>
+          Birim
+
+          <select id="rawEntryUnit">
+            <option value="kg">kg</option>
+            <option value="gr">gr</option>
+          </select>
+
+        </label>
+
+        <div style="
+          display:flex;
+          gap:10px;
+          margin-top:15px;
+        ">
+
+          <button
+            style="flex:1"
+            onclick="
+              document
+                .getElementById('rawStockModal')
+                .remove()
+            "
+          >
+            İptal
+          </button>
+
+          <button
+            class="primary"
+            style="flex:1"
+            onclick="confirmRawEntry()"
+          >
+            HAMMADDE EKLE
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    return;
+  }
+
+  /*
+    NORMAL ÜRÜN STOK GİRİŞİ
+  */
+
+  if(!state.products.length){
+
+    toast("Ürünler henüz yüklenmedi");
+
+    return;
+  }
+
+  const old =
+    document.getElementById("stockModal");
+
+  if(old){
+    old.remove();
+  }
+
+  const modal =
+    document.createElement("div");
+
+  modal.id = "stockModal";
+
+  modal.style.cssText = `
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:#fff;
+      width:100%;
+      max-width:450px;
+      border-radius:16px;
+      padding:20px;
+    ">
+
+      <h2 style="margin-top:0">
+        Stok Girişi
+      </h2>
+
+      <label>
+        Ürün
+
+        <select id="newStockProduct">
+
+          ${
+            state.products.map((p,i)=>`
+              <option value="${i}">
+                ${p.name} — ${p.package_size}
+              </option>
+            `).join("")
+          }
+
+        </select>
+
+      </label>
+
+      <label>
+        Miktar
+
+        <input
+          id="newStockQty"
+          type="number"
+          step="0.001"
+          min="0"
+          placeholder="Örn: 10"
+        >
+
+      </label>
+
+      <label>
+        Yer
+
+        <select id="newStockLocation">
+
+          <option value="warehouse">
+            Depo
+          </option>
+
+          <option value="vehicle">
+            Araç
+          </option>
+
+        </select>
+
+      </label>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+      ">
+
+        <button
+          style="flex:1"
+          onclick="
+            document
+              .getElementById('stockModal')
+              .remove()
+          "
+        >
+          İptal
+        </button>
+
+        <button
+          class="primary"
+          style="flex:1"
+          onclick="confirmNewStock()"
+        >
+          STOK EKLE
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+  async function newRawMaterial(){
+
+  const name = prompt("Hammadde adı:");
+
+  if(name === null) return;
+
+  if(!name.trim()){
+
+    toast("Hammadde adı boş olamaz");
+
+    return;
+  }
+
+
+  const qty = Number(
+    prompt("Miktar (kg):", "1")
+  );
+
+  if(!Number.isFinite(qty) || qty <= 0){
+
+    toast("Geçerli bir miktar girin");
+
+    return;
+  }
+
+
+  try{
+
+    const existing = state.rawMaterials.find(
+      r =>
+        String(r.name || "")
+          .trim()
+          .toLocaleLowerCase("tr-TR")
+        ===
+        name.trim()
+          .toLocaleLowerCase("tr-TR")
+    );
+
+
+    if(existing){
+
+      const newQty =
+        Number(existing.quantity || 0) + qty;
+
+
+      await sb(
+        "raw_materials?id=eq." +
+        encodeURIComponent(existing.id),
+        {
+          method:"PATCH",
+
+          body:JSON.stringify({
+            quantity:newQty,
+            unit:"kg"
+          })
+        }
+      );
+
+      toast(
+        name.trim() +
+        " stoğuna " +
+        qty +
+        " kg eklendi"
+      );
+
+    }else{
+
+      await sb(
+        "raw_materials",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            name:name.trim(),
+            quantity:qty,
+            unit:"kg"
+          })
+        }
+      );
+
+      toast(
+        name.trim() +
+        " hammaddesi eklendi"
+      );
+
+    }
+
+
+    await loadData();
+
+    stockTab("raw");
+
+
+  }catch(e){
+
+    console.error(
+      "HAMMADDE HATASI:",
+      e
+    );
+
+    toast(
+      e.message ||
+      "Hammadde kaydedilemedi"
+    );
+
+  }
 
 }
+  async function confirmRawEntry(){
 
+  try{
 
-const old=
-document.getElementById("stockModal");
+    const index =
+      Number(
+        document.getElementById(
+          "rawEntryProduct"
+        ).value
+      );
 
-if(old){
-old.remove();
-}
+    const qty =
+      Number(
+        document.getElementById(
+          "rawEntryQty"
+        ).value
+      );
 
+    const unit =
+      document.getElementById(
+        "rawEntryUnit"
+      ).value;
 
-const modal=
-document.createElement("div");
+    const raw =
+      state.rawMaterials[index];
 
-modal.id="stockModal";
+    if(!raw){
 
-modal.style.cssText=`
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.45);
-z-index:100;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px;
-`;
+      toast("Hammadde seçin");
 
+      return;
+    }
 
-modal.innerHTML=`
+    if(!qty || qty <= 0){
 
-<div style="
-background:#fff;
-width:100%;
-max-width:450px;
-border-radius:16px;
-padding:20px;
-box-shadow:0 10px 40px rgba(0,0,0,.25)
-">
+      toast("Miktar girin");
 
-<h2 style="margin-top:0">
-Stok Girişi
-</h2>
+      return;
+    }
 
-<label>
-Ürün
+    /*
+      Eğer gr girilmişse kg'a çevir
+    */
 
-<select id="newStockProduct">
+    let addKg = qty;
 
-${state.products.map(
-(p,i)=>
-`
-<option value="${i}">
-${p.name} — ${p.package_size}
-</option>
-`
-).join("")}
+    if(unit === "gr"){
+      addKg = qty / 1000;
+    }
 
-</select>
+    const current =
+      Number(raw.quantity || 0);
 
-</label>
+    const next =
+      current + addKg;
 
+    await sb(
+      "raw_materials?id=eq." + raw.id,
+      {
+        method:"PATCH",
 
-<label>
-Miktar
+        body:JSON.stringify({
+          quantity:next,
+          unit:"kg"
+        })
+      }
+    );
 
-<input
-id="newStockQty"
-type="number"
-step="0.001"
-min="0"
-placeholder="Örn: 10">
+    /*
+      Hammadde giriş hareketi
+    */
 
-</label>
+    toast(
+      raw.name +
+      " stoğuna " +
+      addKg.toLocaleString("tr-TR", {
+        maximumFractionDigits:3
+      }) +
+      " kg eklendi"
+    );
 
+    const modal =
+      document.getElementById(
+        "rawStockModal"
+      );
 
-<label>
-Yer
+    if(modal){
+      modal.remove();
+    }
 
-<select id="newStockLocation">
+    await loadData();
 
-<option value="warehouse">
-Depo
-</option>
+    stockTab("raw");
 
-<option value="vehicle">
-Araç
-</option>
+  }catch(e){
 
-</select>
+    console.error(
+      "HAMMADDE GİRİŞ HATASI:",
+      e
+    );
 
-</label>
+    toast(
+      e.message ||
+      "Hammadde eklenemedi"
+    );
 
-
-<div style="
-display:flex;
-gap:10px;
-margin-top:15px
-">
-
-<button
-style="flex:1"
-onclick="document.getElementById('stockModal').remove()">
-
-İptal
-
-</button>
-
-
-<button
-class="primary"
-style="flex:1"
-onclick="confirmNewStock()">
-
-STOK EKLE
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-
-document.body.appendChild(modal);
+  }
 
 }
 
@@ -1702,6 +2582,202 @@ function updateTransferDirection(){
     title.textContent = "Depo → Araç";
     button.textContent = "ARACA AKTAR";
 
+  }
+}
+function calculateProduction(){
+
+  const qtyInput = document.getElementById("productionQty");
+  const gramInput = document.getElementById("productionGram");
+  const info = document.getElementById("productionInfo");
+
+  if (!qtyInput || !gramInput || !info) return;
+
+  const qty = Number(
+    String(qtyInput.value || "").replace(",", ".")
+  );
+
+  const gram = Number(
+    String(gramInput.value || "").replace(",", ".")
+  );
+
+  if (qty <= 0 || gram <= 0) {
+    info.textContent =
+      "Üretim miktarı girildiğinde hesaplanır.";
+    return;
+  }
+
+  const kg = (qty * gram) / 1000;
+
+  info.innerHTML =
+    `${qty.toLocaleString("tr-TR")} adet × ` +
+    `${gram.toLocaleString("tr-TR")} gr = ` +
+    `<b>${kg.toLocaleString("tr-TR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 3
+    })} kg</b> hammadde tüketilecek.`;
+}
+  if(productionQty){
+  productionQty.addEventListener(
+    "input",
+    calculateProduction
+  );
+}
+
+if(productionGram){
+  productionGram.addEventListener(
+    "input",
+    calculateProduction
+  );
+}
+  calculateProduction();
+  async function saveProduction(){
+  try {
+    // Elemanları her tıklamada yeniden bul
+    const rawSelect = document.getElementById("productionRawProduct");
+    const productSelect = document.getElementById("productionProduct");
+    const qtyInput = document.getElementById("productionQty");
+    const gramInput = document.getElementById("productionGram");
+
+    if (!rawSelect || !productSelect || !qtyInput || !gramInput) {
+      throw new Error("Üretim alanları bulunamadı");
+    }
+
+    const rawIndex = Number(rawSelect.value);
+    const productIndex = Number(productSelect.value);
+
+    const qty = Number(String(qtyInput.value).replace(",", "."));
+    const gram = Number(String(gramInput.value).replace(",", "."));
+
+    const raw = state.rawMaterials[rawIndex];
+    const product = state.products[productIndex];
+
+    console.log("ÜRETİM:", {
+      raw,
+      product,
+      qty,
+      gram
+    });
+
+    if (!raw) {
+      toast("Hammadde seçin");
+      return;
+    }
+
+    if (!product) {
+      toast("Üretilecek ürünü seçin");
+      return;
+    }
+
+    if (!qty || qty <= 0) {
+      toast("Üretilecek adet girin");
+      return;
+    }
+
+    if (!gram || gram <= 0) {
+      toast("Paket gramajını girin");
+      return;
+    }
+
+    // Tüketilecek hammadde kg
+    const consumed = (qty * gram) / 1000;
+    const current = Number(raw.quantity || 0);
+
+    if (current < consumed) {
+      toast(
+        "Yetersiz hammadde! " +
+        raw.name +
+        " mevcut: " +
+        current +
+        " " +
+        (raw.unit || "kg")
+      );
+      return;
+    }
+
+    // 1. HAMMADDE STOĞUNDAN DÜŞ
+    const rawResult = await sb(
+      "raw_materials?id=eq." + encodeURIComponent(raw.id),
+      {
+        method: "PATCH",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          quantity: current - consumed
+        })
+      }
+    );
+
+    console.log("HAMMADDE GÜNCELLEME:", rawResult);
+
+    if (!Array.isArray(rawResult) || rawResult.length === 0) {
+      throw new Error(
+        "Hammadde stoğu güncellenemedi. Supabase UPDATE/RLS politikasını kontrol edin."
+      );
+    }
+
+    // 2. ÜRÜNÜ DEPO STOĞUNA EKLE
+    await upsertStock(
+      product.id,
+      "warehouse",
+      qty
+    );
+
+    // 3. ÜRETİM HAREKETİNİ KAYDET
+    const movementResult = await sb(
+      "stock_movements",
+      {
+        method: "POST",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          product_id: product.id,
+          movement_type: "production",
+          to_location: "warehouse",
+          quantity: qty,
+          notes:
+            "Üretim: " +
+            qty +
+            " adet × " +
+            gram +
+            " gr | " +
+            consumed +
+            " kg " +
+            raw.name +
+            " hammaddesi tüketildi"
+        })
+      }
+    );
+
+    console.log("ÜRETİM HAREKETİ:", movementResult);
+
+    if (!Array.isArray(movementResult) || movementResult.length === 0) {
+      console.warn("stock_movements kayıt döndürmedi:", movementResult);
+    }
+
+    // 4. BAŞARILI
+    toast(
+      qty +
+      " adet " +
+      product.name +
+      " üretimi kaydedildi"
+    );
+
+    qtyInput.value = "";
+    gramInput.value = "";
+
+    calculateProduction();
+
+    // Verileri yeniden çek
+    await loadData();
+
+    // Üretim ekranında kal
+    stockTab("production");
+
+  } catch (e) {
+    console.error("ÜRETİM HATASI:", e);
+    toast(e.message || "Üretim kaydedilemedi");
   }
 }
 async function saveTransfer(){
@@ -2074,83 +3150,7 @@ function renderProducts(){
 }
 
 
-async function login(email,password){
-  const btn=document.getElementById("loginButton");
-  const err=document.getElementById("loginError");
-  err.style.display="none";
-  btn.disabled=true;
-  btn.textContent="GİRİŞ YAPILIYOR...";
-
-  try{
-    const r=await fetch(SB_URL+"/auth/v1/token?grant_type=password",{
-      method:"POST",
-      headers:{"apikey":SB_KEY,"Content-Type":"application/json"},
-      body:JSON.stringify({email,password})
-    });
-    const data=await r.json();
-    if(!r.ok){
-      throw new Error(data.error_description||data.msg||"E-posta veya şifre hatalı.");
-    }
-
-    localStorage.setItem("bahcem_access_token",data.access_token);
-    if(data.refresh_token) localStorage.setItem("bahcem_refresh_token",data.refresh_token);
-    if(data.user) localStorage.setItem("bahcem_user",JSON.stringify(data.user));
-
-    document.getElementById("loginScreen").hidden=true;
-    document.getElementById("appShell").hidden=false;
-    await loadData();
-  }catch(e){
-    err.textContent=e.message||"Giriş yapılamadı.";
-    err.style.display="block";
-  }finally{
-    btn.disabled=false;
-    btn.textContent="GİRİŞ YAP";
-  }
-}
-
-async function restoreSession(){
-  const token=localStorage.getItem("bahcem_access_token");
-  if(!token){
-    document.getElementById("loginScreen").hidden=false;
-    return;
-  }
-
-  try{
-    const r=await fetch(SB_URL+"/auth/v1/user",{
-      headers:{"apikey":SB_KEY,"Authorization":"Bearer "+token}
-    });
-    if(!r.ok) throw new Error("session");
-    const user=await r.json();
-    localStorage.setItem("bahcem_user",JSON.stringify(user));
-    document.getElementById("loginScreen").hidden=true;
-    document.getElementById("appShell").hidden=false;
-    await loadData();
-  }catch(e){
-    localStorage.removeItem("bahcem_access_token");
-    localStorage.removeItem("bahcem_refresh_token");
-    localStorage.removeItem("bahcem_user");
-    document.getElementById("loginScreen").hidden=false;
-  }
-}
-
-function logout(){
-  localStorage.removeItem("bahcem_access_token");
-  localStorage.removeItem("bahcem_refresh_token");
-  localStorage.removeItem("bahcem_user");
-  document.getElementById("appShell").style.display="none";
-  document.getElementById("loginScreen").hidden=false;
-  document.getElementById("loginPassword").value="";
-}
-
-document.getElementById("loginForm").addEventListener("submit",function(e){
-  e.preventDefault();
-  login(
-    document.getElementById("loginEmail").value.trim(),
-    document.getElementById("loginPassword").value
-  );
-});
-
-restoreSession();
+loadData();
 
 </script>
 
