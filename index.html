@@ -1314,55 +1314,56 @@ function renderCustomers(){
 
 async function editCustomer(id){
 
+  const c = state.customers.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!c){
+    toast("Müşteri bulunamadı");
+    return;
+  }
+
+  const name = prompt(
+    "Müşteri adı:",
+    c.name || ""
+  );
+
+  if(name === null) return;
+
+  const newName = name.trim();
+
+  if(!newName){
+    toast("Müşteri adı boş olamaz");
+    return;
+  }
+
+  const phone = prompt(
+    "Telefon:",
+    c.phone || ""
+  );
+
+  if(phone === null) return;
+
+  const newPhone = phone.trim();
+
   try{
 
-    // Müşteriyi Supabase'den doğrudan bul
-    const found = await sb(
-      "customers?select=*&id=eq." +
-      encodeURIComponent(String(id))
-    );
-
-    if(!found || !found.length){
-      toast("Müşteri Supabase'de bulunamadı");
-      console.error("MÜŞTERİ ID:", id);
-      console.error("SUPABASE SONUCU:", found);
-      return;
-    }
-
-    const c = found[0];
-
-    const name = prompt(
-      "Müşteri adı:",
-      c.name || ""
-    );
-
-    if(name === null) return;
-
-    const newName = name.trim();
-
-    if(!newName){
-      toast("Müşteri adı boş olamaz");
-      return;
-    }
-
-    const phone = prompt(
-      "Telefon:",
-      c.phone || ""
-    );
-
-    if(phone === null) return;
-
-    const newPhone = phone.trim();
-
-    console.log("GÜNCELLENECEK MÜŞTERİ:", c);
+    console.log("MÜŞTERİ GÜNCELLEME");
     console.log("ID:", c.id);
+    console.log("ESKİ İSİM:", c.name);
+    console.log("YENİ İSİM:", newName);
 
-    // Güncelle
-    await sb(
+    /*
+      MÜŞTERİYİ GÜNCELLE
+    */
+    const result = await sb(
       "customers?id=eq." +
       encodeURIComponent(String(c.id)),
       {
         method:"PATCH",
+        headers:{
+          "Prefer":"return=representation"
+        },
         body:JSON.stringify({
           name:newName,
           phone:newPhone
@@ -1370,48 +1371,84 @@ async function editCustomer(id){
       }
     );
 
-    // Güncellemenin gerçekten yapıldığını tekrar kontrol et
-    const check = await sb(
-      "customers?select=*&id=eq." +
-      encodeURIComponent(String(c.id))
-    );
+    console.log("PATCH SONUCU:", result);
 
-    if(!check || !check.length){
-      toast("Müşteri kaydı kontrol edilemedi");
-      return;
+    /*
+      Supabase'in döndürdüğü kayıt yoksa
+      ama hata da vermediyse RLS/izin problemi
+      olma ihtimali yüksek.
+    */
+    if(!result || result.length === 0){
+
+      /*
+        Şimdi doğrudan tekrar okuyalım
+      */
+      const verify = await sb(
+        "customers?select=id,name,phone&id=eq." +
+        encodeURIComponent(String(c.id))
+      );
+
+      console.log("KONTROL SONUCU:", verify);
+
+      if(
+        verify &&
+        verify.length &&
+        verify[0].name === newName
+      ){
+
+        toast("Müşteri güncellendi");
+
+        const index = state.customers.findIndex(
+          x => String(x.id) === String(c.id)
+        );
+
+        if(index !== -1){
+          state.customers[index] = verify[0];
+        }
+
+        renderCustomers();
+
+        saleCustomer.innerHTML =
+          customerOptions();
+
+        paymentCustomer.innerHTML =
+          customerOptions();
+
+        return;
+      }
+
+      throw new Error(
+        "Müşteri güncelleme yetkisi çalışmıyor. Supabase UPDATE politikası kontrol edilmeli."
+      );
     }
 
-    if(check[0].name !== newName){
-      toast("İsim güncellenmedi");
-      console.error("BEKLENEN:", newName);
-      console.error("GELEN:", check[0].name);
-      return;
-    }
+    /*
+      Başarılı güncelleme
+    */
+    const updated = result[0];
 
-    // Yerel listeyi güncelle
     const index = state.customers.findIndex(
       x => String(x.id) === String(c.id)
     );
 
     if(index !== -1){
-      state.customers[index] = check[0];
+      state.customers[index] = updated;
     }
 
-    // Müşteri listesini yenile
     renderCustomers();
 
-    // Satış müşteri listesini yenile
-    saleCustomer.innerHTML = customerOptions();
+    saleCustomer.innerHTML =
+      customerOptions();
 
-    // Tahsilat müşteri listesini yenile
-    paymentCustomer.innerHTML = customerOptions();
+    paymentCustomer.innerHTML =
+      customerOptions();
 
-    // Detay açıksa ismi de değiştir
     if(
       detailId &&
       String(detailId) === String(c.id)
     ){
-      detailName.textContent = newName;
+      detailName.textContent =
+        updated.name;
     }
 
     toast("Müşteri başarıyla güncellendi");
