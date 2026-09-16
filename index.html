@@ -2584,37 +2584,38 @@ function updateTransferDirection(){
 
   }
 }
- function calculateProduction(){
+function calculateProduction(){
 
-  if(!productionQty || !productionGram) return;
+  const qtyInput = document.getElementById("productionQty");
+  const gramInput = document.getElementById("productionGram");
+  const info = document.getElementById("productionInfo");
 
-  const qty =
-    Number(productionQty.value || 0);
+  if (!qtyInput || !gramInput || !info) return;
 
-  const gram =
-    Number(productionGram.value || 0);
+  const qty = Number(
+    String(qtyInput.value || "").replace(",", ".")
+  );
 
-  if(qty <= 0 || gram <= 0){
+  const gram = Number(
+    String(gramInput.value || "").replace(",", ".")
+  );
 
-    productionInfo.textContent =
+  if (qty <= 0 || gram <= 0) {
+    info.textContent =
       "Üretim miktarı girildiğinde hesaplanır.";
-
     return;
   }
 
-  const totalGram = qty * gram;
-  const totalKg = totalGram / 1000;
+  const kg = (qty * gram) / 1000;
 
-  productionInfo.innerHTML =
-    `
-    ${qty.toLocaleString("tr-TR")} adet ×
-    ${gram.toLocaleString("tr-TR")} gr
-    =
-    <b>${totalKg.toLocaleString("tr-TR",{maximumFractionDigits:3})} kg</b>
-    hammadde tüketilecek.
-    `;
-
-} 
+  info.innerHTML =
+    `${qty.toLocaleString("tr-TR")} adet × ` +
+    `${gram.toLocaleString("tr-TR")} gr = ` +
+    `<b>${kg.toLocaleString("tr-TR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 3
+    })} kg</b> hammadde tüketilecek.`;
+}
   if(productionQty){
   productionQty.addEventListener(
     "input",
@@ -2628,6 +2629,7 @@ if(productionGram){
     calculateProduction
   );
 }
+  calculateProduction();
   async function saveProduction(){
   try {
     // Elemanları her tıklamada yeniden bul
