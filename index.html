@@ -4,463 +4,101 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#16823b">
-<title>BahÃ§em Baharat</title>
+<title>Bah&#231;em Baharat</title>
 
 <style>
+:root{--gold:#f4c95d;--gold2:#dcae32;--gold3:#ffe39a;--black:#080808;--panel:#101010;--panel2:#151515;--line:#3d3420;--text:#f7f2e6;--muted:#a9a49a;--danger:#ff4d4d;--success:#66d98a}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f4f6f5;color:#17221a;padding-bottom:75px}
-.top{background:#16823b;color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
-.brand{font-weight:900}
-.sub{font-size:11px;opacity:.85}
-.mode{background:#fff;color:#16823b;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:800}
-
-main{max-width:1000px;margin:auto;padding:14px}
-.page{display:none}
-.page.active{display:block}
-.sectionHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-h1{font-size:22px;margin:8px 0}
-h2{font-size:17px;margin:4px 0 12px}
-
-.card{background:#fff;border:1px solid #e2e7e3;border-radius:14px;padding:14px;margin-bottom:12px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stats span{font-size:12px;color:#66736a}
-.stats b{display:block;font-size:19px;margin-top:7px}
-
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-
-button{border:0;border-radius:10px;padding:11px 13px;background:#e8eee9;color:#17321f;font-weight:700}
-button.primary{background:#16823b;color:#fff}
-button.big{width:100%;padding:15px;font-size:16px;margin-top:10px}
-button.small{padding:8px 10px}
-button.ghost{background:transparent}
-button.remove{background:#ffecec;color:#a33;padding:9px}
-
-label{display:block;font-size:12px;font-weight:700;color:#58645c;margin:9px 0}
-input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9px;padding:11px;background:#fff;font-size:15px}
-.row{display:flex;gap:10px}
-.grow{flex:1}
-
-.saleRow{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:end;border-bottom:1px solid #eee;padding:7px 0}
-.total{display:flex;justify-content:space-between;font-size:18px;margin-top:14px;padding-top:12px;border-top:2px solid #ddd}
-
-.customer{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #eee}
-.customer:last-child{border:0}
-.debt{font-weight:900}
-
-.detailTop{display:flex;justify-content:space-between;align-items:center}
-.detailTop b{font-size:24px}
-
-.movement{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eee}
-.movement small{display:block;color:#69756d}
-.plus{color:#b3261e}
-.minus{color:#19733a}
-
-.stockRow{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;padding:9px 0;border-bottom:1px solid #eee}
-.stockRow small{display:block;color:#69756d}
-
-.muted{color:#657168;font-size:13px;line-height:1.5}
-
-.tabs{display:flex;gap:6px;margin-bottom:10px}
-.tabs button.active{background:#16823b;color:#fff}
-
-.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:7px;z-index:10}
-.bottom button{background:transparent;font-size:21px;padding:3px 10px}
-.bottom small{display:block;font-size:10px}
-
-#toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#17221a;color:#fff;padding:11px 16px;border-radius:99px;display:none;z-index:20}
-
-@media(max-width:650px){
-.grid{grid-template-columns:1fr 1fr}
-.quick{grid-template-columns:1fr 1fr}
-.saleRow{grid-template-columns:1fr 75px 85px 40px}
-.row{flex-direction:column;gap:0}
-}
-/* ANA EKRAN GÃ–RÃœNÃœMÃœ */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin:15px 0;
-}
-
-.grid .card{
-  background:#fff;
-  border:1px solid #e5e5e5;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.grid .card span{
-  display:block;
-  font-size:13px;
-  color:#777;
-  margin-bottom:8px;
-}
-
-.grid .card b{
-  display:block;
-  font-size:20px;
-  font-weight:700;
-}
-
-.quick{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-
-.quick button{
-  min-height:44px;
-  border:1px solid #ddd;
-  border-radius:9px;
-  background:#fff;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.quick button:hover{
-  background:#f3f3f3;
-}
-
-#recent{
-  min-height:40px;
-}
-
-.movement{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 4px;
-  border-bottom:1px solid #eee;
-}
-
-.movement small{
-  display:block;
-  color:#888;
-  margin-top:4px;
-}
-
-@media(max-width:700px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .quick{
-    grid-template-columns:repeat(2,1fr);
-  }
-}
-.grid.stats{
-  display:grid !important;
-  grid-template-columns:repeat(4,1fr) !important;
-  gap:12px !important;
-}
-
-.grid.stats .card{
-  background:#fff;
-  border:1px solid #e5e5e5;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.grid.stats .card span{
-  display:block;
-  color:#777;
-  font-size:13px;
-  margin-bottom:8px;
-}
-
-.grid.stats .card b{
-  display:block;
-  font-size:20px;
-  font-weight:700;
-}
-
-@media(max-width:650px){
-  .grid.stats{
-    grid-template-columns:repeat(2,1fr) !important;
-  }
-  .quick{
-    grid-template-columns:repeat(2,1fr) !important;
-}                        
-}
-</style>
-
-<style id="bahcem-gold-v2">
-:root{
-  --bg:#080908;--panel:#101211;--panel2:#141615;--line:#383a35;
-  --gold:#d9ad42;--gold2:#f3cc68;--text:#eee9dd;--muted:#96958c;
-}
-html,body{background:#080908!important;color:var(--text)!important}
-body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;min-height:100vh;padding-bottom:30px!important}
-.top{
-  height:86px!important;position:fixed!important;left:260px;right:0;top:0;
-  background:rgba(8,9,8,.94)!important;border-bottom:1px solid rgba(217,173,66,.22);
-  padding:0 28px!important;z-index:50!important;backdrop-filter:blur(14px);
-}
-.mobileBrand{display:none}.menuBtn{
-  background:transparent!important;color:var(--gold2)!important;border:0!important;
-  font-size:31px!important;padding:5px 10px!important;
-}
-.topRight{margin-left:auto;display:flex;align-items:center;gap:22px}
-.dateBox,.userBox{
-  display:flex;align-items:center;gap:12px;border:1px solid #44453e;
-  border-radius:12px;padding:10px 15px;color:#f0ede5;background:#0d0f0e;
-}
-.dateBox:first-letter,.userIcon{color:var(--gold2)}
-.dateBox small,.userBox small{color:#aaa79e}
-.userBox{border:0;background:transparent;padding-right:0}
-.userIcon{font-size:28px;border:1px solid var(--gold);border-radius:50%;width:40px;height:40px;display:grid;place-items:center}
-.sideMenu{
-  position:fixed;left:0;top:0;bottom:0;width:260px;z-index:60;
-  background:
-    radial-gradient(circle at 40% 80%,rgba(180,120,30,.15),transparent 27%),
-    linear-gradient(180deg,#0a0b0a,#070807);
-  border-right:1px solid rgba(217,173,66,.48);
-  padding:18px 16px;display:flex;flex-direction:column;
-}
-.sideLogo{text-align:center;padding:5px 0 22px;border-bottom:1px solid #292b27}
-.leafMark{color:var(--gold2);font-size:28px}
-.logoScript,.brandScript{
-  font-family:"Brush Script MT","Segoe Script",cursive;color:var(--gold2);
-  font-size:48px;line-height:.85;font-weight:600;
-}
-.logoSub,.brandSub{letter-spacing:6px;font-size:12px;margin-top:10px;color:#eee8dc}
-.logoTag{font-family:cursive;color:var(--gold);font-size:15px;margin-top:18px}
-.sideNav{display:flex;flex-direction:column;gap:6px;padding-top:15px}
-.navItem{
-  width:100%;display:flex;align-items:center;gap:16px;text-align:left;
-  background:transparent!important;border:1px solid transparent!important;
-  color:#eee9df!important;padding:12px 14px!important;border-radius:10px!important;
-  font-size:16px!important;font-weight:600!important;
-}
-.navItem:first-letter{color:var(--gold2)}
-.navItem.active,.navItem:hover{
-  background:linear-gradient(90deg,#f0c85f,#b98828)!important;
-  color:#17140d!important;border-color:rgba(255,220,120,.4)!important;
-  box-shadow:0 7px 20px rgba(211,163,50,.15);
-}
-.navItem.active span,.navItem:hover span{color:#17140d!important}
-.sideFooter{margin-top:auto;padding:18px 8px;color:var(--gold);font-family:cursive;font-size:18px}
-.sideFooter span{display:block;color:#c9b875;font-size:14px}
-main{max-width:none!important;margin-left:260px!important;padding:110px 26px 30px!important}
+html,body{min-height:100%;}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 75% 0%,#251d0b 0,#0b0b0b 30%,#050505 75%);color:var(--text);padding-bottom:0;}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(244,201,93,.035),transparent 35%,rgba(244,201,93,.02));}
+.top{height:82px;background:rgba(7,7,7,.96);border-bottom:1px solid #3a301c;color:#fff;padding:0 28px 0 292px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:0;right:0;z-index:20;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.brand{font-size:22px;font-weight:900;letter-spacing:2px;color:var(--gold)}
+.sub{font-size:11px;opacity:.7;letter-spacing:1px;color:#ddd;margin-top:3px}
+.mode{background:#17150e;color:var(--gold);border:1px solid #5a4820;border-radius:999px;padding:7px 13px;font-size:11px;font-weight:800;letter-spacing:.6px;box-shadow:0 0 18px rgba(244,201,93,.08)}
+main{max-width:none;margin:0 0 0 260px;padding:112px 28px 32px;min-height:100vh}
 .page{display:none}.page.active{display:block}
-.heroHead{display:flex;justify-content:space-between;align-items:flex-end;padding:10px 4px 20px}
-.eyebrow{color:#8d8c83;font-size:11px;letter-spacing:2px}
-.heroHead h1{color:var(--gold2)!important;font-size:40px!important;margin:9px 0 4px!important}
-.heroHead p{font-size:17px;color:#dedad1;margin:0}
-.heroSlogan{text-align:right;color:var(--gold2);font-family:cursive;font-size:22px;line-height:1.05;padding-right:10px}
-.heroSlogan em{font-size:18px}
-.grid.stats{grid-template-columns:repeat(4,1fr)!important;gap:18px!important;margin:10px 0 18px!important}
-.grid.stats .card,.card{
-  background:linear-gradient(145deg,#111312,#0c0e0d)!important;
-  border:1px solid #3b3d37!important;border-radius:14px!important;
-  box-shadow:0 12px 30px rgba(0,0,0,.22)!important;color:var(--text)!important;
-}
-.statCard{display:flex;align-items:center;gap:15px;min-height:118px}
-.statCard span{color:#ddd8ce!important;font-size:14px!important}
-.statCard b{color:var(--gold2)!important;font-size:29px!important;margin-top:5px!important}
-.statCard small{display:block;color:#aaa69c;margin-top:4px}
-.statIcon{width:48px;height:48px;display:grid;place-items:center;color:var(--gold2);font-size:34px}
-.dashboardQuick{grid-template-columns:repeat(5,1fr)!important;gap:12px!important;margin:8px 0 16px}
-.dashboardQuick button{
-  min-height:58px!important;background:linear-gradient(145deg,#191915,#0e100e)!important;
-  border:1px solid #b88c28!important;color:var(--gold2)!important;border-radius:11px!important;
-  font-size:15px!important;box-shadow:0 8px 20px rgba(0,0,0,.2);
-}
-.dashboardQuick button:hover{background:linear-gradient(145deg,#2a2414,#11120f)!important;transform:translateY(-1px)}
-.dashboardColumns{display:grid;grid-template-columns:1.45fr 1fr;gap:18px}
-.dashboardPanel{min-height:250px}
-.panelTitle{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #2b2e2b;padding-bottom:9px}
-.panelTitle h2{color:var(--gold2)!important;margin:0!important}
-.panelTitle i{color:#e06455;font-style:normal}
-.fakeStock>div{display:grid;grid-template-columns:2fr .6fr .6fr;padding:10px 6px;border-bottom:1px solid #262926;color:#dedbd2}
-.fakeStock>div:first-child{color:#a8a49a;font-size:12px}
-.fakeStock strong{color:var(--gold2)}
-.brandNote{display:flex;align-items:center;gap:22px;padding:15px 20px!important;margin-top:18px}
-.brandNote b{display:block;color:var(--gold2);font-size:18px}
-.brandNote span{color:#aaa79f;font-size:12px}
-.goldBars{display:flex;gap:5px;align-items:end;height:28px}
-.goldBars i{width:8px;background:var(--gold);display:block}
-.goldBars i:nth-child(1){height:10px}.goldBars i:nth-child(2){height:16px}.goldBars i:nth-child(3){height:22px}
-.goldBars i:nth-child(4){height:27px}.goldBars i:nth-child(5){height:19px}.goldBars i:nth-child(6){height:24px}.goldBars i:nth-child(7){height:14px}
-.sectionHead h1{color:var(--gold2)!important}
-label{color:#aaa79f!important}
-input,select{
-  background:#0b0d0c!important;color:#eee9df!important;border-color:#3a3d38!important;
-}
-input:focus,select:focus{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(217,173,66,.10)!important}
-button.primary{background:linear-gradient(135deg,#b88625,#e8c15c)!important;color:#151109!important}
-button{background:#1a1d1a!important;color:#eee9df!important;border-color:#343733}
-.tabs{background:#0d0f0e!important;border:1px solid #2d302c;padding:5px;border-radius:12px}
-.tabs button.active{background:linear-gradient(135deg,#b88625,#e8c15c)!important;color:#151109!important}
-.bottom{display:none!important}
-#toast{background:#171914!important;color:var(--gold2)!important;border:1px solid #a27b26!important}
-@media(max-width:900px){
-  .sideMenu{transform:translateX(-100%);transition:.2s}
-  .sideMenu.open{transform:translateX(0)}
-  .top{left:0!important}
-  main{margin-left:0!important;padding:96px 14px 25px!important}
-  .menuBtn{display:block}
-  .grid.stats{grid-template-columns:repeat(2,1fr)!important}
-  .dashboardQuick{grid-template-columns:repeat(2,1fr)!important}
-  .dashboardColumns{grid-template-columns:1fr}
-  .heroSlogan{display:none}
-}
-@media(max-width:600px){
-  .dateBox{display:none}
-  .heroHead h1{font-size:30px!important}
-  .grid.stats{grid-template-columns:1fr 1fr!important}
-  .statCard{min-height:100px;padding:12px!important}
-  .statCard b{font-size:22px!important}
-  .dashboardQuick{grid-template-columns:1fr 1fr!important}
-}
+.sectionHead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+h1{font-size:28px;margin:8px 0;color:var(--gold);letter-spacing:.2px}h2{font-size:18px;margin:4px 0 14px;color:var(--gold3)}
+.card{background:linear-gradient(145deg,rgba(20,20,20,.98),rgba(9,9,9,.98));border:1px solid #4a3d22;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.025)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.grid.stats{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:14px!important;margin:0 0 18px}
+.grid .card,.grid.stats .card{background:linear-gradient(145deg,#171717,#0b0b0b);border:1px solid #5a4925;border-radius:14px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,.25);position:relative;overflow:hidden}
+.grid .card:after{content:"";position:absolute;right:-35px;top:-35px;width:100px;height:100px;border-radius:50%;background:rgba(244,201,93,.06)}
+.stats span{font-size:12px;color:#aaa}.stats b,.grid.stats .card b{display:block;font-size:24px;margin-top:8px;color:var(--gold);font-weight:800}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.quick button{min-height:48px}
+button{border:1px solid #40351e;border-radius:10px;padding:11px 13px;background:#171717;color:#eee;font-weight:750;cursor:pointer;transition:.18s ease}button:hover{transform:translateY(-1px);border-color:var(--gold2);box-shadow:0 5px 18px rgba(244,201,93,.1)}button.primary{background:linear-gradient(135deg,#f8d978,#c99125);color:#111;border-color:#f2c95b;box-shadow:0 4px 18px rgba(218,171,50,.18)}button.big{width:100%;padding:15px;font-size:16px;margin-top:10px}button.small{padding:8px 10px}button.ghost{background:transparent;color:var(--gold3);border-color:#4d4024}button.remove{background:#291313;color:#ff8888;border-color:#6d2828}
+label{display:block;font-size:12px;font-weight:700;color:#bdb6a8;margin:9px 0}input,select{width:100%;margin-top:5px;border:1px solid #403821;border-radius:9px;padding:11px;background:#0e0e0e;color:#f4f0e7;font-size:15px;outline:none}input:focus,select:focus{border-color:var(--gold2);box-shadow:0 0 0 2px rgba(244,201,93,.08)}
+.row{display:flex;gap:10px}.grow{flex:1}.saleRow{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:end;border-bottom:1px solid #292318;padding:8px 0}.total{display:flex;justify-content:space-between;font-size:18px;margin-top:14px;padding-top:12px;border-top:1px solid #4b3d21}.total b{color:var(--gold);font-size:22px}
+.customer{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #292318}.customer:last-child{border:0}.customer small{display:block;color:#888;margin-top:4px}.debt{font-weight:900;color:var(--gold)}
+.detailTop{display:flex;justify-content:space-between;align-items:center}.detailTop b{font-size:24px;color:var(--gold)}.movement{display:flex;justify-content:space-between;align-items:center;padding:11px 4px;border-bottom:1px solid #292318}.movement small{display:block;color:#8e897e;margin-top:4px}.plus{color:#6fdb8f}.minus{color:#ff7777}.stockRow{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;padding:10px 0;border-bottom:1px solid #292318}.stockRow small{display:block;color:#8e897e}.muted{color:#8e897e;font-size:13px;line-height:1.5}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button.active{background:linear-gradient(135deg,#f8d978,#c99125);color:#111;border-color:#f2c95b}
+.bottom{position:fixed;left:0;top:0;bottom:0;width:260px;background:linear-gradient(180deg,#090909,#0d0d0d);border-right:1px solid #4a3d22;display:flex;flex-direction:column;justify-content:flex-start;padding:30px 16px;z-index:30}.bottom:before{content:"BAHÇEM\A BAHARAT";white-space:pre;text-align:center;color:var(--gold);font-weight:900;letter-spacing:2px;font-size:23px;line-height:1.25;padding:8px 0 34px}.bottom button{background:transparent;border:0;border-radius:10px;color:#ddd;text-align:left;font-size:15px;padding:13px 16px;margin:2px 0}.bottom button:hover{background:#1b180f;color:var(--gold)}.bottom small{display:inline;font-size:15px;margin-left:9px}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#15130e;border:1px solid #695323;color:#fff;padding:11px 17px;border-radius:999px;display:none;z-index:100;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#stockModal>div{background:#111!important;border:1px solid #5a4925!important;color:#fff} 
+@media(max-width:900px){.top{padding-left:22px}.bottom{width:220px}main{margin-left:220px;padding-left:18px;padding-right:18px}.grid.stats{grid-template-columns:repeat(2,1fr)!important}.quick{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.top{height:68px;padding:0 14px}.brand{font-size:17px}.sub{display:none}.mode{font-size:9px;padding:6px 9px}main{margin-left:0;padding:86px 12px 78px}.bottom{top:auto;left:0;right:0;bottom:0;width:100%;height:64px;flex-direction:row;padding:6px 3px;border-right:0;border-top:1px solid #4a3d22}.bottom:before{display:none}.bottom button{flex:1;text-align:center;font-size:18px;padding:4px 2px}.bottom small{display:block;font-size:9px;margin:1px 0 0}.grid.stats{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}.grid.stats .card{padding:13px}.stats b,.grid.stats .card b{font-size:18px}.quick{grid-template-columns:repeat(2,1fr)}.row{flex-direction:column;gap:0}.saleRow{grid-template-columns:1fr 70px 78px 38px}h1{font-size:23px}}
 </style>
-<script>
-function toggleSideMenu(){
-  const m=document.getElementById('sideMenu');
-  if(m) m.classList.toggle('open');
-}
-document.addEventListener('click',function(e){
-  const btn=e.target.closest('.navItem');
-  if(btn && window.innerWidth<=900){
-    const m=document.getElementById('sideMenu');
-    if(m) m.classList.remove('open');
-  }
-});
-</script>
-
 </head>
 
 <body>
 
-
 <header class="top">
-  <div class="mobileBrand">
-    <div class="brandScript">BahÃ§em</div>
-    <div class="brandSub">BAHARAT</div>
-  </div>
-  <button class="menuBtn" onclick="toggleSideMenu()">â˜°</button>
-  <div class="topRight">
-    <div class="dateBox">â–£ <span id="liveDate">16 EylÃ¼l 2026<br><small>Ã‡arÅŸamba 12:48</small></span></div>
-    <div class="userBox"><span class="userIcon">â—</span><span>Zafer Demir<br><small>YÃ¶netici</small></span>âŒ„</div>
-  </div>
+<div>
+<div class="brand">BAH&#199;EM BAHARAT</div>
+<div class="sub">MUHTE&#350;EM TAT &#183; STOK & CAR&#304;</div>
+</div>
+<div class="mode" id="mode">BA&#286;LANIYOR</div>
 </header>
-
-
-
-<aside id="sideMenu" class="sideMenu">
-  <div class="sideLogo">
-    <div class="leafMark">âœ¦</div>
-    <div class="logoScript">BahÃ§em</div>
-    <div class="logoSub">BAHARAT</div>
-    <div class="logoTag">DoÄŸadan Sofranzza...</div>
-  </div>
-
-  <div class="sideNav">
-    <button class="navItem active" data-page="dashboard" onclick="go('dashboard')">âŒ‚ <span>Ana Sayfa</span></button>
-    <button class="navItem" data-page="sale" onclick="go('sale')">ğŸ›’ <span>SatÄ±ÅŸ Ä°ÅŸlemleri</span></button>
-    <button class="navItem" data-page="customer" onclick="go('customer')">â™Ÿ <span>MÃ¼ÅŸteriler (Cari)</span></button>
-    <button class="navItem" data-page="payment" onclick="go('payment')">â–¤ <span>Ã–demeler</span></button>
-    <button class="navItem" data-page="production" onclick="go('production')">âš™ <span>Ãœretim</span></button>
-    <button class="navItem" data-page="stock" onclick="go('stock')">â–£ <span>Stok / Hammadde</span></button>
-    <button class="navItem" data-page="products" onclick="go('products')">â—† <span>ÃœrÃ¼nler</span></button>
-    <button class="navItem" data-page="transfer" onclick="go('transfer')">â‡„ <span>Transferler</span></button>
-  </div>
-
-  <div class="sideFooter">
-    <div>âœ¦</div>
-    <b>Kaliteli Baharat</b>
-    <span>GÃ¼venilir Lezzet</span>
-  </div>
-</aside>
 
 <main>
 
-
 <section id="dashboard" class="page active">
-  <div class="heroHead">
-    <div>
-      <div class="eyebrow">BAHÃ‡EM BAHARAT â€¢ YÃ–NETÄ°M PANELÄ°</div>
-      <h1>HoÅŸ Geldiniz</h1>
-      <p>BahÃ§em Baharat ile iÅŸiniz her zaman kontrol altÄ±nda</p>
-    </div>
-    <div class="heroSlogan">Baharatla<br><em>Daha GÃ¼zel Bir DÃ¼nya...</em></div>
-  </div>
 
-  <div class="grid stats">
-    <div class="card statCard">
-      <div class="statIcon">â†—</div>
-      <div><span>BugÃ¼nkÃ¼ SatÄ±ÅŸ</span><b id="statSales">0,00 TL</b><small>GÃ¼ncel satÄ±ÅŸ toplamÄ±</small></div>
-    </div>
-    <div class="card statCard">
-      <div class="statIcon">â™Ÿ</div>
-      <div><span>Toplam MÃ¼ÅŸteri</span><b id="statDebt">0,00 TL</b><small>Aktif cari toplamÄ±</small></div>
-    </div>
-    <div class="card statCard">
-      <div class="statIcon">â—‡</div>
-      <div><span>Toplam ÃœrÃ¼n</span><b id="statProducts">0</b><small>Stokta kayÄ±tlÄ±</small></div>
-    </div>
-    <div class="card statCard">
-      <div class="statIcon">â—‰</div>
-      <div><div><span>DÃ¼ÅŸÃ¼k Stok</span><b id="statLow">0</b><small>Hammadde / Ã¼rÃ¼n</small></div></div>
-    </div>
-  </div>
+<div class="grid stats">
+<div class="card"><span>Toplam Cari</span><b id="statDebt">0,00 TL</b></div>
+<div class="card"><span>Bug&#252;nk&#252; Sat&#305;&#351;</span><b id="statSales">0,00 TL</b></div>
+<div class="card"><span>&#220;r&#252;n &#199;e&#351;idi</span><b id="statProducts">0</b></div>
+<div class="card"><span>D&#252;&#351;&#252;k Stok</span><b id="statLow">0</b></div>
+</div>
 
-  <div class="quick dashboardQuick">
-    <button onclick="go('sale')">ğŸ›’ <span>SatÄ±ÅŸ Yap</span></button>
-    <button onclick="go('customer')">â™Ÿ <span>MÃ¼ÅŸteri Ekle</span></button>
-    <button onclick="go('production')">âš™ <span>Ãœretim Yap</span></button>
-    <button onclick="go('stock');setTimeout(()=>{try{newRawMaterial()}catch(e){}},50)">â–£ <span>Hammadde Ekle</span></button>
-    <button onclick="go('products')">â—† <span>ÃœrÃ¼n Ekle</span></button>
-  </div>
+<div class="card">
+<h2>H&#305;zl&#305; &#304;&#351;lemler</h2>
+<div class="quick">
+<button onclick="go('sale')">&#65291; Yeni Sat&#305;&#351;</button>
+<button onclick="go('customer')">&#65291; M&#252;&#351;teri</button>
+<button onclick="go('payment')">&#8378; Tahsilat</button>
+<button onclick="go('transfer')">&#8644; Depo &#8594; Ara&#231;</button>
+</div>
+</div>
 
-  <div class="dashboardColumns">
-    <div class="card dashboardPanel">
-      <div class="panelTitle"><h2>ğŸ›’ Son SatÄ±ÅŸlar</h2><button class="small ghost">TÃ¼mÃ¼nÃ¼ GÃ¶râŒ„</button></div>
-      <div id="recent"></div>
-    </div>
+<div class="card">
+<h2>Son Sat&#305;&#351;lar</h2>
+<div id="recent"></div>
+</div>
 
-    <div class="card dashboardPanel">
-      <div class="panelTitle"><h2>â–£ Stok Durumu <i>(Kritik)</i></h2><button class="small ghost" onclick="go('stock')">TÃ¼mÃ¼nÃ¼ GÃ¶r</button></div>
-      <div class="fakeStock">
-        <div><b>ÃœrÃ¼n / Hammadde</b><b>Stok</b><b>Birim</b></div>
-        <div><span>âš  Karabiber</span><strong>â€”</strong><span>kg</span></div>
-        <div><span>âš  Pul Biber</span><strong>â€”</strong><span>kg</span></div>
-        <div><span>âš  Kimyon</span><strong>â€”</strong><span>kg</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card brandNote">
-    <div class="goldBars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    <div><b>BahÃ§em Baharat</b><span>Kaliteli Baharat â€¢ GÃ¼venilir Lezzet</span></div>
-  </div>
 </section>
-
 
 
 <section id="sale" class="page">
 
 <div class="sectionHead">
-<h1>Yeni SatÄ±ÅŸ</h1>
-<button class="ghost" onclick="go('dashboard')">â† Ana</button>
+<h1>Yeni Sat&#305;&#351;</h1>
+<button class="ghost" onclick="go('dashboard')">&#8592; Ana</button>
 </div>
 
 <div class="card">
 
 <label>
-MÃ¼ÅŸteri
+M&#252;&#351;teri
 <select id="saleCustomer"></select>
 </label>
 
 <div class="row">
 
 <label class="grow">
-Ã–deme
+&#214;deme
 <select id="salePayment">
-  <option value="cash">PeÅŸin</option>
+  <option value="cash">Pe&#351;in</option>
   <option value="cari">Veresiye / Cari</option>
 </select>
 </label>
@@ -468,7 +106,7 @@ MÃ¼ÅŸteri
 <label class="grow">
 Stok
 <select id="saleLocation">
-<option value="vehicle">AraÃ§</option>
+<option value="vehicle">Ara&#231;</option>
 <option value="warehouse">Depo</option>
 </select>
 </label>
@@ -479,8 +117,8 @@ Stok
 <div class="card">
 
 <div class="sectionHead">
-<h2>ÃœrÃ¼nler</h2>
-<button class="small" onclick="addSaleRow()">ï¼‹ ÃœrÃ¼n</button>
+<h2>&#220;r&#252;nler</h2>
+<button class="small" onclick="addSaleRow()">&#65291; &#220;r&#252;n</button>
 </div>
 
 <div id="saleRows"></div>
@@ -499,8 +137,8 @@ TOPLAM
 <section id="customer" class="page">
 
 <div class="sectionHead">
-<h1>MÃ¼ÅŸteriler & Cariler</h1>
-<button class="primary" onclick="newCustomer()">ï¼‹ MÃ¼ÅŸteri</button>
+<h1>M&#252;&#351;teriler & Cariler</h1>
+<button class="primary" onclick="newCustomer()">&#65291; M&#252;&#351;teri</button>
 </div>
 
 <div id="customerList" class="card"></div>
@@ -511,8 +149,8 @@ TOPLAM
 <section id="customerDetail" class="page">
 
 <div class="sectionHead">
-<h1 id="detailName">MÃ¼ÅŸteri</h1>
-<button class="ghost" onclick="go('customer')">â† Geri</button>
+<h1 id="detailName">M&#252;&#351;teri</h1>
+<button class="ghost" onclick="go('customer')">&#8592; Geri</button>
 </div>
 
 <div class="card detailTop">
@@ -531,100 +169,18 @@ TOPLAM
 <section id="stock" class="page">
 
 <div class="sectionHead">
-
-  <h1>Stok</h1>
-
-  <div style="display:flex;gap:6px;flex-wrap:wrap">
-
-    <button class="small" onclick="newStock()">
-      ï¼‹ Stok GiriÅŸi
-    </button>
-
-    <button class="small" onclick="newRawMaterial()">
-      ï¼‹ Hammadde
-    </button>
-
-  </div>
-
+<h1>Stok</h1>
+<button class="small" onclick="newStock()">&#65291; Stok Giri&#351;i</button>
 </div>
-</div>
-
 
 <div class="tabs">
-  <button class="active" onclick="stockTab('warehouse')">Depo</button>
-  <button onclick="stockTab('vehicle')">AraÃ§</button>
-  <button onclick="stockTab('raw')">Hammadde</button>
-  <button onclick="stockTab('production')">Ãœretim</button>
+<button class="active" onclick="stockTab('warehouse')">Depo</button>
+<button onclick="stockTab('vehicle')">Ara&#231;</button>
 </div>
+
 <div class="card">
 <div id="stockTable"></div>
 </div>
-</section>
-<section id="production" class="page">
-
-<div class="sectionHead">
-  <h1>Ãœretim</h1>
-  <button class="ghost" onclick="go('stock')">â† Stok</button>
-</div>
-
-<div class="card">
-
-<h2>Hammadde â†’ ÃœrÃ¼n Ãœretimi</h2>
-
-<p class="muted">
-Ã–rneÄŸin 25 kg pul biber hammaddesinden 100 adet 40 gr pul biber
-Ã¼retirseniz hammaddeden 4 kg dÃ¼ÅŸer, depo stoÄŸuna 100 adet Ã¼rÃ¼n eklenir.
-</p>
-
-<label>
-Hammadde
-<select id="productionRawProduct"></select>
-</label>
-
-<label>
-Ãœretilecek ÃœrÃ¼n
-<select id="productionProduct"></select>
-</label>
-
-<div class="row">
-
-<label class="grow">
-Ãœretilecek Adet
-<input
-  id="productionQty"
-  type="number"
-  min="1"
-  step="1"
-  placeholder="Ã–rn: 100">
-</label>
-
-<label class="grow">
-Paket GramajÄ±
-<input
-  id="productionGram"
-  type="number"
-  min="1"
-  step="1"
-  placeholder="Ã–rn: 40">
-</label>
-
-</div>
-
-<div class="card" style="background:#f4f8f5;margin-top:15px">
-  <b>Hammadde tÃ¼ketimi</b>
-  <div id="productionInfo" class="muted">
-    Ãœretim miktarÄ± girildiÄŸinde hesaplanÄ±r.
-  </div>
-</div>
-
-<button
-  class="primary big"
-  onclick="saveProduction()">
-  ÃœRETÄ°MÄ° KAYDET
-</button>
-
-</div>
-
 
 </section>
 
@@ -632,21 +188,21 @@ Paket GramajÄ±
 <section id="transfer" class="page">
 
 <div class="sectionHead">
-<h1 id="transferTitle">Depo â†’ AraÃ§</h1>
+<h1 id="transferTitle">Depo &#8594; Ara&#231;</h1>
 </div>
 
 <div class="card">
 
 <label>
-YÃ¶n
+Y&#246;n
 <select id="transferDirection" onchange="updateTransferDirection()">  
-<option value="toVehicle">Depo â†’ AraÃ§</option>
-<option value="toWarehouse">AraÃ§ â†’ Depo</option>
+<option value="toVehicle">Depo &#8594; Ara&#231;</option>
+<option value="toWarehouse">Ara&#231; &#8594; Depo</option>
 </select>
 </label>
 
 <label>
-ÃœrÃ¼n
+&#220;r&#252;n
 <select id="transferProduct"></select>
 </label>
 
@@ -682,7 +238,7 @@ Birim
 <div class="card">
 
 <label>
-MÃ¼ÅŸteri
+M&#252;&#351;teri
 <select id="paymentCustomer"></select>
 </label>
 
@@ -696,7 +252,7 @@ Not
 <input id="paymentNote" placeholder="Nakit, EFT, havale...">
 </label>
 
-<button class="primary big" onclick="savePayment()">TAHSÄ°LATI KAYDET</button>
+<button class="primary big" onclick="savePayment()">TAHS&#304;LATI KAYDET</button>
 
 </div>
 </section>
@@ -705,12 +261,12 @@ Not
 <section id="products" class="page">
 
 <div class="sectionHead">
-<h1>ÃœrÃ¼nler</h1>
-<button class="primary" onclick="newProduct()">ï¼‹ Yeni ÃœrÃ¼n</button>
+<h1>&#220;r&#252;nler</h1>
+<button class="primary" onclick="newProduct()">&#65291; Yeni &#220;r&#252;n</button>
 </div>
 
 <div class="card">
-<input id="productSearch" placeholder="ÃœrÃ¼n ara..." oninput="renderProducts()">
+<input id="productSearch" placeholder="&#220;r&#252;n ara..." oninput="renderProducts()">
 <div id="productList"></div>
 </div>
 
@@ -720,11 +276,11 @@ Not
 
 
 <nav class="bottom">
-<button onclick="go('dashboard')">âŒ‚<small>Ana</small></button>
-<button onclick="go('sale')">ï¼‹<small>SatÄ±ÅŸ</small></button>
-<button onclick="go('customer')">â™™<small>Cari</small></button>
-<button onclick="go('stock')">â–¦<small>Stok</small></button>
-<button onclick="go('products')">â˜·<small>ÃœrÃ¼n</small></button>
+<button onclick="go('dashboard')">&#8962;<small>Ana</small></button>
+<button onclick="go('sale')">&#65291;<small>Sat&#305;&#351;</small></button>
+<button onclick="go('customer')">&#9817;<small>Cari</small></button>
+<button onclick="go('stock')">&#9638;<small>Stok</small></button>
+<button onclick="go('products')">&#9783;<small>&#220;r&#252;n</small></button>
 </nav>
 
 <div id="toast"></div>
@@ -735,63 +291,62 @@ Not
 const SB_URL="https://qylarzksgbepwzhmffva.supabase.co";
 
 /*
-  BURAYA MEVCUT SUPABASE PUBLISHABLE KEY'Ä°NÄ° KOY.
+  BURAYA MEVCUT SUPABASE PUBLISHABLE KEY'\u0130N\u0130 KOY.
 */
 const SB_KEY="sb_publishable_izJ80wVySuMYWFGPwakDXA_VYfdmuun";
 
 
 const PRODUCT_DATA=[
 {"name":"Pul Biber Halis I.","package_size":"40 gr","sale_price":22.75},
-{"name":"SÃ¼per AcÄ±","package_size":"120 gr","sale_price":78.0},
-{"name":"Ä°sot","package_size":"50 gr","sale_price":22.75},
-{"name":"AcÄ± Toz Biber","package_size":"50 gr","sale_price":22.75},
-{"name":"TatlÄ± Toz Biber","package_size":"50 gr","sale_price":22.75},
-{"name":"KiÅŸniÅŸ","package_size":"35 gr","sale_price":16.25},
+{"name":"S\u00fcper Ac\u0131","package_size":"120 gr","sale_price":78.0},
+{"name":"\u0130sot","package_size":"50 gr","sale_price":22.75},
+{"name":"Ac\u0131 Toz Biber","package_size":"50 gr","sale_price":22.75},
+{"name":"Tatl\u0131 Toz Biber","package_size":"50 gr","sale_price":22.75},
+{"name":"Ki\u015fni\u015f","package_size":"35 gr","sale_price":16.25},
 {"name":"Nane","package_size":"20 gr","sale_price":16.25},
 {"name":"Karabiber","package_size":"150 gr","sale_price":91.0},
 {"name":"Karabiber","package_size":"40 gr","sale_price":32.5},
 {"name":"Kekik","package_size":"15 gr","sale_price":16.25},
-{"name":"TarÃ§Ä±n Toz","package_size":"40 gr","sale_price":22.75},
+{"name":"Tar\u00e7\u0131n Toz","package_size":"40 gr","sale_price":22.75},
 {"name":"Kimyon","package_size":"40 gr","sale_price":22.75},
-{"name":"Ã‡Ã¶rek Otu","package_size":"130 gr","sale_price":32.5},
-{"name":"Ã‡Ã¶rek Otu","package_size":"50 gr","sale_price":19.5},
+{"name":"\u00c7\u00f6rek Otu","package_size":"130 gr","sale_price":32.5},
+{"name":"\u00c7\u00f6rek Otu","package_size":"50 gr","sale_price":19.5},
 {"name":"Susam Beyaz","package_size":"50 gr","sale_price":19.5},
 {"name":"Hindistan Cevizi","package_size":"20 gr","sale_price":16.25},
 {"name":"Zencefil","package_size":"40 gr","sale_price":19.5},
-{"name":"ZerdeÃ§al","package_size":"40 gr","sale_price":19.5},
+{"name":"Zerde\u00e7al","package_size":"40 gr","sale_price":19.5},
 {"name":"Limon Tuzu","package_size":"300 gr","sale_price":null},
 {"name":"Limon Tuzu","package_size":"55 gr","sale_price":19.5},
 {"name":"Sumak","package_size":"40 gr","sale_price":19.5},
-{"name":"Pasta SÃ¼sÃ¼","package_size":"35 gr","sale_price":16.25},
+{"name":"Pasta S\u00fcs\u00fc","package_size":"35 gr","sale_price":16.25},
 {"name":"Galeta Unu","package_size":"230 gr","sale_price":32.5},
 {"name":"Karbonat","package_size":"50 gr","sale_price":13.0},
 {"name":"Karanfil","package_size":"10 gr","sale_price":19.5},
-{"name":"KÃ¶ri","package_size":"40 gr","sale_price":19.5},
+{"name":"K\u00f6ri","package_size":"40 gr","sale_price":19.5},
 {"name":"Yenibahar","package_size":"35 gr","sale_price":39.0},
 {"name":"Ihlamur","package_size":"40 gr","sale_price":81.25},
 {"name":"Kekik","package_size":"300 gr","sale_price":null},
-{"name":"Pul Biber Halis Ä°pek","package_size":"500 gr","sale_price":227.5},
+{"name":"Pul Biber Halis \u0130pek","package_size":"500 gr","sale_price":227.5},
 {"name":"Nane","package_size":"300 gr","sale_price":null},
-{"name":"Pul Biber H. Ä°pek","package_size":"1 kg","sale_price":390.0},
+{"name":"Pul Biber H. \u0130pek","package_size":"1 kg","sale_price":390.0},
 {"name":"Amonyak","package_size":"30 gr","sale_price":19.5},
 {"name":"Mahlep","package_size":"30 gr","sale_price":32.5},
-{"name":"Mavi HaÅŸhaÅŸ","package_size":"50 gr","sale_price":19.5},
-{"name":"Ã‡ubuk TarÃ§Ä±n","package_size":"20 gr","sale_price":19.5},
-{"name":"KÃ¶fte BaharatÄ±","package_size":"40 gr","sale_price":19.5},
-{"name":"Tavuk BaharatÄ±","package_size":"40 gr","sale_price":19.5},
-{"name":"Ã‡emen","package_size":"30 gr","sale_price":19.5},
-{"name":"AcÄ± Biber","package_size":"200 gr","sale_price":130.0}
+{"name":"Mavi Ha\u015fha\u015f","package_size":"50 gr","sale_price":19.5},
+{"name":"\u00c7ubuk Tar\u00e7\u0131n","package_size":"20 gr","sale_price":19.5},
+{"name":"K\u00f6fte Baharat\u0131","package_size":"40 gr","sale_price":19.5},
+{"name":"Tavuk Baharat\u0131","package_size":"40 gr","sale_price":19.5},
+{"name":"\u00c7emen","package_size":"30 gr","sale_price":19.5},
+{"name":"Ac\u0131 Biber","package_size":"200 gr","sale_price":130.0}
 ];
 
 
 let state={
 products:[],
-rawMaterials:[],
 customers:[],
 stock:[],
 sales:[],
 payments:[]
-}
+};
 
 let stockLoc="warehouse";
 let detailId=null;
@@ -801,20 +356,6 @@ const mode=document.getElementById("mode");
 const saleCustomer=document.getElementById("saleCustomer");
 const paymentCustomer=document.getElementById("paymentCustomer");
 const transferProduct=document.getElementById("transferProduct");
-const productionRawProduct =
-  document.getElementById("productionRawProduct");
-
-const productionProduct =
-  document.getElementById("productionProduct");
-
-const productionQty =
-  document.getElementById("productionQty");
-
-const productionGram =
-  document.getElementById("productionGram");
-
-const productionInfo =
-  document.getElementById("productionInfo");  
 const saleRows=document.getElementById("saleRows");
 const saleTotal=document.getElementById("saleTotal");
 const customerList=document.getElementById("customerList");
@@ -861,7 +402,7 @@ async function sb(path,opts={}){
 
   }catch(e){
     if(e.name==="AbortError"){
-      throw new Error("Supabase baÄŸlantÄ±sÄ± 8 saniyede yanÄ±t vermedi");
+      throw new Error("Supabase ba\u011flant\u0131s\u0131 8 saniyede yan\u0131t vermedi");
     }
     throw e;
   }finally{
@@ -920,9 +461,9 @@ function options(){
   return state.products.map(function(p,i){
     return "<option value=\"" + i + "\">" +
       (p.package_size || "") +
-      " â€” " +
+      " \u2014 " +
       p.name +
-      (p.sale_price != null ? " â€” " + money(p.sale_price) : "") +
+      (p.sale_price != null ? " \u2014 " + money(p.sale_price) : "") +
       "</option>";
   }).join("");
 }
@@ -942,16 +483,12 @@ c.name+
 
 async function loadData(){
 
-mode.textContent="BAÄLANIYOR";
+mode.textContent="BA\u011eLANIYOR";
 
 try{
 
 state.products=await sb(
 "products?select=*&order=id"
-);
-
-state.rawMaterials=await sb(
-"raw_materials?select=*&order=name"
 );
 
 state.customers=await sb(
@@ -984,11 +521,11 @@ renderAll();
 
 console.error("SUPABASE HATASI:",e);
 
-mode.textContent="BAÄLANTI HATASI";
+mode.textContent="BA\u011eLANTI HATASI";
 mode.style.background="#ffecec";
 mode.style.color="#a33";
 
-toast("Bulut baÄŸlantÄ±sÄ± kurulamadÄ±");
+toast("Bulut ba\u011flant\u0131s\u0131 kurulamad\u0131");
 
 }
 
@@ -1002,31 +539,6 @@ saleCustomer.innerHTML=customerOptions();
 paymentCustomer.innerHTML=customerOptions();
 
 transferProduct.innerHTML=options();
-if(productionRawProduct){
-
-  productionRawProduct.innerHTML =
-    state.rawMaterials.map(function(r,i){
-      return `
-        <option value="${i}">
-          ${r.name} â€” ${r.quantity} ${r.unit || "kg"}
-        </option>
-      `;
-    }).join("");
-
-}
-
-if(productionProduct){
-
-  productionProduct.innerHTML =
-    state.products.map(function(p,i){
-      return `
-        <option value="${i}">
-          ${p.name} â€” ${p.package_size}
-        </option>
-      `;
-    }).join("");
-
-}  
 
 document.querySelectorAll(".sprod").forEach(
 x=>{
@@ -1087,25 +599,19 @@ function renderDashboard(){
   statLow.textContent=low;
 
   recent.innerHTML=state.sales
-  .slice(0,6)
-  .map(s=>{
-    const customer = state.customers.find(
-      c => String(c.id) === String(s.customer_id)
-    );
-
-    return `
+    .slice(0,6)
+    .map(s=>`
       <div class="movement">
         <div>
-          <b>${customer?.name || "MÃ¼ÅŸteri #" + s.customer_id}</b>
+          <b>M\u00fc\u015fteri #${s.customer_id}</b>
           <small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small>
         </div>
         <b>${money(s.total)}</b>
       </div>
-    `;
-  })
-  .join("")
-  ||
-  '<p class="muted">HenÃ¼z satÄ±ÅŸ yok.</p>';
+    `)
+    .join("")
+    ||
+    '<p class="muted">Hen\u00fcz sat\u0131\u015f yok.</p>';
 }
 
 
@@ -1124,7 +630,7 @@ ${options()}
 <option>kg</option>
 <option>adet</option>
 </select>
-<button class="remove" onclick="this.parentElement.remove();calcSale()">Ã—</button>`;
+<button class="remove" onclick="this.parentElement.remove();calcSale()">\u00d7</button>`;
 
 saleRows.appendChild(d);
 
@@ -1164,76 +670,55 @@ saleTotal.textContent=money(t);
 }
 
 
-async function upsertStock(product_id, location, delta) {
-  const rows = await sb(
-    "stock?product_id=eq." +
-    encodeURIComponent(product_id) +
-    "&location=eq." +
-    encodeURIComponent(location)
+async function upsertStock(product_id,location,delta){
+
+  const rows=await sb(
+    "stock?product_id=eq."+encodeURIComponent(product_id)+"&location=eq."+encodeURIComponent(location),
+    {
+      method:"GET"
+    }
   );
 
-  if (!Array.isArray(rows)) {
-    throw new Error("Stok bilgisi okunamadÄ±");
-  }
+  if(rows.length){
 
-  if (rows.length) {
-    const row = rows[0];
+    const row=rows[0];
 
-    const next =
-      Number(row.quantity || 0) +
-      Number(delta);
+    const next=Number(row.quantity||0)+Number(delta);
 
-    if (next < 0) {
+    if(next<0){
       throw new Error("Yetersiz stok");
     }
 
-    const result = await sb(
-      "stock?id=eq." +
-      encodeURIComponent(row.id),
+    await sb(
+      "stock?id=eq."+row.id,
       {
-        method: "PATCH",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          quantity: next
+        method:"PATCH",
+        body:JSON.stringify({
+          quantity:next
         })
       }
     );
 
-    if (!Array.isArray(result) || result.length === 0) {
-      throw new Error(
-        "ÃœrÃ¼n stoÄŸu gÃ¼ncellenemedi"
-      );
-    }
+  }else{
 
-  } else {
-
-    if (Number(delta) < 0) {
+    if(Number(delta)<0){
       throw new Error("Yetersiz stok");
     }
 
-    const result = await sb(
+    await sb(
       "stock",
       {
-        method: "POST",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          product_id: product_id,
-          location: location,
-          quantity: Number(delta)
+        method:"POST",
+        body:JSON.stringify({
+          product_id:product_id,
+          location:location,
+          quantity:Number(delta)
         })
       }
     );
 
-    if (!Array.isArray(result) || result.length === 0) {
-      throw new Error(
-        "Yeni Ã¼rÃ¼n stoÄŸu oluÅŸturulamadÄ±"
-      );
-    }
   }
+
 }
 
 
@@ -1246,7 +731,7 @@ x=>String(x.id)===String(saleCustomer.value)
 );
 
 if(!c){
-toast("Ã–nce mÃ¼ÅŸteri ekleyin");
+toast("\u00d6nce m\u00fc\u015fteri ekleyin");
 return;
 }
 
@@ -1288,7 +773,7 @@ total+=(p.sale_price||0)*q;
 );
 
 if(!items.length){
-toast("ÃœrÃ¼n ekleyin");
+toast("\u00dcr\u00fcn ekleyin");
 return;
 }
 
@@ -1306,7 +791,7 @@ if(
 Number(row.quantity)<it.q
 ){
 throw new Error(
-it.p.name+" iÃ§in stok yetersiz"
+it.p.name+" i\u00e7in stok yetersiz"
 );
 }
 
@@ -1333,7 +818,7 @@ total
 const sale=ss[0];
 
 if(!sale){
-throw new Error("SatÄ±ÅŸ kaydÄ± oluÅŸturulamadÄ±");
+throw new Error("Sat\u0131\u015f kayd\u0131 olu\u015fturulamad\u0131");
 }
 
 
@@ -1369,7 +854,7 @@ product_id:it.p.id,
 movement_type:"sale",
 from_location:loc,
 quantity:it.q,
-notes:"SatÄ±ÅŸ #"+sale.id
+notes:"Sat\u0131\u015f #"+sale.id
 })
 }
 );
@@ -1388,7 +873,7 @@ method:"POST",
 body:JSON.stringify({
 customer_id:c.id,
 movement_type:"sale",
-description:"SatÄ±ÅŸ #"+sale.id,
+description:"Sat\u0131\u015f #"+sale.id,
 debit:total,
 credit:0,
 sale_id:sale.id
@@ -1399,7 +884,7 @@ sale_id:sale.id
 }
 
 
-toast("SatÄ±ÅŸ kaydedildi");
+toast("Sat\u0131\u015f kaydedildi");
 
 saleRows.innerHTML="";
 
@@ -1413,7 +898,7 @@ console.error(e);
 
 toast(
 e.message ||
-"SatÄ±ÅŸ kaydedilemedi"
+"Sat\u0131\u015f kaydedilemedi"
 );
 
 }
@@ -1423,16 +908,16 @@ e.message ||
 
 async function newProduct(){
 
-const name=prompt("ÃœrÃ¼n adÄ±:");
+const name=prompt("\u00dcr\u00fcn ad\u0131:");
 
 if(!name)return;
 
 const package_size=
-prompt("Paket / gramaj (Ã–rn: 40 gr):");
+prompt("Paket / gramaj (\u00d6rn: 40 gr):");
 
 if(!package_size)return;
 
-const price=prompt("SatÄ±ÅŸ fiyatÄ±:");
+const price=prompt("Sat\u0131\u015f fiyat\u0131:");
 
 const sale_price=
 price==="" ?
@@ -1447,7 +932,7 @@ sale_price<0
 )
 ){
 
-toast("GeÃ§erli bir fiyat girin");
+toast("Ge\u00e7erli bir fiyat girin");
 return;
 
 }
@@ -1468,7 +953,7 @@ active:true
 }
 );
 
-toast("ÃœrÃ¼n eklendi");
+toast("\u00dcr\u00fcn eklendi");
 
 await loadData();
 
@@ -1476,19 +961,16 @@ await loadData();
 
 console.error(e);
 
-toast("ÃœrÃ¼n eklenemedi");
+toast("\u00dcr\u00fcn eklenemedi");
 
 }
 
 }
-  
-
-
 
 
 async function newCustomer(){
 
-const n=prompt("MÃ¼ÅŸteri adÄ±:");
+const n=prompt("M\u00fc\u015fteri ad\u0131:");
 
 if(!n)return;
 
@@ -1504,7 +986,7 @@ name:n.trim()
 }
 );
 
-toast("MÃ¼ÅŸteri eklendi");
+toast("M\u00fc\u015fteri eklendi");
 
 await loadData();
 
@@ -1512,7 +994,7 @@ await loadData();
 
 console.error(e);
 
-toast("MÃ¼ÅŸteri eklenemedi");
+toast("M\u00fc\u015fteri eklenemedi");
 
 }
 
@@ -1521,235 +1003,27 @@ toast("MÃ¼ÅŸteri eklenemedi");
 
 function renderCustomers(){
 
-  customerList.innerHTML =
-    state.customers
-    .filter(c => c.active !== false)
-    .map(c =>
+customerList.innerHTML=
+state.customers
+.map(
+c=>
+"<div class=\"customer\">"+
+"<div>"+
+"<b>"+c.name+"</b>"+
+"<small>"+(c.phone||"")+"</small>"+
+"</div>"+
+"<div>"+
+"<b class=\"debt\">"+
+money(c.balance)+
+"</b>"+
+"<button class=\"small\" onclick=\"showCustomer("+c.id+")\">A\u00e7</button>"+
+"</div>"+
+"</div>"
+)
+.join("")
+||
+'<p class="muted">Hen\u00fcz m\u00fc\u015fteri yok.</p>';
 
-      "<div class=\"customer\">" +
-
-        "<div>" +
-          "<b>" + c.name + "</b>" +
-          "<small>" + (c.phone || "") + "</small>" +
-        "</div>" +
-
-        "<div>" +
-
-          "<b class=\"debt\">" +
-            money(c.balance) +
-          "</b>" +
-
-          "<button class=\"small\" onclick=\"showCustomer(" + c.id + ")\">" +
-            "AÃ§" +
-          "</button>" +
-
-          "<button class=\"small\" onclick=\"editCustomer(" + c.id + ")\">" +
-            "DÃ¼zenle" +
-          "</button>" +
-
-          "<button class=\"small remove\" onclick=\"deleteCustomer(" + c.id + ")\">" +
-            "Sil" +
-          "</button>" +
-
-        "</div>" +
-
-      "</div>"
-
-    )
-    .join("") ||
-
-    '<p class="muted">HenÃ¼z mÃ¼ÅŸteri yok.</p>';
-}
-
-
-async function editCustomer(id){
-
-  const c = state.customers.find(
-    x => String(x.id) === String(id)
-  );
-
-  if(!c){
-    toast("MÃ¼ÅŸteri bulunamadÄ±");
-    return;
-  }
-
-  const name = prompt(
-    "MÃ¼ÅŸteri adÄ±:",
-    c.name || ""
-  );
-
-  if(name === null) return;
-
-  const newName = name.trim();
-
-  if(!newName){
-    toast("MÃ¼ÅŸteri adÄ± boÅŸ olamaz");
-    return;
-  }
-
-  const phone = prompt(
-    "Telefon:",
-    c.phone || ""
-  );
-
-  if(phone === null) return;
-
-  const newPhone = phone.trim();
-
-  try{
-
-    console.log("MÃœÅTERÄ° GÃœNCELLEME");
-    console.log("ID:", c.id);
-    console.log("ESKÄ° Ä°SÄ°M:", c.name);
-    console.log("YENÄ° Ä°SÄ°M:", newName);
-
-    /*
-      MÃœÅTERÄ°YÄ° GÃœNCELLE
-    */
-    const result = await sb(
-      "customers?id=eq." +
-      encodeURIComponent(String(c.id)),
-      {
-        method:"PATCH",
-        headers:{
-          "Prefer":"return=representation"
-        },
-        body:JSON.stringify({
-          name:newName,
-          phone:newPhone
-        })
-      }
-    );
-
-    console.log("PATCH SONUCU:", result);
-
-    /*
-      Supabase'in dÃ¶ndÃ¼rdÃ¼ÄŸÃ¼ kayÄ±t yoksa
-      ama hata da vermediyse RLS/izin problemi
-      olma ihtimali yÃ¼ksek.
-    */
-    if(!result || result.length === 0){
-
-      /*
-        Åimdi doÄŸrudan tekrar okuyalÄ±m
-      */
-      const verify = await sb(
-        "customers?select=id,name,phone&id=eq." +
-        encodeURIComponent(String(c.id))
-      );
-
-      console.log("KONTROL SONUCU:", verify);
-
-      if(
-        verify &&
-        verify.length &&
-        verify[0].name === newName
-      ){
-
-        toast("MÃ¼ÅŸteri gÃ¼ncellendi");
-
-        const index = state.customers.findIndex(
-          x => String(x.id) === String(c.id)
-        );
-
-        if(index !== -1){
-          state.customers[index] = verify[0];
-        }
-
-        renderCustomers();
-
-        saleCustomer.innerHTML =
-          customerOptions();
-
-        paymentCustomer.innerHTML =
-          customerOptions();
-
-        return;
-      }
-
-      throw new Error(
-        "MÃ¼ÅŸteri gÃ¼ncelleme yetkisi Ã§alÄ±ÅŸmÄ±yor. Supabase UPDATE politikasÄ± kontrol edilmeli."
-      );
-    }
-
-    /*
-      BaÅŸarÄ±lÄ± gÃ¼ncelleme
-    */
-    const updated = result[0];
-
-    const index = state.customers.findIndex(
-      x => String(x.id) === String(c.id)
-    );
-
-    if(index !== -1){
-      state.customers[index] = updated;
-    }
-
-    renderCustomers();
-
-    saleCustomer.innerHTML =
-      customerOptions();
-
-    paymentCustomer.innerHTML =
-      customerOptions();
-
-    if(
-      detailId &&
-      String(detailId) === String(c.id)
-    ){
-      detailName.textContent =
-        updated.name;
-    }
-
-    toast("MÃ¼ÅŸteri baÅŸarÄ±yla gÃ¼ncellendi");
-
-  }catch(e){
-
-    console.error(
-      "MÃœÅTERÄ° GÃœNCELLEME HATASI:",
-      e
-    );
-
-    toast(
-      e.message ||
-      "MÃ¼ÅŸteri gÃ¼ncellenemedi"
-    );
-
-  }
-
-}
-
-async function deleteCustomer(id){
-  const c = state.customers.find(
-    x => String(x.id) === String(id)
-  );
-
-  if(!c) return;
-
-  const ok = confirm(
-    c.name + "\n\nBu mÃ¼ÅŸteriyi silmek istediÄŸinize emin misiniz?"
-  );
-
-  if(!ok) return;
-
-  try{
-    await sb(
-      "customers?id=eq." + id,
-      {
-        method:"DELETE"
-      }
-    );
-
-    toast("MÃ¼ÅŸteri silindi");
-    await loadData();
-
-  }catch(e){
-    console.error(e);
-    toast(
-      e.message ||
-      "MÃ¼ÅŸteri silinemedi"
-    );
-  }
 }
 
 
@@ -1782,7 +1056,7 @@ async function renderDetail(){
       `customer_ledger?select=*&customer_id=eq.${c.id}&order=movement_date.desc`
     );
 
-    // Cari bakiye SADECE ledger Ã¼zerinden hesaplanÄ±r
+    // Cari bakiye SADECE ledger \u00fczerinden hesaplan\u0131r
     let balance = ledger.reduce(
       (a,x) =>
         a +
@@ -1794,16 +1068,16 @@ async function renderDetail(){
     detailBalance.textContent = money(balance);
 
 
-    // MÃ¼ÅŸterinin bÃ¼tÃ¼n satÄ±ÅŸlarÄ±nÄ± al
+    // M\u00fc\u015fterinin b\u00fct\u00fcn sat\u0131\u015flar\u0131n\u0131 al
     let sales = await sb(
-      `sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc`
+      'sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc'
     );
 
 
     let movements = [];
 
 
-    // SATIÅLARI DETAYA EKLE
+    // SATI\u015eLARI DETAYA EKLE
     for(const sale of sales){
 
       let items = await sb(
@@ -1817,14 +1091,14 @@ async function renderDetail(){
         );
 
         return (
-          (product?.name || "ÃœrÃ¼n") +
+          (product?.name || "\u00dcr\u00fcn") +
           " x " +
           Number(item.quantity || 0).toLocaleString("tr-TR") +
           " " +
           (item.unit || "")
         );
 
-      }).join(" â€¢ ");
+      }).join(" \u2022 ");
 
 
       movements.push({
@@ -1838,8 +1112,8 @@ async function renderDetail(){
 
               <b>
                 ${sale.payment_type === "cash"
-                  ? "PeÅŸin SatÄ±ÅŸ"
-                  : "Cari SatÄ±ÅŸ"} #${sale.id}
+                  ? "Pe\u015fin Sat\u0131\u015f"
+                  : "Cari Sat\u0131\u015f"} #${sale.id}
               </b>
 
               <small>
@@ -1865,10 +1139,10 @@ async function renderDetail(){
     }
 
 
-    // TAHSÄ°LAT VE DÄ°ÄER CARÄ° HAREKETLERÄ° EKLE
+    // TAHS\u0130LAT VE D\u0130\u011eER CAR\u0130 HAREKETLER\u0130 EKLE
     ledger.forEach(x => {
 
-      // SatÄ±ÅŸ kayÄ±tlarÄ±nÄ± yukarÄ±dan zaten ekledik
+      // Sat\u0131\u015f kay\u0131tlar\u0131n\u0131 yukar\u0131dan zaten ekledik
       if(x.movement_type === "sale") return;
 
       movements.push({
@@ -1903,10 +1177,10 @@ async function renderDetail(){
 
       });
 
-    });
+    }
 
 
-    // Tarihe gÃ¶re sÄ±rala
+    // Tarihe g\u00f6re s\u0131rala
     movements.sort(
       (a,b) =>
         new Date(b.date) - new Date(a.date)
@@ -1924,7 +1198,7 @@ async function renderDetail(){
     console.error(e);
 
     detailMovements.innerHTML =
-      '<p class="muted">Cari hareketleri yÃ¼klenemedi.</p>';
+      '<p class="muted">Cari hareketleri y\u00fcklenemedi.</p>';
 
   }
 
@@ -1932,751 +1206,198 @@ async function renderDetail(){
 
 function stockTab(x){
 
-  stockLoc = x;
-  const entryButton =
-  document.getElementById("stockEntryButton");
+stockLoc=x;
 
-if(entryButton){
+document
+.querySelectorAll(".tabs button")
+.forEach(
+(b,i)=>
+b.classList.toggle(
+"active",
+(i===0&&x==="warehouse") ||
+(i===1&&x==="vehicle")
+)
+);
 
-  if(x === "raw"){
+renderStock();
 
-    entryButton.textContent =
-      "ï¼‹ Hammadde GiriÅŸi";
-
-  }else if(x === "production"){
-
-    entryButton.textContent =
-      "ï¼‹ Stok GiriÅŸi";
-
-  }else{
-
-    entryButton.textContent =
-      "ï¼‹ Stok GiriÅŸi";
-
-  }
-
-}
-
-  const buttons =
-    document.querySelectorAll(".tabs button");
-
-  buttons.forEach(button => {
-    button.classList.remove("active");
-  });
-
-  if(x === "warehouse"){
-    buttons[0]?.classList.add("active");
-  }
-
-  if(x === "vehicle"){
-    buttons[1]?.classList.add("active");
-  }
-
-  if(x === "raw"){
-    buttons[2]?.classList.add("active");
-  }
-
-  if(x === "production"){
-    buttons[3]?.classList.add("active");
-  }
-
-  /*
-    ÃœRETÄ°M SEKMESÄ°
-    AyrÄ± sayfaya gitmek yerine
-    aynÄ± stok ekranÄ±nda Ã¼retim bÃ¶lÃ¼mÃ¼nÃ¼ gÃ¶steriyoruz.
-  */
-
-  const stockTable = document.getElementById("stockTable");
-
-  if(x === "production"){
-
-    stockTable.innerHTML = `
-      <div class="card">
-
-        <h2>Hammadde â†’ ÃœrÃ¼n Ãœretimi</h2>
-
-        <p class="muted">
-          Ã–rneÄŸin 25 kg pul biber hammaddesinden
-          100 adet 40 gr pul biber Ã¼retirseniz
-          hammaddeden 4 kg dÃ¼ÅŸer ve depoya
-          100 adet Ã¼rÃ¼n eklenir.
-        </p>
-
-        <label>
-          Hammadde
-          <select id="productionRawProduct">
-            ${
-              state.rawMaterials.map(function(r,i){
-                return `
-                  <option value="${i}">
-                    ${r.name} â€” ${r.quantity} ${r.unit || "kg"}
-                  </option>
-                `;
-              }).join("")
-            }
-          </select>
-        </label>
-
-        <label>
-          Ãœretilecek ÃœrÃ¼n
-          <select id="productionProduct">
-            ${
-              state.products.map(function(p,i){
-                return `
-                  <option value="${i}">
-                    ${p.name} â€” ${p.package_size}
-                  </option>
-                `;
-              }).join("")
-            }
-          </select>
-        </label>
-
-        <div class="row">
-
-          <label class="grow">
-            Ãœretilecek Adet
-            <input
-              id="productionQty"
-              type="number"
-              min="1"
-              step="1"
-              placeholder="Ã–rn: 100"
-            >
-          </label>
-
-          <label class="grow">
-            Paket GramajÄ±
-            <input
-              id="productionGram"
-              type="number"
-              min="1"
-              step="1"
-              placeholder="Ã–rn: 40"
-            >
-          </label>
-
-        </div>
-
-        <div
-          class="card"
-          style="background:#f4f8f5;margin-top:15px"
-        >
-          <b>Hammadde tÃ¼ketimi</b>
-
-          <div
-            id="productionInfo"
-            class="muted"
-          >
-            Ãœretim miktarÄ± girildiÄŸinde hesaplanÄ±r.
-          </div>
-
-        </div>
-
-        <button
-          class="primary big"
-          onclick="saveProduction()"
-        >
-          ÃœRETÄ°MÄ° KAYDET
-        </button>
-
-      </div>
-    `;
-
-    const qty =
-      document.getElementById("productionQty");
-
-    const gram =
-      document.getElementById("productionGram");
-
-    if(qty){
-      qty.addEventListener("input", calculateProduction);
-    }
-
-    if(gram){
-      gram.addEventListener("input", calculateProduction);
-    }
-
-    return;
-  }
-
-  renderStock();
 }
 
 
 function renderStock(){
 
-  /*
-    HAMMADDE EKRANI
-  */
+  stockTable.innerHTML=state.products.map(p=>{
 
-  if(stockLoc === "raw"){
+    const rows=state.stock.filter(
+      x=>
+        String(x.product_id)===String(p.id) &&
+        x.location===stockLoc
+    );
 
-    if(!state.rawMaterials.length){
+    const quantity=rows.reduce(
+      (sum,x)=>sum+Number(x.quantity||0),
+      0
+    );
 
-      stockTable.innerHTML =
-        '<p class="muted">HenÃ¼z hammadde yok.</p>';
+    return `
+      <div class="stockRow">
 
-      return;
-
-    }
-
-    stockTable.innerHTML =
-      state.rawMaterials.map(raw => {
-
-        const quantity =
-          Number(raw.quantity || 0);
-
-        return `
-          <div class="stockRow">
-
-            <div>
-              <b>${raw.name}</b>
-              <small>Hammadde</small>
-            </div>
-
-            <div>
-              <b>
-                ${quantity.toLocaleString(
-                  "tr-TR",
-                  {
-                    minimumFractionDigits:0,
-                    maximumFractionDigits:3
-                  }
-                )}
-              </b>
-            </div>
-
-            <div>
-              ${raw.unit || "kg"}
-            </div>
-
-          </div>
-        `;
-
-      }).join("");
-
-    return;
-  }
-
-
-  /*
-    DEPO / ARAÃ‡ EKRANI
-  */
-
-  stockTable.innerHTML =
-    state.products.map(p => {
-
-      const rows =
-        state.stock.filter(
-          x =>
-            String(x.product_id) === String(p.id) &&
-            x.location === stockLoc
-        );
-
-      const quantity =
-        rows.reduce(
-          (sum,x) =>
-            sum + Number(x.quantity || 0),
-          0
-        );
-
-      return `
-        <div class="stockRow">
-
-          <div>
-            <b>${p.name}</b>
-            <small>
-              ${p.package_size || ""}
-            </small>
-          </div>
-
-          <div>
-            <b>
-              ${quantity.toLocaleString(
-                "tr-TR",
-                {
-                  maximumFractionDigits:3
-                }
-              )}
-            </b>
-          </div>
-
-          <div>
-            ${
-              p.sale_price == null
-              ? "Fiyat yok"
-              : money(p.sale_price)
-            }
-          </div>
-
+        <div>
+          <b>${p.name}</b>
+          <small>${p.package_size||""}</small>
         </div>
-      `;
 
-    }).join("");
+        <div>
+          <b>${quantity}</b>
+        </div>
+
+        <div>
+          ${p.sale_price==null
+            ?"Fiyat yok"
+            :money(p.sale_price)}
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
 
 }
 
 
 async function newStock(){
 
-  /*
-    HAMMADDE SEKmesindeysek
-    hammadde giriÅŸi aÃ§
-  */
+if(!state.products.length){
 
-  if(stockLoc === "raw"){
+toast("\u00dcr\u00fcnler hen\u00fcz y\u00fcklenmedi");
 
-    const old =
-      document.getElementById("rawStockModal");
-
-    if(old) old.remove();
-
-    const modal =
-      document.createElement("div");
-
-    modal.id = "rawStockModal";
-
-    modal.style.cssText = `
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.45);
-      z-index:100;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-    `;
-
-    modal.innerHTML = `
-      <div style="
-        background:#fff;
-        width:100%;
-        max-width:450px;
-        border-radius:16px;
-        padding:20px;
-      ">
-
-        <h2 style="margin-top:0">
-          Hammadde GiriÅŸi
-        </h2>
-
-        <label>
-          Hammadde
-
-          <select id="rawEntryProduct">
-
-            ${
-              state.rawMaterials.map((r,i)=>`
-                <option value="${i}">
-                  ${r.name}
-                </option>
-              `).join("")
-            }
-
-          </select>
-
-        </label>
-
-        <label>
-          Miktar
-
-          <input
-            id="rawEntryQty"
-            type="number"
-            min="0"
-            step="0.001"
-            placeholder="Ã–rn: 25"
-          >
-
-        </label>
-
-        <label>
-          Birim
-
-          <select id="rawEntryUnit">
-            <option value="kg">kg</option>
-            <option value="gr">gr</option>
-          </select>
-
-        </label>
-
-        <div style="
-          display:flex;
-          gap:10px;
-          margin-top:15px;
-        ">
-
-          <button
-            style="flex:1"
-            onclick="
-              document
-                .getElementById('rawStockModal')
-                .remove()
-            "
-          >
-            Ä°ptal
-          </button>
-
-          <button
-            class="primary"
-            style="flex:1"
-            onclick="confirmRawEntry()"
-          >
-            HAMMADDE EKLE
-          </button>
-
-        </div>
-
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    return;
-  }
-
-  /*
-    NORMAL ÃœRÃœN STOK GÄ°RÄ°ÅÄ°
-  */
-
-  if(!state.products.length){
-
-    toast("ÃœrÃ¼nler henÃ¼z yÃ¼klenmedi");
-
-    return;
-  }
-
-  const old =
-    document.getElementById("stockModal");
-
-  if(old){
-    old.remove();
-  }
-
-  const modal =
-    document.createElement("div");
-
-  modal.id = "stockModal";
-
-  modal.style.cssText = `
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.45);
-    z-index:100;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  `;
-
-  modal.innerHTML = `
-    <div style="
-      background:#fff;
-      width:100%;
-      max-width:450px;
-      border-radius:16px;
-      padding:20px;
-    ">
-
-      <h2 style="margin-top:0">
-        Stok GiriÅŸi
-      </h2>
-
-      <label>
-        ÃœrÃ¼n
-
-        <select id="newStockProduct">
-
-          ${
-            state.products.map((p,i)=>`
-              <option value="${i}">
-                ${p.name} â€” ${p.package_size}
-              </option>
-            `).join("")
-          }
-
-        </select>
-
-      </label>
-
-      <label>
-        Miktar
-
-        <input
-          id="newStockQty"
-          type="number"
-          step="0.001"
-          min="0"
-          placeholder="Ã–rn: 10"
-        >
-
-      </label>
-
-      <label>
-        Yer
-
-        <select id="newStockLocation">
-
-          <option value="warehouse">
-            Depo
-          </option>
-
-          <option value="vehicle">
-            AraÃ§
-          </option>
-
-        </select>
-
-      </label>
-
-      <div style="
-        display:flex;
-        gap:10px;
-        margin-top:15px;
-      ">
-
-        <button
-          style="flex:1"
-          onclick="
-            document
-              .getElementById('stockModal')
-              .remove()
-          "
-        >
-          Ä°ptal
-        </button>
-
-        <button
-          class="primary"
-          style="flex:1"
-          onclick="confirmNewStock()"
-        >
-          STOK EKLE
-        </button>
-
-      </div>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-}
-  async function newRawMaterial(){
-
-  const name = prompt("Hammadde adÄ±:");
-
-  if(name === null) return;
-
-  if(!name.trim()){
-
-    toast("Hammadde adÄ± boÅŸ olamaz");
-
-    return;
-  }
-
-
-  const qty = Number(
-    prompt("Miktar (kg):", "1")
-  );
-
-  if(!Number.isFinite(qty) || qty <= 0){
-
-    toast("GeÃ§erli bir miktar girin");
-
-    return;
-  }
-
-
-  try{
-
-    const existing = state.rawMaterials.find(
-      r =>
-        String(r.name || "")
-          .trim()
-          .toLocaleLowerCase("tr-TR")
-        ===
-        name.trim()
-          .toLocaleLowerCase("tr-TR")
-    );
-
-
-    if(existing){
-
-      const newQty =
-        Number(existing.quantity || 0) + qty;
-
-
-      await sb(
-        "raw_materials?id=eq." +
-        encodeURIComponent(existing.id),
-        {
-          method:"PATCH",
-
-          body:JSON.stringify({
-            quantity:newQty,
-            unit:"kg"
-          })
-        }
-      );
-
-      toast(
-        name.trim() +
-        " stoÄŸuna " +
-        qty +
-        " kg eklendi"
-      );
-
-    }else{
-
-      await sb(
-        "raw_materials",
-        {
-          method:"POST",
-
-          body:JSON.stringify({
-            name:name.trim(),
-            quantity:qty,
-            unit:"kg"
-          })
-        }
-      );
-
-      toast(
-        name.trim() +
-        " hammaddesi eklendi"
-      );
-
-    }
-
-
-    await loadData();
-
-    stockTab("raw");
-
-
-  }catch(e){
-
-    console.error(
-      "HAMMADDE HATASI:",
-      e
-    );
-
-    toast(
-      e.message ||
-      "Hammadde kaydedilemedi"
-    );
-
-  }
+return;
 
 }
-  async function confirmRawEntry(){
 
-  try{
 
-    const index =
-      Number(
-        document.getElementById(
-          "rawEntryProduct"
-        ).value
-      );
+const old=
+document.getElementById("stockModal");
 
-    const qty =
-      Number(
-        document.getElementById(
-          "rawEntryQty"
-        ).value
-      );
+if(old){
+old.remove();
+}
 
-    const unit =
-      document.getElementById(
-        "rawEntryUnit"
-      ).value;
 
-    const raw =
-      state.rawMaterials[index];
+const modal=
+document.createElement("div");
 
-    if(!raw){
+modal.id="stockModal";
 
-      toast("Hammadde seÃ§in");
+modal.style.cssText=`
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+z-index:100;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+`;
 
-      return;
-    }
 
-    if(!qty || qty <= 0){
+modal.innerHTML=`
 
-      toast("Miktar girin");
+<div style="
+background:#fff;
+width:100%;
+max-width:450px;
+border-radius:16px;
+padding:20px;
+box-shadow:0 10px 40px rgba(0,0,0,.25)
+">
 
-      return;
-    }
+<h2 style="margin-top:0">
+Stok Giri\u015fi
+</h2>
 
-    /*
-      EÄŸer gr girilmiÅŸse kg'a Ã§evir
-    */
+<label>
+\u00dcr\u00fcn
 
-    let addKg = qty;
+<select id="newStockProduct">
 
-    if(unit === "gr"){
-      addKg = qty / 1000;
-    }
+${state.products.map(
+(p,i)=>
+`
+<option value="${i}">
+${p.name} \u2014 ${p.package_size}
+</option>
+`
+).join("")}
 
-    const current =
-      Number(raw.quantity || 0);
+</select>
 
-    const next =
-      current + addKg;
+</label>
 
-    await sb(
-      "raw_materials?id=eq." + raw.id,
-      {
-        method:"PATCH",
 
-        body:JSON.stringify({
-          quantity:next,
-          unit:"kg"
-        })
-      }
-    );
+<label>
+Miktar
 
-    /*
-      Hammadde giriÅŸ hareketi
-    */
+<input
+id="newStockQty"
+type="number"
+step="0.001"
+min="0"
+placeholder="\u00d6rn: 10">
 
-    toast(
-      raw.name +
-      " stoÄŸuna " +
-      addKg.toLocaleString("tr-TR", {
-        maximumFractionDigits:3
-      }) +
-      " kg eklendi"
-    );
+</label>
 
-    const modal =
-      document.getElementById(
-        "rawStockModal"
-      );
 
-    if(modal){
-      modal.remove();
-    }
+<label>
+Yer
 
-    await loadData();
+<select id="newStockLocation">
 
-    stockTab("raw");
+<option value="warehouse">
+Depo
+</option>
 
-  }catch(e){
+<option value="vehicle">
+Ara\u00e7
+</option>
 
-    console.error(
-      "HAMMADDE GÄ°RÄ°Å HATASI:",
-      e
-    );
+</select>
 
-    toast(
-      e.message ||
-      "Hammadde eklenemedi"
-    );
+</label>
 
-  }
+
+<div style="
+display:flex;
+gap:10px;
+margin-top:15px
+">
+
+<button
+style="flex:1"
+onclick="document.getElementById('stockModal').remove()">
+
+\u0130ptal
+
+</button>
+
+
+<button
+class="primary"
+style="flex:1"
+onclick="confirmNewStock()">
+
+STOK EKLE
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+
+document.body.appendChild(modal);
 
 }
 
@@ -2709,7 +1430,7 @@ const p=state.products[i];
 
 if(!p){
 
-toast("ÃœrÃ¼n seÃ§ilmedi");
+toast("\u00dcr\u00fcn se\u00e7ilmedi");
 
 return;
 
@@ -2788,210 +1509,14 @@ function updateTransferDirection(){
 
   if(direction === "toWarehouse"){
 
-    title.textContent = "AraÃ§ â†’ Depo";
+    title.textContent = "Ara\u00e7 \u2192 Depo";
     button.textContent = "DEPOYA AKTAR";
 
   }else{
 
-    title.textContent = "Depo â†’ AraÃ§";
+    title.textContent = "Depo \u2192 Ara\u00e7";
     button.textContent = "ARACA AKTAR";
 
-  }
-}
-function calculateProduction(){
-
-  const qtyInput = document.getElementById("productionQty");
-  const gramInput = document.getElementById("productionGram");
-  const info = document.getElementById("productionInfo");
-
-  if (!qtyInput || !gramInput || !info) return;
-
-  const qty = Number(
-    String(qtyInput.value || "").replace(",", ".")
-  );
-
-  const gram = Number(
-    String(gramInput.value || "").replace(",", ".")
-  );
-
-  if (qty <= 0 || gram <= 0) {
-    info.textContent =
-      "Ãœretim miktarÄ± girildiÄŸinde hesaplanÄ±r.";
-    return;
-  }
-
-  const kg = (qty * gram) / 1000;
-
-  info.innerHTML =
-    `${qty.toLocaleString("tr-TR")} adet Ã— ` +
-    `${gram.toLocaleString("tr-TR")} gr = ` +
-    `<b>${kg.toLocaleString("tr-TR", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 3
-    })} kg</b> hammadde tÃ¼ketilecek.`;
-}
-  if(productionQty){
-  productionQty.addEventListener(
-    "input",
-    calculateProduction
-  );
-}
-
-if(productionGram){
-  productionGram.addEventListener(
-    "input",
-    calculateProduction
-  );
-}
-  calculateProduction();
-  async function saveProduction(){
-  try {
-    // ElemanlarÄ± her tÄ±klamada yeniden bul
-    const rawSelect = document.getElementById("productionRawProduct");
-    const productSelect = document.getElementById("productionProduct");
-    const qtyInput = document.getElementById("productionQty");
-    const gramInput = document.getElementById("productionGram");
-
-    if (!rawSelect || !productSelect || !qtyInput || !gramInput) {
-      throw new Error("Ãœretim alanlarÄ± bulunamadÄ±");
-    }
-
-    const rawIndex = Number(rawSelect.value);
-    const productIndex = Number(productSelect.value);
-
-    const qty = Number(String(qtyInput.value).replace(",", "."));
-    const gram = Number(String(gramInput.value).replace(",", "."));
-
-    const raw = state.rawMaterials[rawIndex];
-    const product = state.products[productIndex];
-
-    console.log("ÃœRETÄ°M:", {
-      raw,
-      product,
-      qty,
-      gram
-    });
-
-    if (!raw) {
-      toast("Hammadde seÃ§in");
-      return;
-    }
-
-    if (!product) {
-      toast("Ãœretilecek Ã¼rÃ¼nÃ¼ seÃ§in");
-      return;
-    }
-
-    if (!qty || qty <= 0) {
-      toast("Ãœretilecek adet girin");
-      return;
-    }
-
-    if (!gram || gram <= 0) {
-      toast("Paket gramajÄ±nÄ± girin");
-      return;
-    }
-
-    // TÃ¼ketilecek hammadde kg
-    const consumed = (qty * gram) / 1000;
-    const current = Number(raw.quantity || 0);
-
-    if (current < consumed) {
-      toast(
-        "Yetersiz hammadde! " +
-        raw.name +
-        " mevcut: " +
-        current +
-        " " +
-        (raw.unit || "kg")
-      );
-      return;
-    }
-
-    // 1. HAMMADDE STOÄUNDAN DÃœÅ
-    const rawResult = await sb(
-      "raw_materials?id=eq." + encodeURIComponent(raw.id),
-      {
-        method: "PATCH",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          quantity: current - consumed
-        })
-      }
-    );
-
-    console.log("HAMMADDE GÃœNCELLEME:", rawResult);
-
-    if (!Array.isArray(rawResult) || rawResult.length === 0) {
-      throw new Error(
-        "Hammadde stoÄŸu gÃ¼ncellenemedi. Supabase UPDATE/RLS politikasÄ±nÄ± kontrol edin."
-      );
-    }
-
-    // 2. ÃœRÃœNÃœ DEPO STOÄUNA EKLE
-    await upsertStock(
-      product.id,
-      "warehouse",
-      qty
-    );
-
-    // 3. ÃœRETÄ°M HAREKETÄ°NÄ° KAYDET
-    const movementResult = await sb(
-      "stock_movements",
-      {
-        method: "POST",
-        headers: {
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify({
-          product_id: product.id,
-          movement_type: "production",
-          to_location: "warehouse",
-          quantity: qty,
-          notes:
-            "Ãœretim: " +
-            qty +
-            " adet Ã— " +
-            gram +
-            " gr | " +
-            consumed +
-            " kg " +
-            raw.name +
-            " hammaddesi tÃ¼ketildi"
-        })
-      }
-    );
-
-    console.log("ÃœRETÄ°M HAREKETÄ°:", movementResult);
-
-    if (!Array.isArray(movementResult) || movementResult.length === 0) {
-      console.warn("stock_movements kayÄ±t dÃ¶ndÃ¼rmedi:", movementResult);
-    }
-
-    // 4. BAÅARILI
-    toast(
-      qty +
-      " adet " +
-      product.name +
-      " Ã¼retimi kaydedildi"
-    );
-
-    qtyInput.value = "";
-    gramInput.value = "";
-
-    calculateProduction();
-
-    // Verileri yeniden Ã§ek
-    await loadData();
-
-    // Ãœretim ekranÄ±nda kal
-    stockTab("production");
-
-  } catch (e) {
-    console.error("ÃœRETÄ°M HATASI:", e);
-    toast(e.message || "Ãœretim kaydedilemedi");
   }
 }
 async function saveTransfer(){
@@ -3017,13 +1542,13 @@ async function saveTransfer(){
     const p = state.products[i];
 
     if(!p){
-      toast("ÃœrÃ¼n seÃ§ilmedi");
+      toast("\u00dcr\u00fcn se\u00e7ilmedi");
       return;
     }
 
     if(direction === "toVehicle"){
 
-      // DEPO â†’ ARAÃ‡
+      // DEPO \u2192 ARA\u00c7
       await upsertStock(
         p.id,
         "warehouse",
@@ -3050,11 +1575,11 @@ async function saveTransfer(){
         }
       );
 
-      toast("AraÃ§ stoÄŸuna aktarÄ±ldÄ±");
+      toast("Ara\u00e7 sto\u011funa aktar\u0131ld\u0131");
 
     }else if(direction === "toWarehouse"){
 
-      // ARAÃ‡ â†’ DEPO
+      // ARA\u00c7 \u2192 DEPO
       await upsertStock(
         p.id,
         "vehicle",
@@ -3081,7 +1606,7 @@ async function saveTransfer(){
         }
       );
 
-      toast("Depo stoÄŸuna aktarÄ±ldÄ±");
+      toast("Depo sto\u011funa aktar\u0131ld\u0131");
 
     }
 
@@ -3097,7 +1622,7 @@ async function saveTransfer(){
 
     toast(
       e.message ||
-      "Transfer yapÄ±lamadÄ±"
+      "Transfer yap\u0131lamad\u0131"
     );
 
   }
@@ -3126,7 +1651,7 @@ document.getElementById(
 
 if(!c || a<=0){
 
-toast("MÃ¼ÅŸteri ve tutar girin");
+toast("M\u00fc\u015fteri ve tutar girin");
 
 return;
 
@@ -3218,14 +1743,14 @@ function renderProducts(){
         <div>
           <b>
             ${p.sale_price == null
-              ? "Fiyat girilmemiÅŸ"
+              ? "Fiyat girilmemi\u015f"
               : money(p.sale_price)}
           </b>
 
           <button
             class="small"
             onclick="editProductPrice(${p.id})">
-            DÃœZENLE
+            D\u00dcZENLE
           </button>
         </div>
 
@@ -3233,7 +1758,7 @@ function renderProducts(){
     `)
     .join("")
     ||
-    '<p class="muted">ÃœrÃ¼n bulunamadÄ±.</p>';
+    '<p class="muted">\u00dcr\u00fcn bulunamad\u0131.</p>';
 }
   async function editProductPrice(id){
 
@@ -3244,10 +1769,10 @@ function renderProducts(){
   if(!p) return;
 
   const action = prompt(
-    "ÃœRÃœN Ä°ÅLEMÄ°\n\n" +
-    "1 = ÃœrÃ¼nÃ¼ DÃ¼zenle\n" +
-    "2 = ÃœrÃ¼nÃ¼ Sil\n\n" +
-    "SeÃ§iminiz:"
+    "\u00dcR\u00dcN \u0130\u015eLEM\u0130\n\n" +
+    "1 = \u00dcr\u00fcn\u00fc D\u00fczenle\n" +
+    "2 = \u00dcr\u00fcn\u00fc Sil\n\n" +
+    "Se\u00e7iminiz:"
   );
 
   if(action === null) return;
@@ -3258,7 +1783,7 @@ function renderProducts(){
       p.name +
       " (" +
       (p.package_size || "") +
-      ")\n\nBu Ã¼rÃ¼nÃ¼ silmek istediÄŸinize emin misiniz?"
+      ")\n\nBu \u00fcr\u00fcn\u00fc silmek istedi\u011finize emin misiniz?"
     );
 
     if(!ok) return;
@@ -3275,7 +1800,7 @@ function renderProducts(){
         }
       );
 
-      toast("ÃœrÃ¼n silindi");
+      toast("\u00dcr\u00fcn silindi");
 
       await loadData();
       renderProducts();
@@ -3286,7 +1811,7 @@ function renderProducts(){
 
       toast(
         e.message ||
-        "ÃœrÃ¼n silinemedi"
+        "\u00dcr\u00fcn silinemedi"
       );
     }
 
@@ -3299,7 +1824,7 @@ function renderProducts(){
   }
 
   const name = prompt(
-    "ÃœrÃ¼n adÄ±:",
+    "\u00dcr\u00fcn ad\u0131:",
     p.name || ""
   );
 
@@ -3313,7 +1838,7 @@ function renderProducts(){
   if(packageSize === null) return;
 
   const priceValue = prompt(
-    "SatÄ±ÅŸ fiyatÄ±:",
+    "Sat\u0131\u015f fiyat\u0131:",
     p.sale_price ?? ""
   );
 
@@ -3348,7 +1873,7 @@ function renderProducts(){
       }
     );
 
-    toast("ÃœrÃ¼n gÃ¼ncellendi");
+    toast("\u00dcr\u00fcn g\u00fcncellendi");
 
     await loadData();
 
@@ -3358,7 +1883,7 @@ function renderProducts(){
 
     toast(
       e.message ||
-      "ÃœrÃ¼n gÃ¼ncellenemedi"
+      "\u00dcr\u00fcn g\u00fcncellenemedi"
     );
   }
 }
