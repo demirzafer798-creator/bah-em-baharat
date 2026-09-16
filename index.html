@@ -1318,7 +1318,10 @@ async function editCustomer(id){
     x => String(x.id) === String(id)
   );
 
-  if(!c) return;
+  if(!c){
+    toast("Müşteri bulunamadı");
+    return;
+  }
 
   const name = prompt(
     "Müşteri adı:",
@@ -1327,10 +1330,10 @@ async function editCustomer(id){
 
   if(name === null) return;
 
-  if(!name.trim()){
+  const newName = name.trim();
 
+  if(!newName){
     toast("Müşteri adı boş olamaz");
-
     return;
   }
 
@@ -1341,67 +1344,73 @@ async function editCustomer(id){
 
   if(phone === null) return;
 
+  const newPhone = phone.trim();
+
   try{
 
+    /*
+      ÖNCE GÜNCELLEMEYİ YAP
+    */
     const result = await sb(
-      "customers?id=eq." +
-      encodeURIComponent(id),
+      "customers?id=eq." + encodeURIComponent(String(id)),
       {
         method:"PATCH",
-
         headers:{
           "Prefer":"return=representation"
         },
-
         body:JSON.stringify({
-          name:name.trim(),
-          phone:phone.trim()
+          name:newName,
+          phone:newPhone
         })
       }
     );
 
     /*
-      Supabase gerçekten güncellemiş mi?
+      SUPABASE GERÇEKTEN KAYDI
+      GÜNCELLEDİ Mİ KONTROL ET
     */
-
     if(!result || !result.length){
 
       throw new Error(
-        "Müşteri güncellenemedi: kayıt bulunamadı."
+        "Müşteri kaydı güncellenemedi. Supabase kayıt döndürmedi."
       );
-
     }
 
     /*
-      Güncel kaydı doğrudan state'e yaz
+      EKRANDAKİ VERİYİ DE HEMEN GÜNCELLE
     */
+    const updated = result[0];
 
-    const updated =
-      result[0];
-
-    const index =
-      state.customers.findIndex(
-        x => String(x.id) === String(id)
-      );
+    const index = state.customers.findIndex(
+      x => String(x.id) === String(id)
+    );
 
     if(index !== -1){
-
-      state.customers[index] =
-        updated;
-
+      state.customers[index] = {
+        ...state.customers[index],
+        ...updated
+      };
     }
 
+    /*
+      EKRANI YENİDEN ÇİZ
+    */
     renderCustomers();
 
-    saleCustomer.innerHTML =
-      customerOptions();
+    saleCustomer.innerHTML = customerOptions();
+    paymentCustomer.innerHTML = customerOptions();
 
-    paymentCustomer.innerHTML =
-      customerOptions();
+    /*
+      Eğer müşteri detay ekranı açıksa onu da güncelle
+    */
+    if(
+      detailId &&
+      String(detailId) === String(id)
+    ){
+      detailName.textContent = newName;
+    }
 
-    toast(
-      "Müşteri başarıyla güncellendi"
-    );
+    toast("Müşteri güncellendi");
 
   }catch(e){
 
