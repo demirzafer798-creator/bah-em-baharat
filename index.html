@@ -250,7 +250,7 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
 <button onclick="go('sale')">＋ Yeni Satış</button>
 <button onclick="go('customer')">＋ Müşteri</button>
 <button onclick="go('payment')">₺ Tahsilat</button>
-<button onclick="go('transfer')">⇄ Depo → Araç</button>
+<button onclick="go('transfer')">⇄ Depo → Araç</button><button onclick="go('rawmaterials')">🧂 Hammadde</button><button onclick="go('production')">⚙ Üretim</button>
 </div>
 </div>
 
@@ -456,18 +456,14 @@ Not
 </section>
 
 
+<section id="rawmaterials" class="page">
+<div class="sectionHead"><h1>Hammadde</h1><button class="ghost" onclick="go('dashboard')">← Ana</button></div>
+<div class="card"><h2>Hammadde Stokları</h2><div id="rawMaterialList"></div><button class="primary big" onclick="newRawMaterial()">＋ Hammadde Ekle</button></div>
+</section>
+
 <section id="production" class="page">
-<div class="sectionHead">
-<h1>Hammadde & Üretim</h1>
-<button class="ghost" onclick="go('dashboard')">← Ana</button>
-</div>
-<div class="card">
-<h2>Hammadde Stokları</h2>
-<div id="rawMaterialList"></div>
-<button class="primary big" onclick="newRawMaterial()">＋ Hammadde Ekle</button>
-</div>
-<div class="card">
-<h2>Üretim Kaydı</h2>
+<div class="sectionHead"><h1>Üretim</h1><button class="ghost" onclick="go('dashboard')">← Ana</button></div>
+<div class="card"><h2>Üretim Kaydı</h2>
 <div class="prodBox">
 <label>Hammadde<select id="productionRawMaterial"></select></label>
 <label>Mamul / Ürün<select id="productionProduct"></select></label>
@@ -478,8 +474,7 @@ Not
 </div>
 <div id="productionResult" class="prodResult"></div>
 <button class="primary big" onclick="saveProduction()">ÜRETİMİ KAYDET</button>
-</div>
-</section>
+</div></section>
 
 </main>
 
@@ -489,7 +484,7 @@ Not
 <button onclick="go('sale')">＋<small>Satış</small></button>
 <button onclick="go('customer')">♙<small>Cari</small></button>
 <button onclick="go('stock')">▦<small>Stok</small></button>
-<button onclick="go('products')">☷<small>Ürün</small></button>
+<button onclick="go('products')">☷<small>Ürün</small></button><button onclick="go('rawmaterials')">▤<small>Hammadde</small></button>
 <button onclick="go('production')">⚙<small>Üretim</small></button>
 </nav>
 
