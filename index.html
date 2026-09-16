@@ -1314,50 +1314,55 @@ function renderCustomers(){
 
 async function editCustomer(id){
 
-  const c = state.customers.find(
-    x => String(x.id) === String(id)
-  );
-
-  if(!c){
-    toast("Müşteri bulunamadı");
-    return;
-  }
-
-  const name = prompt(
-    "Müşteri adı:",
-    c.name || ""
-  );
-
-  if(name === null) return;
-
-  const newName = name.trim();
-
-  if(!newName){
-    toast("Müşteri adı boş olamaz");
-    return;
-  }
-
-  const phone = prompt(
-    "Telefon:",
-    c.phone || ""
-  );
-
-  if(phone === null) return;
-
-  const newPhone = phone.trim();
-
   try{
 
-    /*
-      ÖNCE GÜNCELLEMEYİ YAP
-    */
-    const result = await sb(
-      "customers?id=eq." + encodeURIComponent(String(id)),
+    // Müşteriyi Supabase'den doğrudan bul
+    const found = await sb(
+      "customers?select=*&id=eq." +
+      encodeURIComponent(String(id))
+    );
+
+    if(!found || !found.length){
+      toast("Müşteri Supabase'de bulunamadı");
+      console.error("MÜŞTERİ ID:", id);
+      console.error("SUPABASE SONUCU:", found);
+      return;
+    }
+
+    const c = found[0];
+
+    const name = prompt(
+      "Müşteri adı:",
+      c.name || ""
+    );
+
+    if(name === null) return;
+
+    const newName = name.trim();
+
+    if(!newName){
+      toast("Müşteri adı boş olamaz");
+      return;
+    }
+
+    const phone = prompt(
+      "Telefon:",
+      c.phone || ""
+    );
+
+    if(phone === null) return;
+
+    const newPhone = phone.trim();
+
+    console.log("GÜNCELLENECEK MÜŞTERİ:", c);
+    console.log("ID:", c.id);
+
+    // Güncelle
+    await sb(
+      "customers?id=eq." +
+      encodeURIComponent(String(c.id)),
       {
         method:"PATCH",
-        headers:{
-          "Prefer":"return=representation"
-        },
         body:JSON.stringify({
           name:newName,
           phone:newPhone
@@ -1365,52 +1370,51 @@ async function editCustomer(id){
       }
     );
 
-    /*
-      SUPABASE GERÇEKTEN KAYDI
-      GÜNCELLEDİ Mİ KONTROL ET
-    */
-    if(!result || !result.length){
+    // Güncellemenin gerçekten yapıldığını tekrar kontrol et
+    const check = await sb(
+      "customers?select=*&id=eq." +
+      encodeURIComponent(String(c.id))
+    );
 
-      throw new Error(
-        "Müşteri kaydı güncellenemedi. Supabase kayıt döndürmedi."
-      );
+    if(!check || !check.length){
+      toast("Müşteri kaydı kontrol edilemedi");
+      return;
     }
 
-    /*
-      EKRANDAKİ VERİYİ DE HEMEN GÜNCELLE
-    */
-    const updated = result[0];
+    if(check[0].name !== newName){
+      toast("İsim güncellenmedi");
+      console.error("BEKLENEN:", newName);
+      console.error("GELEN:", check[0].name);
+      return;
+    }
 
+    // Yerel listeyi güncelle
     const index = state.customers.findIndex(
-      x => String(x.id) === String(id)
+      x => String(x.id) === String(c.id)
     );
 
     if(index !== -1){
-      state.customers[index] = {
-        ...state.customers[index],
-        ...updated
-      };
+      state.customers[index] = check[0];
     }
 
-    /*
-      EKRANI YENİDEN ÇİZ
-    */
+    // Müşteri listesini yenile
     renderCustomers();
 
+    // Satış müşteri listesini yenile
     saleCustomer.innerHTML = customerOptions();
+
+    // Tahsilat müşteri listesini yenile
     paymentCustomer.innerHTML = customerOptions();
 
-    /*
-      Eğer müşteri detay ekranı açıksa onu da güncelle
-    */
+    // Detay açıksa ismi de değiştir
     if(
       detailId &&
-      String(detailId) === String(id)
+      String(detailId) === String(c.id)
     ){
       detailName.textContent = newName;
     }
 
-    toast("Müşteri güncellendi");
+    toast("Müşteri başarıyla güncellendi");
 
   }catch(e){
 
@@ -1427,7 +1431,6 @@ async function editCustomer(id){
   }
 
 }
-
 
 async function deleteCustomer(id){
   const c = state.customers.find(
