@@ -2227,6 +2227,114 @@ async function newStock(){
 
   document.body.appendChild(modal);
 }
+  async function newRawMaterial(){
+
+  const name = prompt("Hammadde adı:");
+
+  if(name === null) return;
+
+  if(!name.trim()){
+
+    toast("Hammadde adı boş olamaz");
+
+    return;
+  }
+
+
+  const qty = Number(
+    prompt("Miktar (kg):", "1")
+  );
+
+  if(!Number.isFinite(qty) || qty <= 0){
+
+    toast("Geçerli bir miktar girin");
+
+    return;
+  }
+
+
+  try{
+
+    const existing = state.rawMaterials.find(
+      r =>
+        String(r.name || "")
+          .trim()
+          .toLocaleLowerCase("tr-TR")
+        ===
+        name.trim()
+          .toLocaleLowerCase("tr-TR")
+    );
+
+
+    if(existing){
+
+      const newQty =
+        Number(existing.quantity || 0) + qty;
+
+
+      await sb(
+        "raw_materials?id=eq." +
+        encodeURIComponent(existing.id),
+        {
+          method:"PATCH",
+
+          body:JSON.stringify({
+            quantity:newQty,
+            unit:"kg"
+          })
+        }
+      );
+
+      toast(
+        name.trim() +
+        " stoğuna " +
+        qty +
+        " kg eklendi"
+      );
+
+    }else{
+
+      await sb(
+        "raw_materials",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            name:name.trim(),
+            quantity:qty,
+            unit:"kg"
+          })
+        }
+      );
+
+      toast(
+        name.trim() +
+        " hammaddesi eklendi"
+      );
+
+    }
+
+
+    await loadData();
+
+    stockTab("raw");
+
+
+  }catch(e){
+
+    console.error(
+      "HAMMADDE HATASI:",
+      e
+    );
+
+    toast(
+      e.message ||
+      "Hammadde kaydedilemedi"
+    );
+
+  }
+
+}
   async function confirmRawEntry(){
 
   try{
