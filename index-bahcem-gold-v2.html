@@ -834,6 +834,7 @@ const detailMovements=document.getElementById("detailMovements");
 async function sb(path,opts={}){
   const headers={
     "apikey":SB_KEY,
+    "Authorization":"Bearer "+SB_KEY,
     "Content-Type":"application/json",
     ...(opts.headers||{})
   };
