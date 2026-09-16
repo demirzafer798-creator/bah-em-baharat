@@ -318,7 +318,9 @@ TOPLAM
 
 <div class="sectionHead">
 <h1>Stok</h1>
-<button class="small" onclick="newStock()">＋ Stok Girişi</button>
+<button class="small" id="stockEntryButton" onclick="newStock()">
+＋ Stok Girişi
+</button>
 </div>
 
 
@@ -326,7 +328,7 @@ TOPLAM
   <button class="active" onclick="stockTab('warehouse')">Depo</button>
   <button onclick="stockTab('vehicle')">Araç</button>
   <button onclick="stockTab('raw')">Hammadde</button>
-  <button onclick="go('production')">Üretim</button>
+  <button onclick="stockTab('production')">Üretim</button>
 </div>
 <div class="card">
 <div id="stockTable"></div>
@@ -1318,7 +1320,6 @@ async function editCustomer(id){
 
   if(!c) return;
 
-
   const name = prompt(
     "Müşteri adı:",
     c.name || ""
@@ -1326,15 +1327,12 @@ async function editCustomer(id){
 
   if(name === null) return;
 
-
   if(!name.trim()){
 
     toast("Müşteri adı boş olamaz");
 
     return;
-
   }
-
 
   const phone = prompt(
     "Telefon:",
@@ -1343,34 +1341,74 @@ async function editCustomer(id){
 
   if(phone === null) return;
 
-
   try{
 
-    await sb(
-      "customers?id=eq." + id,
+    const result = await sb(
+      "customers?id=eq." +
+      encodeURIComponent(id),
       {
         method:"PATCH",
 
+        headers:{
+          "Prefer":"return=representation"
+        },
+
         body:JSON.stringify({
-
           name:name.trim(),
-
           phone:phone.trim()
-
         })
       }
     );
 
+    /*
+      Supabase gerçekten güncellemiş mi?
+    */
 
-    toast("Müşteri güncellendi");
+    if(!result || !result.length){
 
+      throw new Error(
+        "Müşteri güncellenemedi: kayıt bulunamadı."
+      );
 
-    await loadData();
+    }
 
+    /*
+      Güncel kaydı doğrudan state'e yaz
+    */
+
+    const updated =
+      result[0];
+
+    const index =
+      state.customers.findIndex(
+        x => String(x.id) === String(id)
+      );
+
+    if(index !== -1){
+
+      state.customers[index] =
+        updated;
+
+    }
+
+    renderCustomers();
+
+    saleCustomer.innerHTML =
+      customerOptions();
+
+    paymentCustomer.innerHTML =
+      customerOptions();
+
+    toast(
+      "Müşteri başarıyla güncellendi"
+    );
 
   }catch(e){
 
-    console.error(e);
+    console.error(
+      "MÜŞTERİ GÜNCELLEME HATASI:",
+      e
+    );
 
     toast(
       e.message ||
@@ -1596,6 +1634,29 @@ async function renderDetail(){
 function stockTab(x){
 
   stockLoc = x;
+  const entryButton =
+  document.getElementById("stockEntryButton");
+
+if(entryButton){
+
+  if(x === "raw"){
+
+    entryButton.textContent =
+      "＋ Hammadde Girişi";
+
+  }else if(x === "production"){
+
+    entryButton.textContent =
+      "＋ Stok Girişi";
+
+  }else{
+
+    entryButton.textContent =
+      "＋ Stok Girişi";
+
+  }
+
+}
 
   const buttons =
     document.querySelectorAll(".tabs button");
@@ -1604,35 +1665,143 @@ function stockTab(x){
     button.classList.remove("active");
   });
 
-
   if(x === "warehouse"){
     buttons[0]?.classList.add("active");
   }
 
-  else if(x === "vehicle"){
+  if(x === "vehicle"){
     buttons[1]?.classList.add("active");
   }
 
-  else if(x === "raw"){
+  if(x === "raw"){
     buttons[2]?.classList.add("active");
   }
 
-  else if(x === "production"){
+  if(x === "production"){
     buttons[3]?.classList.add("active");
   }
 
+  /*
+    ÜRETİM SEKMESİ
+    Ayrı sayfaya gitmek yerine
+    aynı stok ekranında üretim bölümünü gösteriyoruz.
+  */
+
+  const stockTable = document.getElementById("stockTable");
 
   if(x === "production"){
 
-    go("production");
+    stockTable.innerHTML = `
+      <div class="card">
+
+        <h2>Hammadde → Ürün Üretimi</h2>
+
+        <p class="muted">
+          Örneğin 25 kg pul biber hammaddesinden
+          100 adet 40 gr pul biber üretirseniz
+          hammaddeden 4 kg düşer ve depoya
+          100 adet ürün eklenir.
+        </p>
+
+        <label>
+          Hammadde
+          <select id="productionRawProduct">
+            ${
+              state.rawMaterials.map(function(r,i){
+                return `
+                  <option value="${i}">
+                    ${r.name} — ${r.quantity} ${r.unit || "kg"}
+                  </option>
+                `;
+              }).join("")
+            }
+          </select>
+        </label>
+
+        <label>
+          Üretilecek Ürün
+          <select id="productionProduct">
+            ${
+              state.products.map(function(p,i){
+                return `
+                  <option value="${i}">
+                    ${p.name} — ${p.package_size}
+                  </option>
+                `;
+              }).join("")
+            }
+          </select>
+        </label>
+
+        <div class="row">
+
+          <label class="grow">
+            Üretilecek Adet
+            <input
+              id="productionQty"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Örn: 100"
+            >
+          </label>
+
+          <label class="grow">
+            Paket Gramajı
+            <input
+              id="productionGram"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Örn: 40"
+            >
+          </label>
+
+        </div>
+
+        <div
+          class="card"
+          style="background:#f4f8f5;margin-top:15px"
+        >
+          <b>Hammadde tüketimi</b>
+
+          <div
+            id="productionInfo"
+            class="muted"
+          >
+            Üretim miktarı girildiğinde hesaplanır.
+          </div>
+
+        </div>
+
+        <button
+          class="primary big"
+          onclick="saveProduction()"
+        >
+          ÜRETİMİ KAYDET
+        </button>
+
+      </div>
+    `;
+
+    const qty =
+      document.getElementById("productionQty");
+
+    const gram =
+      document.getElementById("productionGram");
+
+    if(qty){
+      qty.addEventListener("input", calculateProduction);
+    }
+
+    if(gram){
+      gram.addEventListener("input", calculateProduction);
+    }
 
     return;
-
   }
 
-
   renderStock();
-
 }
 
 
@@ -1752,137 +1921,355 @@ function renderStock(){
 
 async function newStock(){
 
-if(!state.products.length){
+  /*
+    HAMMADDE SEKmesindeysek
+    hammadde girişi aç
+  */
 
-toast("Ürünler henüz yüklenmedi");
+  if(stockLoc === "raw"){
 
-return;
+    const old =
+      document.getElementById("rawStockModal");
 
+    if(old) old.remove();
+
+    const modal =
+      document.createElement("div");
+
+    modal.id = "rawStockModal";
+
+    modal.style.cssText = `
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    `;
+
+    modal.innerHTML = `
+      <div style="
+        background:#fff;
+        width:100%;
+        max-width:450px;
+        border-radius:16px;
+        padding:20px;
+      ">
+
+        <h2 style="margin-top:0">
+          Hammadde Girişi
+        </h2>
+
+        <label>
+          Hammadde
+
+          <select id="rawEntryProduct">
+
+            ${
+              state.rawMaterials.map((r,i)=>`
+                <option value="${i}">
+                  ${r.name}
+                </option>
+              `).join("")
+            }
+
+          </select>
+
+        </label>
+
+        <label>
+          Miktar
+
+          <input
+            id="rawEntryQty"
+            type="number"
+            min="0"
+            step="0.001"
+            placeholder="Örn: 25"
+          >
+
+        </label>
+
+        <label>
+          Birim
+
+          <select id="rawEntryUnit">
+            <option value="kg">kg</option>
+            <option value="gr">gr</option>
+          </select>
+
+        </label>
+
+        <div style="
+          display:flex;
+          gap:10px;
+          margin-top:15px;
+        ">
+
+          <button
+            style="flex:1"
+            onclick="
+              document
+                .getElementById('rawStockModal')
+                .remove()
+            "
+          >
+            İptal
+          </button>
+
+          <button
+            class="primary"
+            style="flex:1"
+            onclick="confirmRawEntry()"
+          >
+            HAMMADDE EKLE
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    return;
+  }
+
+  /*
+    NORMAL ÜRÜN STOK GİRİŞİ
+  */
+
+  if(!state.products.length){
+
+    toast("Ürünler henüz yüklenmedi");
+
+    return;
+  }
+
+  const old =
+    document.getElementById("stockModal");
+
+  if(old){
+    old.remove();
+  }
+
+  const modal =
+    document.createElement("div");
+
+  modal.id = "stockModal";
+
+  modal.style.cssText = `
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:#fff;
+      width:100%;
+      max-width:450px;
+      border-radius:16px;
+      padding:20px;
+    ">
+
+      <h2 style="margin-top:0">
+        Stok Girişi
+      </h2>
+
+      <label>
+        Ürün
+
+        <select id="newStockProduct">
+
+          ${
+            state.products.map((p,i)=>`
+              <option value="${i}">
+                ${p.name} — ${p.package_size}
+              </option>
+            `).join("")
+          }
+
+        </select>
+
+      </label>
+
+      <label>
+        Miktar
+
+        <input
+          id="newStockQty"
+          type="number"
+          step="0.001"
+          min="0"
+          placeholder="Örn: 10"
+        >
+
+      </label>
+
+      <label>
+        Yer
+
+        <select id="newStockLocation">
+
+          <option value="warehouse">
+            Depo
+          </option>
+
+          <option value="vehicle">
+            Araç
+          </option>
+
+        </select>
+
+      </label>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+      ">
+
+        <button
+          style="flex:1"
+          onclick="
+            document
+              .getElementById('stockModal')
+              .remove()
+          "
+        >
+          İptal
+        </button>
+
+        <button
+          class="primary"
+          style="flex:1"
+          onclick="confirmNewStock()"
+        >
+          STOK EKLE
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
 }
+  async function confirmRawEntry(){
 
+  try{
 
-const old=
-document.getElementById("stockModal");
+    const index =
+      Number(
+        document.getElementById(
+          "rawEntryProduct"
+        ).value
+      );
 
-if(old){
-old.remove();
-}
+    const qty =
+      Number(
+        document.getElementById(
+          "rawEntryQty"
+        ).value
+      );
 
+    const unit =
+      document.getElementById(
+        "rawEntryUnit"
+      ).value;
 
-const modal=
-document.createElement("div");
+    const raw =
+      state.rawMaterials[index];
 
-modal.id="stockModal";
+    if(!raw){
 
-modal.style.cssText=`
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.45);
-z-index:100;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px;
-`;
+      toast("Hammadde seçin");
 
+      return;
+    }
 
-modal.innerHTML=`
+    if(!qty || qty <= 0){
 
-<div style="
-background:#fff;
-width:100%;
-max-width:450px;
-border-radius:16px;
-padding:20px;
-box-shadow:0 10px 40px rgba(0,0,0,.25)
-">
+      toast("Miktar girin");
 
-<h2 style="margin-top:0">
-Stok Girişi
-</h2>
+      return;
+    }
 
-<label>
-Ürün
+    /*
+      Eğer gr girilmişse kg'a çevir
+    */
 
-<select id="newStockProduct">
+    let addKg = qty;
 
-${state.products.map(
-(p,i)=>
-`
-<option value="${i}">
-${p.name} — ${p.package_size}
-</option>
-`
-).join("")}
+    if(unit === "gr"){
+      addKg = qty / 1000;
+    }
 
-</select>
+    const current =
+      Number(raw.quantity || 0);
 
-</label>
+    const next =
+      current + addKg;
 
+    await sb(
+      "raw_materials?id=eq." + raw.id,
+      {
+        method:"PATCH",
 
-<label>
-Miktar
+        body:JSON.stringify({
+          quantity:next,
+          unit:"kg"
+        })
+      }
+    );
 
-<input
-id="newStockQty"
-type="number"
-step="0.001"
-min="0"
-placeholder="Örn: 10">
+    /*
+      Hammadde giriş hareketi
+    */
 
-</label>
+    toast(
+      raw.name +
+      " stoğuna " +
+      addKg.toLocaleString("tr-TR", {
+        maximumFractionDigits:3
+      }) +
+      " kg eklendi"
+    );
 
+    const modal =
+      document.getElementById(
+        "rawStockModal"
+      );
 
-<label>
-Yer
+    if(modal){
+      modal.remove();
+    }
 
-<select id="newStockLocation">
+    await loadData();
 
-<option value="warehouse">
-Depo
-</option>
+    stockTab("raw");
 
-<option value="vehicle">
-Araç
-</option>
+  }catch(e){
 
-</select>
+    console.error(
+      "HAMMADDE GİRİŞ HATASI:",
+      e
+    );
 
-</label>
+    toast(
+      e.message ||
+      "Hammadde eklenemedi"
+    );
 
-
-<div style="
-display:flex;
-gap:10px;
-margin-top:15px
-">
-
-<button
-style="flex:1"
-onclick="document.getElementById('stockModal').remove()">
-
-İptal
-
-</button>
-
-
-<button
-class="primary"
-style="flex:1"
-onclick="confirmNewStock()">
-
-STOK EKLE
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-
-document.body.appendChild(modal);
+  }
 
 }
 
