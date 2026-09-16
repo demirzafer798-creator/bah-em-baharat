@@ -397,7 +397,7 @@ Paket Gramajı
 
 </div>
 
-</section>
+
 </section>
 
 
@@ -1318,6 +1318,7 @@ async function editCustomer(id){
 
   if(!c) return;
 
+
   const name = prompt(
     "Müşteri adı:",
     c.name || ""
@@ -1325,23 +1326,47 @@ async function editCustomer(id){
 
   if(name === null) return;
 
+
   if(!name.trim()){
+
     toast("Müşteri adı boş olamaz");
+
     return;
+
   }
 
- try{
 
-  await sb(
-    "customers?id=eq." + id,
-    {
-      method:"DELETE"
-    }
+  const phone = prompt(
+    "Telefon:",
+    c.phone || ""
   );
 
-  toast("Müşteri silindi");
+  if(phone === null) return;
 
-  await loadData();
+
+  try{
+
+    await sb(
+      "customers?id=eq." + id,
+      {
+        method:"PATCH",
+
+        body:JSON.stringify({
+
+          name:name.trim(),
+
+          phone:phone.trim()
+
+        })
+      }
+    );
+
+
+    toast("Müşteri güncellendi");
+
+
+    await loadData();
+
 
   }catch(e){
 
@@ -1353,6 +1378,7 @@ async function editCustomer(id){
     );
 
   }
+
 }
 
 
@@ -1569,61 +1595,157 @@ async function renderDetail(){
 
 function stockTab(x){
 
-stockLoc=x;
+  stockLoc = x;
 
-document
-.querySelectorAll(".tabs button")
-.forEach(
-(b,i)=>
-b.classList.toggle(
-"active",
-(i===0&&x==="warehouse") ||
-(i===1&&x==="vehicle")
-)
-);
+  const buttons =
+    document.querySelectorAll(".tabs button");
 
-renderStock();
+  buttons.forEach(button => {
+    button.classList.remove("active");
+  });
+
+
+  if(x === "warehouse"){
+    buttons[0]?.classList.add("active");
+  }
+
+  else if(x === "vehicle"){
+    buttons[1]?.classList.add("active");
+  }
+
+  else if(x === "raw"){
+    buttons[2]?.classList.add("active");
+  }
+
+  else if(x === "production"){
+    buttons[3]?.classList.add("active");
+  }
+
+
+  if(x === "production"){
+
+    go("production");
+
+    return;
+
+  }
+
+
+  renderStock();
 
 }
 
 
 function renderStock(){
 
-  stockTable.innerHTML=state.products.map(p=>{
+  /*
+    HAMMADDE EKRANI
+  */
 
-    const rows=state.stock.filter(
-      x=>
-        String(x.product_id)===String(p.id) &&
-        x.location===stockLoc
-    );
+  if(stockLoc === "raw"){
 
-    const quantity=rows.reduce(
-      (sum,x)=>sum+Number(x.quantity||0),
-      0
-    );
+    if(!state.rawMaterials.length){
 
-    return `
-      <div class="stockRow">
+      stockTable.innerHTML =
+        '<p class="muted">Henüz hammadde yok.</p>';
 
-        <div>
-          <b>${p.name}</b>
-          <small>${p.package_size||""}</small>
+      return;
+
+    }
+
+    stockTable.innerHTML =
+      state.rawMaterials.map(raw => {
+
+        const quantity =
+          Number(raw.quantity || 0);
+
+        return `
+          <div class="stockRow">
+
+            <div>
+              <b>${raw.name}</b>
+              <small>Hammadde</small>
+            </div>
+
+            <div>
+              <b>
+                ${quantity.toLocaleString(
+                  "tr-TR",
+                  {
+                    minimumFractionDigits:0,
+                    maximumFractionDigits:3
+                  }
+                )}
+              </b>
+            </div>
+
+            <div>
+              ${raw.unit || "kg"}
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+
+    return;
+  }
+
+
+  /*
+    DEPO / ARAÇ EKRANI
+  */
+
+  stockTable.innerHTML =
+    state.products.map(p => {
+
+      const rows =
+        state.stock.filter(
+          x =>
+            String(x.product_id) === String(p.id) &&
+            x.location === stockLoc
+        );
+
+      const quantity =
+        rows.reduce(
+          (sum,x) =>
+            sum + Number(x.quantity || 0),
+          0
+        );
+
+      return `
+        <div class="stockRow">
+
+          <div>
+            <b>${p.name}</b>
+            <small>
+              ${p.package_size || ""}
+            </small>
+          </div>
+
+          <div>
+            <b>
+              ${quantity.toLocaleString(
+                "tr-TR",
+                {
+                  maximumFractionDigits:3
+                }
+              )}
+            </b>
+          </div>
+
+          <div>
+            ${
+              p.sale_price == null
+              ? "Fiyat yok"
+              : money(p.sale_price)
+            }
+          </div>
+
         </div>
+      `;
 
-        <div>
-          <b>${quantity}</b>
-        </div>
-
-        <div>
-          ${p.sale_price==null
-            ?"Fiyat yok"
-            :money(p.sale_price)}
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
+    }).join("");
 
 }
 
