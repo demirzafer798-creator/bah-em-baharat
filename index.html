@@ -558,11 +558,12 @@ const PRODUCT_DATA=[
 
 let state={
 products:[],
+rawMaterials:[],
 customers:[],
 stock:[],
 sales:[],
 payments:[]
-};
+}
 
 let stockLoc="warehouse";
 let detailId=null;
@@ -721,6 +722,10 @@ state.products=await sb(
 "products?select=*&order=id"
 );
 
+state.rawMaterials=await sb(
+"raw_materials?select=*&order=name"
+);
+
 state.customers=await sb(
 "customers?select=*&order=name"
 );
@@ -772,10 +777,10 @@ transferProduct.innerHTML=options();
 if(productionRawProduct){
 
   productionRawProduct.innerHTML =
-    state.products.map(function(p,i){
+    state.rawMaterials.map(function(r,i){
       return `
         <option value="${i}">
-          ${p.name} — ${p.package_size}
+          ${r.name} — ${r.quantity} ${r.unit || "kg"}
         </option>
       `;
     }).join("");
@@ -1937,18 +1942,28 @@ if(productionGram){
     const gram =
       Number(productionGram.value);
 
-    const rawProduct =
-      state.products[rawIndex];
+    const rawMaterial =
+      state.rawMaterials[rawIndex];
 
     const finishedProduct =
       state.products[productIndex];
 
-    if(!rawProduct || !finishedProduct){
 
-      toast("Hammadde ve ürün seçin");
+    if(!rawMaterial){
+
+      toast("Hammadde seçin");
       return;
 
     }
+
+
+    if(!finishedProduct){
+
+      toast("Üretilecek ürünü seçin");
+      return;
+
+    }
+
 
     if(qty <= 0){
 
@@ -1957,6 +1972,7 @@ if(productionGram){
 
     }
 
+
     if(gram <= 0){
 
       toast("Paket gramajını girin");
@@ -1964,23 +1980,72 @@ if(productionGram){
 
     }
 
+
+    /*
+      TOPLAM HAMMADDE TÜKETİMİ
+
+      Örnek:
+      100 adet × 40 gr
+      = 4000 gr
+      = 4 kg
+    */
+
     const consumedKg =
       (qty * gram) / 1000;
 
 
+    const currentRawQuantity =
+      Number(rawMaterial.quantity || 0);
+
+
     /*
-      HAMMADDE STOĞUNDAN DÜŞ
+      HAMMADDE YETERLİ Mİ?
     */
 
-    await upsertStock(
-      rawProduct.id,
-      "raw",
-      -consumedKg
+    if(currentRawQuantity < consumedKg){
+
+      toast(
+        "Yetersiz hammadde! " +
+        rawMaterial.name +
+        " mevcut: " +
+        currentRawQuantity +
+        " " +
+        (rawMaterial.unit || "kg")
+      );
+
+      return;
+
+    }
+
+
+    /*
+      HAMMADDEYİ DÜŞ
+
+      raw_materials tablosundan
+      miktarı azaltıyoruz.
+    */
+
+    const newRawQuantity =
+      currentRawQuantity - consumedKg;
+
+
+    await sb(
+      "raw_materials?id=eq." +
+      rawMaterial.id,
+      {
+        method:"PATCH",
+
+        body:JSON.stringify({
+
+          quantity:newRawQuantity
+
+        })
+      }
     );
 
 
     /*
-      ÜRETİLMİŞ ÜRÜNÜ DEPOYA EKLE
+      ÜRETİLEN ÜRÜNÜ DEPOYA EKLE
     */
 
     await upsertStock(
@@ -1991,13 +2056,17 @@ if(productionGram){
 
 
     /*
-      HAREKET KAYDI
+      STOK HAREKETİ
+
+      Burada product_id olarak
+      bitmiş ürünü kaydediyoruz.
     */
 
     await sb(
       "stock_movements",
       {
         method:"POST",
+
         body:JSON.stringify({
 
           product_id:finishedProduct.id,
@@ -2016,7 +2085,7 @@ if(productionGram){
             " gr | " +
             consumedKg +
             " kg " +
-            rawProduct.name +
+            rawMaterial.name +
             " hammaddesi tüketildi"
 
         })
@@ -2030,10 +2099,19 @@ if(productionGram){
     );
 
 
+    /*
+      FORMU TEMİZLE
+    */
+
     productionQty.value="";
     productionGram.value="";
 
     calculateProduction();
+
+
+    /*
+      VERİLERİ YENİLE
+    */
 
     await loadData();
 
