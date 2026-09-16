@@ -183,7 +183,8 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
   }
   .quick{
     grid-template-columns:repeat(2,1fr) !important;
-}                                                                                                          
+}                        
+}
 </style>
 </head>
 
@@ -330,7 +331,72 @@ TOPLAM
 <div class="card">
 <div id="stockTable"></div>
 </div>
+<section id="production" class="page">
 
+<div class="sectionHead">
+  <h1>Üretim</h1>
+  <button class="ghost" onclick="go('stock')">← Stok</button>
+</div>
+
+<div class="card">
+
+<h2>Hammadde → Ürün Üretimi</h2>
+
+<p class="muted">
+Örneğin 25 kg pul biber hammaddesinden 100 adet 40 gr pul biber
+üretirseniz hammaddeden 4 kg düşer, depo stoğuna 100 adet ürün eklenir.
+</p>
+
+<label>
+Hammadde
+<select id="productionRawProduct"></select>
+</label>
+
+<label>
+Üretilecek Ürün
+<select id="productionProduct"></select>
+</label>
+
+<div class="row">
+
+<label class="grow">
+Üretilecek Adet
+<input
+  id="productionQty"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Örn: 100">
+</label>
+
+<label class="grow">
+Paket Gramajı
+<input
+  id="productionGram"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Örn: 40">
+</label>
+
+</div>
+
+<div class="card" style="background:#f4f8f5;margin-top:15px">
+  <b>Hammadde tüketimi</b>
+  <div id="productionInfo" class="muted">
+    Üretim miktarı girildiğinde hesaplanır.
+  </div>
+</div>
+
+<button
+  class="primary big"
+  onclick="saveProduction()">
+  ÜRETİMİ KAYDET
+</button>
+
+</div>
+
+</section>
 </section>
 
 
@@ -505,6 +571,20 @@ const mode=document.getElementById("mode");
 const saleCustomer=document.getElementById("saleCustomer");
 const paymentCustomer=document.getElementById("paymentCustomer");
 const transferProduct=document.getElementById("transferProduct");
+const productionRawProduct =
+  document.getElementById("productionRawProduct");
+
+const productionProduct =
+  document.getElementById("productionProduct");
+
+const productionQty =
+  document.getElementById("productionQty");
+
+const productionGram =
+  document.getElementById("productionGram");
+
+const productionInfo =
+  document.getElementById("productionInfo");  
 const saleRows=document.getElementById("saleRows");
 const saleTotal=document.getElementById("saleTotal");
 const customerList=document.getElementById("customerList");
@@ -688,6 +768,31 @@ saleCustomer.innerHTML=customerOptions();
 paymentCustomer.innerHTML=customerOptions();
 
 transferProduct.innerHTML=options();
+if(productionRawProduct){
+
+  productionRawProduct.innerHTML =
+    state.products.map(function(p,i){
+      return `
+        <option value="${i}">
+          ${p.name} — ${p.package_size}
+        </option>
+      `;
+    }).join("");
+
+}
+
+if(productionProduct){
+
+  productionProduct.innerHTML =
+    state.products.map(function(p,i){
+      return `
+        <option value="${i}">
+          ${p.name} — ${p.package_size}
+        </option>
+      `;
+    }).join("");
+
+}  
 
 document.querySelectorAll(".sprod").forEach(
 x=>{
@@ -1770,6 +1875,186 @@ function updateTransferDirection(){
     button.textContent = "ARACA AKTAR";
 
   }
+}
+ function calculateProduction(){
+
+  if(!productionQty || !productionGram) return;
+
+  const qty =
+    Number(productionQty.value || 0);
+
+  const gram =
+    Number(productionGram.value || 0);
+
+  if(qty <= 0 || gram <= 0){
+
+    productionInfo.textContent =
+      "Üretim miktarı girildiğinde hesaplanır.";
+
+    return;
+  }
+
+  const totalGram = qty * gram;
+  const totalKg = totalGram / 1000;
+
+  productionInfo.innerHTML =
+    `
+    ${qty.toLocaleString("tr-TR")} adet ×
+    ${gram.toLocaleString("tr-TR")} gr
+    =
+    <b>${totalKg.toLocaleString("tr-TR",{maximumFractionDigits:3})} kg</b>
+    hammadde tüketilecek.
+    `;
+
+} 
+  if(productionQty){
+  productionQty.addEventListener(
+    "input",
+    calculateProduction
+  );
+}
+
+if(productionGram){
+  productionGram.addEventListener(
+    "input",
+    calculateProduction
+  );
+}
+  async function saveProduction(){
+
+  try{
+
+    const rawIndex =
+      Number(productionRawProduct.value);
+
+    const productIndex =
+      Number(productionProduct.value);
+
+    const qty =
+      Number(productionQty.value);
+
+    const gram =
+      Number(productionGram.value);
+
+    const rawProduct =
+      state.products[rawIndex];
+
+    const finishedProduct =
+      state.products[productIndex];
+
+    if(!rawProduct || !finishedProduct){
+
+      toast("Hammadde ve ürün seçin");
+      return;
+
+    }
+
+    if(qty <= 0){
+
+      toast("Üretilecek adet girin");
+      return;
+
+    }
+
+    if(gram <= 0){
+
+      toast("Paket gramajını girin");
+      return;
+
+    }
+
+    const consumedKg =
+      (qty * gram) / 1000;
+
+
+    /*
+      HAMMADDE STOĞUNDAN DÜŞ
+    */
+
+    await upsertStock(
+      rawProduct.id,
+      "raw",
+      -consumedKg
+    );
+
+
+    /*
+      ÜRETİLMİŞ ÜRÜNÜ DEPOYA EKLE
+    */
+
+    await upsertStock(
+      finishedProduct.id,
+      "warehouse",
+      qty
+    );
+
+
+    /*
+      HAREKET KAYDI
+    */
+
+    await sb(
+      "stock_movements",
+      {
+        method:"POST",
+        body:JSON.stringify({
+
+          product_id:finishedProduct.id,
+
+          movement_type:"production",
+
+          to_location:"warehouse",
+
+          quantity:qty,
+
+          notes:
+            "Üretim: " +
+            qty +
+            " adet × " +
+            gram +
+            " gr | " +
+            consumedKg +
+            " kg " +
+            rawProduct.name +
+            " hammaddesi tüketildi"
+
+        })
+      }
+    );
+
+
+    toast(
+      qty +
+      " adet üretim kaydedildi"
+    );
+
+
+    productionQty.value="";
+    productionGram.value="";
+
+    calculateProduction();
+
+    await loadData();
+
+    go("stock");
+
+    stockTab("warehouse");
+
+
+  }catch(e){
+
+    console.error(
+      "ÜRETİM HATASI:",
+      e
+    );
+
+    toast(
+      e.message ||
+      "Üretim kaydedilemedi"
+    );
+
+  }
+
 }
 async function saveTransfer(){
 
