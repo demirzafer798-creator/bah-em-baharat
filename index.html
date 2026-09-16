@@ -950,55 +950,76 @@ saleTotal.textContent=money(t);
 }
 
 
-async function upsertStock(product_id,location,delta){
-
-  const rows=await sb(
-    "stock?product_id=eq."+encodeURIComponent(product_id)+"&location=eq."+encodeURIComponent(location),
-    {
-      method:"GET"
-    }
+async function upsertStock(product_id, location, delta) {
+  const rows = await sb(
+    "stock?product_id=eq." +
+    encodeURIComponent(product_id) +
+    "&location=eq." +
+    encodeURIComponent(location)
   );
 
-  if(rows.length){
-
-    const row=rows[0];
-
-    const next=Number(row.quantity||0)+Number(delta);
-
-    if(next<0){
-      throw new Error("Yetersiz stok");
-    }
-
-    await sb(
-      "stock?id=eq."+row.id,
-      {
-        method:"PATCH",
-        body:JSON.stringify({
-          quantity:next
-        })
-      }
-    );
-
-  }else{
-
-    if(Number(delta)<0){
-      throw new Error("Yetersiz stok");
-    }
-
-    await sb(
-      "stock",
-      {
-        method:"POST",
-        body:JSON.stringify({
-          product_id:product_id,
-          location:location,
-          quantity:Number(delta)
-        })
-      }
-    );
-
+  if (!Array.isArray(rows)) {
+    throw new Error("Stok bilgisi okunamadı");
   }
 
+  if (rows.length) {
+    const row = rows[0];
+
+    const next =
+      Number(row.quantity || 0) +
+      Number(delta);
+
+    if (next < 0) {
+      throw new Error("Yetersiz stok");
+    }
+
+    const result = await sb(
+      "stock?id=eq." +
+      encodeURIComponent(row.id),
+      {
+        method: "PATCH",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          quantity: next
+        })
+      }
+    );
+
+    if (!Array.isArray(result) || result.length === 0) {
+      throw new Error(
+        "Ürün stoğu güncellenemedi"
+      );
+    }
+
+  } else {
+
+    if (Number(delta) < 0) {
+      throw new Error("Yetersiz stok");
+    }
+
+    const result = await sb(
+      "stock",
+      {
+        method: "POST",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          product_id: product_id,
+          location: location,
+          quantity: Number(delta)
+        })
+      }
+    );
+
+    if (!Array.isArray(result) || result.length === 0) {
+      throw new Error(
+        "Yeni ürün stoğu oluşturulamadı"
+      );
+    }
+  }
 }
 
 
@@ -2608,213 +2629,154 @@ if(productionGram){
   );
 }
   async function saveProduction(){
+  try {
+    // Elemanları her tıklamada yeniden bul
+    const rawSelect = document.getElementById("productionRawProduct");
+    const productSelect = document.getElementById("productionProduct");
+    const qtyInput = document.getElementById("productionQty");
+    const gramInput = document.getElementById("productionGram");
 
-  try{
+    if (!rawSelect || !productSelect || !qtyInput || !gramInput) {
+      throw new Error("Üretim alanları bulunamadı");
+    }
 
-    const rawIndex =
-      Number(productionRawProduct.value);
+    const rawIndex = Number(rawSelect.value);
+    const productIndex = Number(productSelect.value);
 
-    const productIndex =
-      Number(productionProduct.value);
+    const qty = Number(String(qtyInput.value).replace(",", "."));
+    const gram = Number(String(gramInput.value).replace(",", "."));
 
-    const qty =
-      Number(productionQty.value);
+    const raw = state.rawMaterials[rawIndex];
+    const product = state.products[productIndex];
 
-    const gram =
-      Number(productionGram.value);
+    console.log("ÜRETİM:", {
+      raw,
+      product,
+      qty,
+      gram
+    });
 
-    const rawMaterial =
-      state.rawMaterials[rawIndex];
-
-    const finishedProduct =
-      state.products[productIndex];
-
-
-    if(!rawMaterial){
-
+    if (!raw) {
       toast("Hammadde seçin");
       return;
-
     }
 
-
-    if(!finishedProduct){
-
+    if (!product) {
       toast("Üretilecek ürünü seçin");
       return;
-
     }
 
-
-    if(qty <= 0){
-
+    if (!qty || qty <= 0) {
       toast("Üretilecek adet girin");
       return;
-
     }
 
-
-    if(gram <= 0){
-
+    if (!gram || gram <= 0) {
       toast("Paket gramajını girin");
       return;
-
     }
 
+    // Tüketilecek hammadde kg
+    const consumed = (qty * gram) / 1000;
+    const current = Number(raw.quantity || 0);
 
-    /*
-      TOPLAM HAMMADDE TÜKETİMİ
-
-      Örnek:
-      100 adet × 40 gr
-      = 4000 gr
-      = 4 kg
-    */
-
-    const consumedKg =
-      (qty * gram) / 1000;
-
-
-    const currentRawQuantity =
-      Number(rawMaterial.quantity || 0);
-
-
-    /*
-      HAMMADDE YETERLİ Mİ?
-    */
-
-    if(currentRawQuantity < consumedKg){
-
+    if (current < consumed) {
       toast(
         "Yetersiz hammadde! " +
-        rawMaterial.name +
+        raw.name +
         " mevcut: " +
-        currentRawQuantity +
+        current +
         " " +
-        (rawMaterial.unit || "kg")
+        (raw.unit || "kg")
       );
-
       return;
-
     }
 
-
-    /*
-      HAMMADDEYİ DÜŞ
-
-      raw_materials tablosundan
-      miktarı azaltıyoruz.
-    */
-
-    const newRawQuantity =
-      currentRawQuantity - consumedKg;
-
-
-    await sb(
-      "raw_materials?id=eq." +
-      rawMaterial.id,
+    // 1. HAMMADDE STOĞUNDAN DÜŞ
+    const rawResult = await sb(
+      "raw_materials?id=eq." + encodeURIComponent(raw.id),
       {
-        method:"PATCH",
-
-        body:JSON.stringify({
-
-          quantity:newRawQuantity
-
+        method: "PATCH",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          quantity: current - consumed
         })
       }
     );
 
+    console.log("HAMMADDE GÜNCELLEME:", rawResult);
 
-    /*
-      ÜRETİLEN ÜRÜNÜ DEPOYA EKLE
-    */
+    if (!Array.isArray(rawResult) || rawResult.length === 0) {
+      throw new Error(
+        "Hammadde stoğu güncellenemedi. Supabase UPDATE/RLS politikasını kontrol edin."
+      );
+    }
 
+    // 2. ÜRÜNÜ DEPO STOĞUNA EKLE
     await upsertStock(
-      finishedProduct.id,
+      product.id,
       "warehouse",
       qty
     );
 
-
-    /*
-      STOK HAREKETİ
-
-      Burada product_id olarak
-      bitmiş ürünü kaydediyoruz.
-    */
-
-    await sb(
+    // 3. ÜRETİM HAREKETİNİ KAYDET
+    const movementResult = await sb(
       "stock_movements",
       {
-        method:"POST",
-
-        body:JSON.stringify({
-
-          product_id:finishedProduct.id,
-
-          movement_type:"production",
-
-          to_location:"warehouse",
-
-          quantity:qty,
-
+        method: "POST",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          product_id: product.id,
+          movement_type: "production",
+          to_location: "warehouse",
+          quantity: qty,
           notes:
             "Üretim: " +
             qty +
             " adet × " +
             gram +
             " gr | " +
-            consumedKg +
+            consumed +
             " kg " +
-            rawMaterial.name +
+            raw.name +
             " hammaddesi tüketildi"
-
         })
       }
     );
 
+    console.log("ÜRETİM HAREKETİ:", movementResult);
 
+    if (!Array.isArray(movementResult) || movementResult.length === 0) {
+      console.warn("stock_movements kayıt döndürmedi:", movementResult);
+    }
+
+    // 4. BAŞARILI
     toast(
       qty +
-      " adet üretim kaydedildi"
+      " adet " +
+      product.name +
+      " üretimi kaydedildi"
     );
 
-
-    /*
-      FORMU TEMİZLE
-    */
-
-    productionQty.value="";
-    productionGram.value="";
+    qtyInput.value = "";
+    gramInput.value = "";
 
     calculateProduction();
 
-
-    /*
-      VERİLERİ YENİLE
-    */
-
+    // Verileri yeniden çek
     await loadData();
 
-    go("stock");
+    // Üretim ekranında kal
+    stockTab("production");
 
-    stockTab("warehouse");
-
-
-  }catch(e){
-
-    console.error(
-      "ÜRETİM HATASI:",
-      e
-    );
-
-    toast(
-      e.message ||
-      "Üretim kaydedilemedi"
-    );
-
+  } catch (e) {
+    console.error("ÜRETİM HATASI:", e);
+    toast(e.message || "Üretim kaydedilemedi");
   }
-
 }
 async function saveTransfer(){
 
