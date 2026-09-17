@@ -336,13 +336,26 @@ document.addEventListener('click',function(e){
 body.authLocked > header, body.authLocked > aside, body.authLocked > main { display:none !important; }
 #authScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#f5f7f6;padding:20px;}
 #authScreen.hidden{display:none;}
-.authCard{width:min(420px,100%);background:#fff;border-radius:18px;padding:30px;box-shadow:0 12px 40px rgba(0,0,0,.12);border:1px solid #e5e9e6;}
-.authCard h1{margin:0 0 6px;font-size:28px;}
+.authCard{
+  width:min(240px,80%);
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 12px 40px rgba(0,0,0,.12);
+  border:1px solid #e5e9e6;
+}
+.authCard h1{margin:0 0 6px;font-size:24px;}
 .authCard p{margin:0 0 24px;color:#6b746e;}
 .authCard label{display:block;margin:14px 0 6px;font-weight:600;}
 .authCard input{width:100%;box-sizing:border-box;padding:13px;border:1px solid #ccd5cf;border-radius:10px;font-size:16px;}
 .authCard button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:10px;background:#16823b;color:#fff;font-weight:700;font-size:16px;cursor:pointer;}
 #authError{min-height:20px;margin-top:12px;color:#b42318;font-size:14px;}
+#authScreen{
+  background-image:url('login-bg.jpg.png');
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
 </style>
 </head>
 
@@ -537,7 +550,17 @@ TOPLAM
 
 <div class="sectionHead">
 <h1 id="detailName">Müşteri</h1>
-<button class="ghost" onclick="go('customer')">← Geri</button>
+
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+  <button class="small" onclick="shareCustomerCari()">
+    📤 CARİYİ GÖNDER
+  </button>
+
+  <button class="ghost" onclick="go('customer')">
+    ← Geri
+  </button>
+</div>
+
 </div>
 
 <div class="card detailTop">
@@ -1857,7 +1880,68 @@ detailId=id;
 go("customerDetail");
 
 }
+function shareCustomerCari(){
 
+  if(!detailId){
+    toast("Müşteri seçilmedi");
+    return;
+  }
+
+  const customer = state.customers.find(
+    c => String(c.id) === String(detailId)
+  );
+
+  if(!customer){
+    toast("Müşteri bulunamadı");
+    return;
+  }
+
+  const name = customer.name || "Müşteri";
+
+  const balance =
+    document.getElementById("detailBalance")?.innerText || "0,00 TL";
+
+  const movements =
+    document.getElementById("detailMovements")?.innerText?.trim()
+    || "Hareket yok.";
+
+  const message =
+`BAHÇEM BAHARAT
+
+CARİ HESAP
+
+Müşteri: ${name}
+
+${movements}
+
+--------------------
+GÜNCEL CARİ BAKİYE:
+${balance}
+
+Bilginize sunulur.`;
+
+  const whatsapp =
+  "https://web.whatsapp.com/send?text=" +
+  encodeURIComponent(message);
+
+// Cariyi panoya kopyala
+if (navigator.clipboard) {
+  navigator.clipboard.writeText(message)
+    .then(() => {
+      toast("Cari kopyalandı. WhatsApp'a yapıştırabilirsiniz.");
+    })
+    .catch(() => {});
+}
+
+// WhatsApp'ı aç
+const link = document.createElement("a");
+link.href = whatsapp;
+link.target = "_blank";
+link.rel = "noopener";
+document.body.appendChild(link);
+link.click();
+link.remove();
+}
 
 
 async function renderDetail(){
@@ -2227,10 +2311,16 @@ function renderStock(){
         return `
           <div class="stockRow">
 
-            <div>
-              <b>${raw.name}</b>
-              <small>Hammadde</small>
-            </div>
+           <div>
+  <b>${raw.name}</b>
+  <small>Hammadde</small>
+
+  <button
+    class="small"
+    onclick="editStockQuantity('raw', ${raw.id}, ${quantity})">
+    DÜZELT
+  </button>
+</div>
 
             <div>
               <b>
@@ -2287,7 +2377,11 @@ function renderStock(){
               ${p.package_size || ""}
             </small>
           </div>
-
+<button
+  class="small"
+  onclick="editStockQuantity('${stockLoc}', ${p.id}, ${quantity})">
+  DÜZELT
+</button>
           <div>
             <b>
               ${quantity.toLocaleString(
@@ -2312,6 +2406,91 @@ function renderStock(){
 
     }).join("");
 
+}
+  async function editStockQuantity(type, id, current){
+
+  const value = prompt(
+    "STOK DÜZELTME\n\n" +
+    "Mevcut stok: " + current + "\n\n" +
+    "Yeni stok miktarını girin:",
+    current
+  );
+
+  if(value === null) return;
+
+  const newQty = Number(
+    String(value).replace(",", ".")
+  );
+
+  if(!Number.isFinite(newQty) || newQty < 0){
+    toast("Geçerli bir stok miktarı girin");
+    return;
+  }
+
+  try{
+
+    if(type === "raw"){
+
+      const result = await sb(
+        "raw_materials?id=eq." +
+        encodeURIComponent(id),
+        {
+          method:"PATCH",
+          headers:{
+            "Prefer":"return=representation"
+          },
+          body:JSON.stringify({
+            quantity:newQty
+          })
+        }
+      );
+
+      if(!Array.isArray(result) || !result.length){
+        throw new Error("Hammadde stoğu güncellenemedi");
+      }
+
+    }else{
+
+      const rows = await sb(
+        "stock?product_id=eq." +
+        encodeURIComponent(id) +
+        "&location=eq." +
+        encodeURIComponent(type)
+      );
+
+      const oldQty =
+        rows.length
+          ? Number(rows[0].quantity || 0)
+          : 0;
+
+      const delta = newQty - oldQty;
+
+      if(delta !== 0){
+        await upsertStock(
+          id,
+          type,
+          delta
+        );
+      }
+
+    }
+
+    toast("Stok güncellendi");
+
+    await loadData();
+
+    stockTab(type);
+
+  }catch(e){
+
+    console.error("STOK DÜZELTME HATASI:",e);
+
+    toast(
+      e.message ||
+      "Stok güncellenemedi"
+    );
+
+  }
 }
 
 
