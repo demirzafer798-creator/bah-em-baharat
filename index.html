@@ -59,10 +59,6 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
 .stockRow small{display:block;color:#69756d}
 
 .muted{color:#657168;font-size:13px;line-height:1.5}
-.rawRow{display:grid;grid-template-columns:2fr 90px 110px auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
-.prodBox{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.prodResult{background:#f4f8f5;border:1px solid #dbe7df;border-radius:10px;padding:12px;margin-top:10px}
-@media(max-width:650px){.rawRow{grid-template-columns:1fr 80px auto}.prodBox{grid-template-columns:1fr}}
 
 .tabs{display:flex;gap:6px;margin-bottom:10px}
 .tabs button.active{background:#16823b;color:#fff}
@@ -187,78 +183,287 @@ input,select{width:100%;margin-top:5px;border:1px solid #cfd8d1;border-radius:9p
   }
   .quick{
     grid-template-columns:repeat(2,1fr) !important;
-  }
+}                        
 }
+</style>
 
-/* GİRİŞ EKRANI */
-#loginScreen{position:fixed;inset:0;background:#f4f6f5;display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
-#loginBox{width:min(420px,100%);background:#fff;border:1px solid #e2e7e3;border-radius:18px;padding:26px;box-shadow:0 8px 30px rgba(0,0,0,.10)}
-#loginBox h1{color:#16823b;font-size:26px;text-align:center;margin:0 0 4px}
-#loginBox .loginSub{text-align:center;color:#657168;font-size:13px;margin-bottom:20px}
-#loginBox label{margin:12px 0}
-#loginBox button{width:100%;margin-top:8px}
-#loginError{display:none;background:#ffecec;color:#a33;border-radius:9px;padding:10px;margin-top:12px;font-size:13px}
-#logoutBtn{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);padding:7px 10px;font-size:12px;margin-left:8px}
-#appShell[hidden]{display:none !important}
-#loginScreen[hidden]{display:none !important}
+<style id="bahcem-gold-v2">
+:root{
+  --bg:#080908;--panel:#101211;--panel2:#141615;--line:#383a35;
+  --gold:#d9ad42;--gold2:#f3cc68;--text:#eee9dd;--muted:#96958c;
+}
+html,body{background:#080908!important;color:var(--text)!important}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;min-height:100vh;padding-bottom:30px!important}
+.top{
+  height:86px!important;position:fixed!important;left:260px;right:0;top:0;
+  background:rgba(8,9,8,.94)!important;border-bottom:1px solid rgba(217,173,66,.22);
+  padding:0 28px!important;z-index:50!important;backdrop-filter:blur(14px);
+}
+.mobileBrand{display:none}.menuBtn{
+  background:transparent!important;color:var(--gold2)!important;border:0!important;
+  font-size:31px!important;padding:5px 10px!important;
+}
+.topRight{margin-left:auto;display:flex;align-items:center;gap:22px}
+.dateBox,.userBox{
+  display:flex;align-items:center;gap:12px;border:1px solid #44453e;
+  border-radius:12px;padding:10px 15px;color:#f0ede5;background:#0d0f0e;
+}
+.dateBox:first-letter,.userIcon{color:var(--gold2)}
+.dateBox small,.userBox small{color:#aaa79e}
+.userBox{border:0;background:transparent;padding-right:0}
+.userIcon{font-size:28px;border:1px solid var(--gold);border-radius:50%;width:40px;height:40px;display:grid;place-items:center}
+.sideMenu{
+  position:fixed;left:0;top:0;bottom:0;width:260px;z-index:60;
+  background:
+    radial-gradient(circle at 40% 80%,rgba(180,120,30,.15),transparent 27%),
+    linear-gradient(180deg,#0a0b0a,#070807);
+  border-right:1px solid rgba(217,173,66,.48);
+  padding:18px 16px;display:flex;flex-direction:column;
+}
+.sideLogo{text-align:center;padding:5px 0 22px;border-bottom:1px solid #292b27}
+.leafMark{color:var(--gold2);font-size:28px}
+.logoScript,.brandScript{
+  font-family:"Brush Script MT","Segoe Script",cursive;color:var(--gold2);
+  font-size:48px;line-height:.85;font-weight:600;
+}
+.logoSub,.brandSub{letter-spacing:6px;font-size:12px;margin-top:10px;color:#eee8dc}
+.logoTag{font-family:cursive;color:var(--gold);font-size:15px;margin-top:18px}
+.sideNav{display:flex;flex-direction:column;gap:6px;padding-top:15px}
+.navItem{
+  width:100%;display:flex;align-items:center;gap:16px;text-align:left;
+  background:transparent!important;border:1px solid transparent!important;
+  color:#eee9df!important;padding:12px 14px!important;border-radius:10px!important;
+  font-size:16px!important;font-weight:600!important;
+}
+.navItem:first-letter{color:var(--gold2)}
+.navItem.active,.navItem:hover{
+  background:linear-gradient(90deg,#f0c85f,#b98828)!important;
+  color:#17140d!important;border-color:rgba(255,220,120,.4)!important;
+  box-shadow:0 7px 20px rgba(211,163,50,.15);
+}
+.navItem.active span,.navItem:hover span{color:#17140d!important}
+.sideFooter{margin-top:auto;padding:18px 8px;color:var(--gold);font-family:cursive;font-size:18px}
+.sideFooter span{display:block;color:#c9b875;font-size:14px}
+main{max-width:none!important;margin-left:260px!important;padding:110px 26px 30px!important}
+.page{display:none}.page.active{display:block}
+.heroHead{display:flex;justify-content:space-between;align-items:flex-end;padding:10px 4px 20px}
+.eyebrow{color:#8d8c83;font-size:11px;letter-spacing:2px}
+.heroHead h1{color:var(--gold2)!important;font-size:40px!important;margin:9px 0 4px!important}
+.heroHead p{font-size:17px;color:#dedad1;margin:0}
+.heroSlogan{text-align:right;color:var(--gold2);font-family:cursive;font-size:22px;line-height:1.05;padding-right:10px}
+.heroSlogan em{font-size:18px}
+.grid.stats{grid-template-columns:repeat(4,1fr)!important;gap:18px!important;margin:10px 0 18px!important}
+.grid.stats .card,.card{
+  background:linear-gradient(145deg,#111312,#0c0e0d)!important;
+  border:1px solid #3b3d37!important;border-radius:14px!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.22)!important;color:var(--text)!important;
+}
+.statCard{display:flex;align-items:center;gap:15px;min-height:118px}
+.statCard span{color:#ddd8ce!important;font-size:14px!important}
+.statCard b{color:var(--gold2)!important;font-size:29px!important;margin-top:5px!important}
+.statCard small{display:block;color:#aaa69c;margin-top:4px}
+.statIcon{width:48px;height:48px;display:grid;place-items:center;color:var(--gold2);font-size:34px}
+.dashboardQuick{grid-template-columns:repeat(5,1fr)!important;gap:12px!important;margin:8px 0 16px}
+.dashboardQuick button{
+  min-height:58px!important;background:linear-gradient(145deg,#191915,#0e100e)!important;
+  border:1px solid #b88c28!important;color:var(--gold2)!important;border-radius:11px!important;
+  font-size:15px!important;box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+.dashboardQuick button:hover{background:linear-gradient(145deg,#2a2414,#11120f)!important;transform:translateY(-1px)}
+.dashboardColumns{display:grid;grid-template-columns:1.45fr 1fr;gap:18px}
+.dashboardPanel{min-height:250px}
+.panelTitle{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #2b2e2b;padding-bottom:9px}
+.panelTitle h2{color:var(--gold2)!important;margin:0!important}
+.panelTitle i{color:#e06455;font-style:normal}
+.fakeStock>div{display:grid;grid-template-columns:2fr .6fr .6fr;padding:10px 6px;border-bottom:1px solid #262926;color:#dedbd2}
+.fakeStock>div:first-child{color:#a8a49a;font-size:12px}
+.fakeStock strong{color:var(--gold2)}
+.brandNote{display:flex;align-items:center;gap:22px;padding:15px 20px!important;margin-top:18px}
+.brandNote b{display:block;color:var(--gold2);font-size:18px}
+.brandNote span{color:#aaa79f;font-size:12px}
+.goldBars{display:flex;gap:5px;align-items:end;height:28px}
+.goldBars i{width:8px;background:var(--gold);display:block}
+.goldBars i:nth-child(1){height:10px}.goldBars i:nth-child(2){height:16px}.goldBars i:nth-child(3){height:22px}
+.goldBars i:nth-child(4){height:27px}.goldBars i:nth-child(5){height:19px}.goldBars i:nth-child(6){height:24px}.goldBars i:nth-child(7){height:14px}
+.sectionHead h1{color:var(--gold2)!important}
+label{color:#aaa79f!important}
+input,select{
+  background:#0b0d0c!important;color:#eee9df!important;border-color:#3a3d38!important;
+}
+input:focus,select:focus{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(217,173,66,.10)!important}
+button.primary{background:linear-gradient(135deg,#b88625,#e8c15c)!important;color:#151109!important}
+button{background:#1a1d1a!important;color:#eee9df!important;border-color:#343733}
+.tabs{background:#0d0f0e!important;border:1px solid #2d302c;padding:5px;border-radius:12px}
+.tabs button.active{background:linear-gradient(135deg,#b88625,#e8c15c)!important;color:#151109!important}
+.bottom{display:none!important}
+#toast{background:#171914!important;color:var(--gold2)!important;border:1px solid #a27b26!important}
+@media(max-width:900px){
+  .sideMenu{transform:translateX(-100%);transition:.2s}
+  .sideMenu.open{transform:translateX(0)}
+  .top{left:0!important}
+  main{margin-left:0!important;padding:96px 14px 25px!important}
+  .menuBtn{display:block}
+  .grid.stats{grid-template-columns:repeat(2,1fr)!important}
+  .dashboardQuick{grid-template-columns:repeat(2,1fr)!important}
+  .dashboardColumns{grid-template-columns:1fr}
+  .heroSlogan{display:none}
+}
+@media(max-width:600px){
+  .dateBox{display:none}
+  .heroHead h1{font-size:30px!important}
+  .grid.stats{grid-template-columns:1fr 1fr!important}
+  .statCard{min-height:100px;padding:12px!important}
+  .statCard b{font-size:22px!important}
+  .dashboardQuick{grid-template-columns:1fr 1fr!important}
+}
+</style>
+<script>
+function toggleSideMenu(){
+  const m=document.getElementById('sideMenu');
+  if(m) m.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  const btn=e.target.closest('.navItem');
+  if(btn && window.innerWidth<=900){
+    const m=document.getElementById('sideMenu');
+    if(m) m.classList.remove('open');
+  }
+});
+</script>
 
+
+<style id="authOnlyStyle">
+body.authLocked > header, body.authLocked > aside, body.authLocked > main { display:none !important; }
+#authScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#f5f7f6;padding:20px;}
+#authScreen.hidden{display:none;}
+.authCard{width:min(420px,100%);background:#fff;border-radius:18px;padding:30px;box-shadow:0 12px 40px rgba(0,0,0,.12);border:1px solid #e5e9e6;}
+.authCard h1{margin:0 0 6px;font-size:28px;}
+.authCard p{margin:0 0 24px;color:#6b746e;}
+.authCard label{display:block;margin:14px 0 6px;font-weight:600;}
+.authCard input{width:100%;box-sizing:border-box;padding:13px;border:1px solid #ccd5cf;border-radius:10px;font-size:16px;}
+.authCard button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:10px;background:#16823b;color:#fff;font-weight:700;font-size:16px;cursor:pointer;}
+#authError{min-height:20px;margin-top:12px;color:#b42318;font-size:14px;}
 </style>
 </head>
 
-<body>
-
-<div id="loginScreen">
-  <div id="loginBox">
-    <h1>BAHÇEM BAHARAT</h1>
-    <div class="loginSub">Stok · Cari · Satış Sistemi</div>
-    <form id="loginForm">
-      <label>E-posta<input id="loginEmail" type="email" autocomplete="username" required placeholder="E-posta adresiniz"></label>
-      <label>Şifre<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Şifreniz"></label>
-      <button class="primary big" type="submit" id="loginButton">GİRİŞ YAP</button>
-      <div id="loginError"></div>
-    </form>
+<body class="authLocked">
+<div id="authScreen">
+  <div class="authCard">
+    <h1>Bahçem Baharat</h1>
+    <p>Yönetim paneline giriş yapın</p>
+    <label for="authEmail">E-posta</label>
+    <input id="authEmail" type="email" autocomplete="username" placeholder="E-posta adresiniz">
+    <label for="authPassword">Şifre</label>
+    <input id="authPassword" type="password" autocomplete="current-password" placeholder="Şifreniz">
+    <button id="authLoginBtn" type="button" onclick="signIn()">GİRİŞ YAP</button>
+    <div id="authError"></div>
   </div>
 </div>
 
-<div id="appShell" hidden>
+
 <header class="top">
-<div>
-<div class="brand">BAHÇEM BAHARAT</div>
-<div class="sub">MUHTEŞEM TAT · STOK & CARİ</div>
-</div>
-<div style="display:flex;align-items:center">
-  <div class="mode" id="mode">BAĞLANIYOR</div>
-  <button id="logoutBtn" onclick="logout()">ÇIKIŞ</button>
-</div>
+  <div class="mobileBrand">
+    <div class="brandScript">Bahçem</div>
+    <div class="brandSub">BAHARAT</div>
+  </div>
+  <button class="menuBtn" onclick="toggleSideMenu()">☰</button>
+  <div class="topRight">
+    <div class="dateBox">▣ <span id="liveDate">16 Eylül 2026<br><small>Çarşamba 12:48</small></span></div>
+    <div class="userBox"><span class="userIcon">●</span><span>Zafer Demir<br><small>Yönetici</small></span><button type="button" class="small" onclick="signOut()" style="margin-left:10px">ÇIKIŞ</button></div>
+  </div>
 </header>
+
+
+
+<aside id="sideMenu" class="sideMenu">
+  <div class="sideLogo">
+    <div class="leafMark">✦</div>
+    <div class="logoScript">Bahçem</div>
+    <div class="logoSub">BAHARAT</div>
+    <div class="logoTag">Doğadan Sofranzza...</div>
+  </div>
+
+  <div class="sideNav">
+    <button class="navItem active" data-page="dashboard" onclick="go('dashboard')">⌂ <span>Ana Sayfa</span></button>
+    <button class="navItem" data-page="sale" onclick="go('sale')">🛒 <span>Satış İşlemleri</span></button>
+    <button class="navItem" data-page="customer" onclick="go('customer')">♟ <span>Müşteriler (Cari)</span></button>
+    <button class="navItem" data-page="payment" onclick="go('payment')">▤ <span>Ödemeler</span></button>
+    <button class="navItem" data-page="production" onclick="go('production')">⚙ <span>Üretim</span></button>
+    <button class="navItem" data-page="stock" onclick="go('stock')">▣ <span>Stok / Hammadde</span></button>
+    <button class="navItem" data-page="products" onclick="go('products')">◆ <span>Ürünler</span></button>
+    <button class="navItem" data-page="transfer" onclick="go('transfer')">⇄ <span>Transferler</span></button>
+  </div>
+
+  <div class="sideFooter">
+    <div>✦</div>
+    <b>Kaliteli Baharat</b>
+    <span>Güvenilir Lezzet</span>
+  </div>
+</aside>
 
 <main>
 
+
 <section id="dashboard" class="page active">
+  <div class="heroHead">
+    <div>
+      <div class="eyebrow">BAHÇEM BAHARAT • YÖNETİM PANELİ</div>
+      <h1>Hoş Geldiniz</h1>
+      <p>Bahçem Baharat ile işiniz her zaman kontrol altında</p>
+    </div>
+    <div class="heroSlogan">Baharatla<br><em>Daha Güzel Bir Dünya...</em></div>
+  </div>
 
-<div class="grid stats">
-<div class="card"><span>Toplam Cari</span><b id="statDebt">0,00 TL</b></div>
-<div class="card"><span>Bugünkü Satış</span><b id="statSales">0,00 TL</b></div>
-<div class="card"><span>Ürün Çeşidi</span><b id="statProducts">0</b></div>
-<div class="card"><span>Düşük Stok</span><b id="statLow">0</b></div>
-</div>
+  <div class="grid stats">
+    <div class="card statCard">
+      <div class="statIcon">↗</div>
+      <div><span>Bugünkü Satış</span><b id="statSales">0,00 TL</b><small>Güncel satış toplamı</small></div>
+    </div>
+    <div class="card statCard">
+      <div class="statIcon">♟</div>
+      <div><span>Toplam Müşteri</span><b id="statDebt">0,00 TL</b><small>Aktif cari toplamı</small></div>
+    </div>
+    <div class="card statCard">
+      <div class="statIcon">◇</div>
+      <div><span>Toplam Ürün</span><b id="statProducts">0</b><small>Stokta kayıtlı</small></div>
+    </div>
+    <div class="card statCard">
+      <div class="statIcon">◉</div>
+      <div><div><span>Düşük Stok</span><b id="statLow">0</b><small>Hammadde / ürün</small></div></div>
+    </div>
+  </div>
 
-<div class="card">
-<h2>Hızlı İşlemler</h2>
-<div class="quick">
-<button onclick="go('sale')">＋ Yeni Satış</button>
-<button onclick="go('customer')">＋ Müşteri</button>
-<button onclick="go('payment')">₺ Tahsilat</button>
-<button onclick="go('transfer')">⇄ Depo → Araç</button>
-</div>
-</div>
+  <div class="quick dashboardQuick">
+    <button onclick="go('sale')">🛒 <span>Satış Yap</span></button>
+    <button onclick="go('customer')">♟ <span>Müşteri Ekle</span></button>
+    <button onclick="go('production')">⚙ <span>Üretim Yap</span></button>
+    <button onclick="go('stock');setTimeout(()=>{try{newRawMaterial()}catch(e){}},50)">▣ <span>Hammadde Ekle</span></button>
+    <button onclick="go('products')">◆ <span>Ürün Ekle</span></button>
+  </div>
 
-<div class="card">
-<h2>Son Satışlar</h2>
-<div id="recent"></div>
-</div>
+  <div class="dashboardColumns">
+    <div class="card dashboardPanel">
+      <div class="panelTitle"><h2>🛒 Son Satışlar</h2><button class="small ghost">Tümünü Gör⌄</button></div>
+      <div id="recent"></div>
+    </div>
 
+    <div class="card dashboardPanel">
+      <div class="panelTitle"><h2>▣ Stok Durumu <i>(Kritik)</i></h2><button class="small ghost" onclick="go('stock')">Tümünü Gör</button></div>
+      <div class="fakeStock">
+        <div><b>Ürün / Hammadde</b><b>Stok</b><b>Birim</b></div>
+        <div><span>⚠ Karabiber</span><strong>—</strong><span>kg</span></div>
+        <div><span>⚠ Pul Biber</span><strong>—</strong><span>kg</span></div>
+        <div><span>⚠ Kimyon</span><strong>—</strong><span>kg</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card brandNote">
+    <div class="goldBars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div><b>Bahçem Baharat</b><span>Kaliteli Baharat • Güvenilir Lezzet</span></div>
+  </div>
 </section>
+
 
 
 <section id="sale" class="page">
@@ -349,19 +554,103 @@ TOPLAM
 
 
 <section id="stock" class="page">
+
 <div class="sectionHead">
-<h1>Stok</h1>
-<div style="display:flex;gap:6px;flex-wrap:wrap">
-<button class="small" onclick="newStock()">＋ Stok Girişi</button>
-<button class="small" onclick="newRawMaterial()">＋ Hammadde</button>
-</div></div>
-<div class="tabs">
-<button class="active" onclick="stockTab('warehouse')">Depo</button>
-<button onclick="stockTab('vehicle')">Araç</button>
-<button onclick="stockTab('raw')">Hammadde</button>
-<button onclick="stockTab('production')">Üretim</button>
+
+  <h1>Stok</h1>
+
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+
+    <button class="small" onclick="newStock()">
+      ＋ Stok Girişi
+    </button>
+
+    <button class="small" onclick="newRawMaterial()">
+      ＋ Hammadde
+    </button>
+
+  </div>
+
 </div>
-<div class="card"><div id="stockTable"></div></div>
+</div>
+
+
+<div class="tabs">
+  <button class="active" onclick="stockTab('warehouse')">Depo</button>
+  <button onclick="stockTab('vehicle')">Araç</button>
+  <button onclick="stockTab('raw')">Hammadde</button>
+  <button onclick="stockTab('production')">Üretim</button>
+</div>
+<div class="card">
+<div id="stockTable"></div>
+</div>
+</section>
+<section id="production" class="page">
+
+<div class="sectionHead">
+  <h1>Üretim</h1>
+  <button class="ghost" onclick="go('stock')">← Stok</button>
+</div>
+
+<div class="card">
+
+<h2>Hammadde → Ürün Üretimi</h2>
+
+<p class="muted">
+Örneğin 25 kg pul biber hammaddesinden 100 adet 40 gr pul biber
+üretirseniz hammaddeden 4 kg düşer, depo stoğuna 100 adet ürün eklenir.
+</p>
+
+<label>
+Hammadde
+<select id="productionRawProduct"></select>
+</label>
+
+<label>
+Üretilecek Ürün
+<select id="productionProduct"></select>
+</label>
+
+<div class="row">
+
+<label class="grow">
+Üretilecek Adet
+<input
+  id="productionQty"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Örn: 100">
+</label>
+
+<label class="grow">
+Paket Gramajı
+<input
+  id="productionGram"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Örn: 40">
+</label>
+
+</div>
+
+<div class="card" style="background:#f4f8f5;margin-top:15px">
+  <b>Hammadde tüketimi</b>
+  <div id="productionInfo" class="muted">
+    Üretim miktarı girildiğinde hesaplanır.
+  </div>
+</div>
+
+<button
+  class="primary big"
+  onclick="saveProduction()">
+  ÜRETİMİ KAYDET
+</button>
+
+</div>
+
+
 </section>
 
 
@@ -452,15 +741,6 @@ Not
 
 </section>
 
-
-<section id="production" class="page">
-<div class="sectionHead"><h1>Hammadde & Üretim</h1><button class="ghost" onclick="go('dashboard')">← Ana</button></div>
-<div class="card"><h2>Hammadde Stokları</h2><div id="rawMaterialList"></div><button class="primary big" onclick="newRawMaterial()">＋ Hammadde Ekle</button></div>
-<div class="card"><h2>Üretim Kaydı</h2>
-<div class="prodBox"><label>Hammadde<select id="productionRawMaterial"></select></label><label>Mamul / Ürün<select id="productionProduct"></select></label></div>
-<div class="prodBox"><label>Üretim miktarı<input id="productionQty" type="number" step="1" min="1" value="1" oninput="calculateProduction()"></label><label>Paket gramajı<input id="productionGram" type="number" step="1" min="1" value="40" oninput="calculateProduction()"></label></div>
-<div id="productionResult" class="prodResult"></div><button class="primary big" onclick="saveProduction()">ÜRETİMİ KAYDET</button></div>
-</section>
 </main>
 
 
@@ -470,7 +750,6 @@ Not
 <button onclick="go('customer')">♙<small>Cari</small></button>
 <button onclick="go('stock')">▦<small>Stok</small></button>
 <button onclick="go('products')">☷<small>Ürün</small></button>
-<button onclick="go('production')">⚙<small>Üretim</small></button>
 </nav>
 
 <div id="toast"></div>
@@ -532,20 +811,104 @@ const PRODUCT_DATA=[
 
 let state={
 products:[],
+rawMaterials:[],
 customers:[],
 stock:[],
 sales:[],
 payments:[]
-};
+}
 
 let stockLoc="warehouse";
 let detailId=null;
 
 
+let authAccessToken=localStorage.getItem("bahcem_access_token")||"";
+let authRefreshToken=localStorage.getItem("bahcem_refresh_token")||"";
+let authRefreshing=null;
+
+function saveAuth(session){
+  authAccessToken=session?.access_token||"";
+  authRefreshToken=session?.refresh_token||authRefreshToken||"";
+  if(authAccessToken) localStorage.setItem("bahcem_access_token",authAccessToken); else localStorage.removeItem("bahcem_access_token");
+  if(authRefreshToken) localStorage.setItem("bahcem_refresh_token",authRefreshToken); else localStorage.removeItem("bahcem_refresh_token");
+}
+function clearAuth(){
+  authAccessToken=""; authRefreshToken="";
+  localStorage.removeItem("bahcem_access_token");
+  localStorage.removeItem("bahcem_refresh_token");
+}
+function showLogin(message=""){
+  document.body.classList.add("authLocked");
+  document.getElementById("authScreen")?.classList.remove("hidden");
+  const e=document.getElementById("authError"); if(e)e.textContent=message;
+}
+function hideLogin(){
+  document.body.classList.remove("authLocked");
+  document.getElementById("authScreen")?.classList.add("hidden");
+}
+function jwtExpired(token){
+  try{ const p=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); return !p.exp || (p.exp*1000 <= Date.now()+30000); }catch(e){ return true; }
+}
+async function refreshAuth(){
+  if(!authRefreshToken) return false;
+  if(authRefreshing) return authRefreshing;
+  authRefreshing=(async()=>{
+    try{
+      const r=await fetch(SB_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:authRefreshToken})});
+      const data=await r.json();
+      if(!r.ok||!data.access_token) throw new Error(data.error_description||data.msg||"Oturum yenilenemedi");
+      saveAuth(data); return true;
+    }catch(e){ clearAuth(); return false; }
+    finally{ authRefreshing=null; }
+  })();
+  return authRefreshing;
+}
+async function signIn(){
+  const email=document.getElementById("authEmail")?.value.trim();
+  const password=document.getElementById("authPassword")?.value||"";
+  const err=document.getElementById("authError"); const btn=document.getElementById("authLoginBtn");
+  if(!email||!password){ if(err)err.textContent="E-posta ve şifre girin."; return; }
+  if(btn){btn.disabled=true;btn.textContent="GİRİŞ YAPILIYOR...";}
+  if(err)err.textContent="";
+  try{
+    const r=await fetch(SB_URL+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"apikey":SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+    const data=await r.json();
+    if(!r.ok||!data.access_token) throw new Error(data.error_description||data.msg||"Giriş başarısız");
+    saveAuth(data); hideLogin(); await loadData();
+  }catch(e){ showLogin(e.message||"Giriş başarısız"); }
+  finally{ if(btn){btn.disabled=false;btn.textContent="GİRİŞ YAP";} }
+}
+async function signOut(){
+  try{ if(authAccessToken) await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+authAccessToken}}); }catch(e){}
+  clearAuth(); showLogin("");
+  const pw=document.getElementById("authPassword"); if(pw)pw.value="";
+}
+async function initAuth(){
+  if(!authAccessToken){ showLogin(""); return; }
+  if(jwtExpired(authAccessToken)){
+    const ok=await refreshAuth(); if(!ok){showLogin("Oturum süresi doldu. Lütfen tekrar giriş yapın.");return;}
+  }
+  hideLogin(); await loadData();
+}
+
 const mode=document.getElementById("mode");
 const saleCustomer=document.getElementById("saleCustomer");
 const paymentCustomer=document.getElementById("paymentCustomer");
 const transferProduct=document.getElementById("transferProduct");
+const productionRawProduct =
+  document.getElementById("productionRawProduct");
+
+const productionProduct =
+  document.getElementById("productionProduct");
+
+const productionQty =
+  document.getElementById("productionQty");
+
+const productionGram =
+  document.getElementById("productionGram");
+
+const productionInfo =
+  document.getElementById("productionInfo");  
 const saleRows=document.getElementById("saleRows");
 const saleTotal=document.getElementById("saleTotal");
 const customerList=document.getElementById("customerList");
@@ -562,51 +925,45 @@ const detailBalance=document.getElementById("detailBalance");
 const detailMovements=document.getElementById("detailMovements");
 
 
-async function refreshAccessToken(){
-  const refreshToken=localStorage.getItem("bahcem_refresh_token");
-  if(!refreshToken) return false;
-  try{
-    const r=await fetch(SB_URL+"/auth/v1/token?grant_type=refresh_token",{
-      method:"POST",
-      headers:{"apikey":SB_KEY,"Content-Type":"application/json"},
-      body:JSON.stringify({refresh_token:refreshToken})
-    });
-    const data=await r.json();
-    if(!r.ok || !data.access_token) return false;
-    localStorage.setItem("bahcem_access_token",data.access_token);
-    if(data.refresh_token) localStorage.setItem("bahcem_refresh_token",data.refresh_token);
-    if(data.user) localStorage.setItem("bahcem_user",JSON.stringify(data.user));
-    return true;
-  }catch(e){
-    console.error("TOKEN YENİLEME HATASI:",e);
-    return false;
-  }
-}
-
-async function sb(path,opts={},retried=false){
-  const token=localStorage.getItem("bahcem_access_token");
+async function sb(path,opts={}){
   const headers={
     "apikey":SB_KEY,
     "Content-Type":"application/json",
-    ...(token ? {"Authorization":"Bearer "+token} : {}),
+    ...(authAccessToken?{"Authorization":"Bearer "+authAccessToken}:{}),
     ...(opts.headers||{})
   };
+
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),8000);
+
   try{
-    const r=await fetch(SB_URL+"/rest/v1/"+path,{...opts,headers,signal:controller.signal});
-    const t=await r.text();
-    if(r.status===401 && !retried){
-      const refreshed=await refreshAccessToken();
-      if(refreshed) return await sb(path,opts,true);
-      throw new Error("Oturum süresi doldu. Lütfen tekrar giriş yapın.");
+    let r=await fetch(
+      SB_URL+"/rest/v1/"+path,
+      { ...opts, headers, signal:controller.signal }
+    );
+    if(r.status===401 && authRefreshToken){
+      const ok=await refreshAuth();
+      if(ok){
+        headers["Authorization"]="Bearer "+authAccessToken;
+        r=await fetch(SB_URL+"/rest/v1/"+path,{...opts,headers,signal:controller.signal});
+      }
     }
-    if(!r.ok) throw new Error(t||"HTTP "+r.status);
+    const t=await r.text();
+    if(!r.ok){
+      if(r.status===401){ clearAuth(); showLogin("Oturum geçersiz. Lütfen tekrar giriş yapın."); }
+      throw new Error(t||"HTTP "+r.status);
+    }
+
     return t?JSON.parse(t):[];
+
   }catch(e){
-    if(e.name==="AbortError") throw new Error("Supabase bağlantısı 8 saniyede yanıt vermedi");
+    if(e.name==="AbortError"){
+      throw new Error("Supabase bağlantısı 8 saniyede yanıt vermedi");
+    }
     throw e;
-  }finally{ clearTimeout(timer); }
+  }finally{
+    clearTimeout(timer);
+  }
 }
 
 
@@ -690,6 +1047,10 @@ state.products=await sb(
 "products?select=*&order=id"
 );
 
+state.rawMaterials=await sb(
+"raw_materials?select=*&order=name"
+);
+
 state.customers=await sb(
 "customers?select=*&order=name"
 );
@@ -709,8 +1070,6 @@ state.payments=await sb(
 mode.textContent="CLOUD";
 mode.style.background="#fff";
 mode.style.color="#16823b";
-
-await loadRawMaterials();
 
 document.querySelectorAll(".saleRow").forEach(
 x=>x.remove()
@@ -740,8 +1099,31 @@ saleCustomer.innerHTML=customerOptions();
 paymentCustomer.innerHTML=customerOptions();
 
 transferProduct.innerHTML=options();
-const productionProduct=document.getElementById("productionProduct");
-if(productionProduct) productionProduct.innerHTML=options();
+if(productionRawProduct){
+
+  productionRawProduct.innerHTML =
+    state.rawMaterials.map(function(r,i){
+      return `
+        <option value="${i}">
+          ${r.name} — ${r.quantity} ${r.unit || "kg"}
+        </option>
+      `;
+    }).join("");
+
+}
+
+if(productionProduct){
+
+  productionProduct.innerHTML =
+    state.products.map(function(p,i){
+      return `
+        <option value="${i}">
+          ${p.name} — ${p.package_size}
+        </option>
+      `;
+    }).join("");
+
+}  
 
 document.querySelectorAll(".sprod").forEach(
 x=>{
@@ -802,19 +1184,25 @@ function renderDashboard(){
   statLow.textContent=low;
 
   recent.innerHTML=state.sales
-    .slice(0,6)
-    .map(s=>`
+  .slice(0,6)
+  .map(s=>{
+    const customer = state.customers.find(
+      c => String(c.id) === String(s.customer_id)
+    );
+
+    return `
       <div class="movement">
         <div>
-          <b>Müşteri #${s.customer_id}</b>
+          <b>${customer?.name || "Müşteri #" + s.customer_id}</b>
           <small>${new Date(s.sale_date).toLocaleString("tr-TR")}</small>
         </div>
         <b>${money(s.total)}</b>
       </div>
-    `)
-    .join("")
-    ||
-    '<p class="muted">Henüz satış yok.</p>';
+    `;
+  })
+  .join("")
+  ||
+  '<p class="muted">Henüz satış yok.</p>';
 }
 
 
@@ -873,55 +1261,76 @@ saleTotal.textContent=money(t);
 }
 
 
-async function upsertStock(product_id,location,delta){
-
-  const rows=await sb(
-    "stock?product_id=eq."+encodeURIComponent(product_id)+"&location=eq."+encodeURIComponent(location),
-    {
-      method:"GET"
-    }
+async function upsertStock(product_id, location, delta) {
+  const rows = await sb(
+    "stock?product_id=eq." +
+    encodeURIComponent(product_id) +
+    "&location=eq." +
+    encodeURIComponent(location)
   );
 
-  if(rows.length){
-
-    const row=rows[0];
-
-    const next=Number(row.quantity||0)+Number(delta);
-
-    if(next<0){
-      throw new Error("Yetersiz stok");
-    }
-
-    await sb(
-      "stock?id=eq."+row.id,
-      {
-        method:"PATCH",
-        body:JSON.stringify({
-          quantity:next
-        })
-      }
-    );
-
-  }else{
-
-    if(Number(delta)<0){
-      throw new Error("Yetersiz stok");
-    }
-
-    await sb(
-      "stock",
-      {
-        method:"POST",
-        body:JSON.stringify({
-          product_id:product_id,
-          location:location,
-          quantity:Number(delta)
-        })
-      }
-    );
-
+  if (!Array.isArray(rows)) {
+    throw new Error("Stok bilgisi okunamadı");
   }
 
+  if (rows.length) {
+    const row = rows[0];
+
+    const next =
+      Number(row.quantity || 0) +
+      Number(delta);
+
+    if (next < 0) {
+      throw new Error("Yetersiz stok");
+    }
+
+    const result = await sb(
+      "stock?id=eq." +
+      encodeURIComponent(row.id),
+      {
+        method: "PATCH",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          quantity: next
+        })
+      }
+    );
+
+    if (!Array.isArray(result) || result.length === 0) {
+      throw new Error(
+        "Ürün stoğu güncellenemedi"
+      );
+    }
+
+  } else {
+
+    if (Number(delta) < 0) {
+      throw new Error("Yetersiz stok");
+    }
+
+    const result = await sb(
+      "stock",
+      {
+        method: "POST",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          product_id: product_id,
+          location: location,
+          quantity: Number(delta)
+        })
+      }
+    );
+
+    if (!Array.isArray(result) || result.length === 0) {
+      throw new Error(
+        "Yeni ürün stoğu oluşturulamadı"
+      );
+    }
+  }
 }
 
 
@@ -1169,6 +1578,9 @@ toast("Ürün eklenemedi");
 }
 
 }
+  
+
+
 
 
 async function newCustomer(){
@@ -1206,38 +1618,237 @@ toast("Müşteri eklenemedi");
 
 function renderCustomers(){
 
-customerList.innerHTML=
-state.customers
-.map(
-c=>
-"<div class=\"customer\">"+
-"<div>"+
-"<b>"+c.name+"</b>"+
-"<small>"+(c.phone||"")+"</small>"+
-"</div>"+
-"<div>"+
-"<b class=\"debt\">"+
-money(c.balance)+
-"</b>"+
-"<button class=\"small\" onclick=\"showCustomer("+c.id+")\">Aç</button>"+
-"<button class=\"small\" onclick=\"editCustomer("+c.id+")\">Düzenle</button>"+
-"</div>"+
-"</div>"
-)
-.join("")
-||
-'<p class="muted">Henüz müşteri yok.</p>';
+  customerList.innerHTML =
+    state.customers
+    .filter(c => c.active !== false)
+    .map(c =>
 
+      "<div class=\"customer\">" +
+
+        "<div>" +
+          "<b>" + c.name + "</b>" +
+          "<small>" + (c.phone || "") + "</small>" +
+        "</div>" +
+
+        "<div>" +
+
+          "<b class=\"debt\">" +
+            money(c.balance) +
+          "</b>" +
+
+          "<button class=\"small\" onclick=\"showCustomer(" + c.id + ")\">" +
+            "Aç" +
+          "</button>" +
+
+          "<button class=\"small\" onclick=\"editCustomer(" + c.id + ")\">" +
+            "Düzenle" +
+          "</button>" +
+
+          "<button class=\"small remove\" onclick=\"deleteCustomer(" + c.id + ")\">" +
+            "Sil" +
+          "</button>" +
+
+        "</div>" +
+
+      "</div>"
+
+    )
+    .join("") ||
+
+    '<p class="muted">Henüz müşteri yok.</p>';
 }
 
 
 async function editCustomer(id){
-  const c=state.customers.find(x=>String(x.id)===String(id)); if(!c)return;
-  const newName=prompt("Müşteri adı:",c.name||""); if(newName===null)return;
-  const newPhone=prompt("Telefon:",c.phone||""); if(newPhone===null)return;
-  if(!newName.trim()){toast("Müşteri adı boş olamaz");return;}
-  try{await sb("customers?id=eq."+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json","Prefer":"return=representation"},body:JSON.stringify({name:newName.trim(),phone:newPhone.trim()})});toast("Müşteri güncellendi");await loadData();renderAll();}catch(e){console.error(e);toast(e.message||"Müşteri güncellenemedi");}
+
+  const c = state.customers.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!c){
+    toast("Müşteri bulunamadı");
+    return;
+  }
+
+  const name = prompt(
+    "Müşteri adı:",
+    c.name || ""
+  );
+
+  if(name === null) return;
+
+  const newName = name.trim();
+
+  if(!newName){
+    toast("Müşteri adı boş olamaz");
+    return;
+  }
+
+  const phone = prompt(
+    "Telefon:",
+    c.phone || ""
+  );
+
+  if(phone === null) return;
+
+  const newPhone = phone.trim();
+
+  try{
+
+    console.log("MÜŞTERİ GÜNCELLEME");
+    console.log("ID:", c.id);
+    console.log("ESKİ İSİM:", c.name);
+    console.log("YENİ İSİM:", newName);
+
+    /*
+      MÜŞTERİYİ GÜNCELLE
+    */
+    const result = await sb(
+      "customers?id=eq." +
+      encodeURIComponent(String(c.id)),
+      {
+        method:"PATCH",
+        headers:{
+          "Prefer":"return=representation"
+        },
+        body:JSON.stringify({
+          name:newName,
+          phone:newPhone
+        })
+      }
+    );
+
+    console.log("PATCH SONUCU:", result);
+
+    /*
+      Supabase'in döndürdüğü kayıt yoksa
+      ama hata da vermediyse RLS/izin problemi
+      olma ihtimali yüksek.
+    */
+    if(!result || result.length === 0){
+
+      /*
+        Şimdi doğrudan tekrar okuyalım
+      */
+      const verify = await sb(
+        "customers?select=id,name,phone&id=eq." +
+        encodeURIComponent(String(c.id))
+      );
+
+      console.log("KONTROL SONUCU:", verify);
+
+      if(
+        verify &&
+        verify.length &&
+        verify[0].name === newName
+      ){
+
+        toast("Müşteri güncellendi");
+
+        const index = state.customers.findIndex(
+          x => String(x.id) === String(c.id)
+        );
+
+        if(index !== -1){
+          state.customers[index] = verify[0];
+        }
+
+        renderCustomers();
+
+        saleCustomer.innerHTML =
+          customerOptions();
+
+        paymentCustomer.innerHTML =
+          customerOptions();
+
+        return;
+      }
+
+      throw new Error(
+        "Müşteri güncelleme yetkisi çalışmıyor. Supabase UPDATE politikası kontrol edilmeli."
+      );
+    }
+
+    /*
+      Başarılı güncelleme
+    */
+    const updated = result[0];
+
+    const index = state.customers.findIndex(
+      x => String(x.id) === String(c.id)
+    );
+
+    if(index !== -1){
+      state.customers[index] = updated;
+    }
+
+    renderCustomers();
+
+    saleCustomer.innerHTML =
+      customerOptions();
+
+    paymentCustomer.innerHTML =
+      customerOptions();
+
+    if(
+      detailId &&
+      String(detailId) === String(c.id)
+    ){
+      detailName.textContent =
+        updated.name;
+    }
+
+    toast("Müşteri başarıyla güncellendi");
+
+  }catch(e){
+
+    console.error(
+      "MÜŞTERİ GÜNCELLEME HATASI:",
+      e
+    );
+
+    toast(
+      e.message ||
+      "Müşteri güncellenemedi"
+    );
+
+  }
+
 }
+
+async function deleteCustomer(id){
+  const c = state.customers.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!c) return;
+
+  const ok = confirm(
+    c.name + "\n\nBu müşteriyi silmek istediğinize emin misiniz?"
+  );
+
+  if(!ok) return;
+
+  try{
+    await sb(
+      "customers?id=eq." + id,
+      {
+        method:"DELETE"
+      }
+    );
+
+    toast("Müşteri silindi");
+    await loadData();
+
+  }catch(e){
+    console.error(e);
+    toast(
+      e.message ||
+      "Müşteri silinemedi"
+    );
+  }
+}
+
 
 function showCustomer(id){
 
@@ -1282,7 +1893,7 @@ async function renderDetail(){
 
     // Müşterinin bütün satışlarını al
     let sales = await sb(
-      'sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc'
+      `sales?select=*&customer_id=eq.${c.id}&order=sale_date.desc`
     );
 
 
@@ -1417,188 +2028,752 @@ async function renderDetail(){
 }
 
 function stockTab(x){
-  stockLoc=x;
-  document.querySelectorAll(".tabs button").forEach((b,i)=>b.classList.toggle("active",["warehouse","vehicle","raw","production"][i]===x));
-  if(x==="production"){go("production");return;}
-  if(x==="raw"){loadRawMaterials();stockTable.innerHTML='<p class="muted">Hammadde stoklarını görmek için Üretim bölümünü açabilirsiniz.</p>';return;}
+
+  stockLoc = x;
+  const entryButton =
+  document.getElementById("stockEntryButton");
+
+if(entryButton){
+
+  if(x === "raw"){
+
+    entryButton.textContent =
+      "＋ Hammadde Girişi";
+
+  }else if(x === "production"){
+
+    entryButton.textContent =
+      "＋ Stok Girişi";
+
+  }else{
+
+    entryButton.textContent =
+      "＋ Stok Girişi";
+
+  }
+
+}
+
+  const buttons =
+    document.querySelectorAll(".tabs button");
+
+  buttons.forEach(button => {
+    button.classList.remove("active");
+  });
+
+  if(x === "warehouse"){
+    buttons[0]?.classList.add("active");
+  }
+
+  if(x === "vehicle"){
+    buttons[1]?.classList.add("active");
+  }
+
+  if(x === "raw"){
+    buttons[2]?.classList.add("active");
+  }
+
+  if(x === "production"){
+    buttons[3]?.classList.add("active");
+  }
+
+  /*
+    ÜRETİM SEKMESİ
+    Ayrı sayfaya gitmek yerine
+    aynı stok ekranında üretim bölümünü gösteriyoruz.
+  */
+
+  const stockTable = document.getElementById("stockTable");
+
+  if(x === "production"){
+
+    stockTable.innerHTML = `
+      <div class="card">
+
+        <h2>Hammadde → Ürün Üretimi</h2>
+
+        <p class="muted">
+          Örneğin 25 kg pul biber hammaddesinden
+          100 adet 40 gr pul biber üretirseniz
+          hammaddeden 4 kg düşer ve depoya
+          100 adet ürün eklenir.
+        </p>
+
+        <label>
+          Hammadde
+          <select id="productionRawProduct">
+            ${
+              state.rawMaterials.map(function(r,i){
+                return `
+                  <option value="${i}">
+                    ${r.name} — ${r.quantity} ${r.unit || "kg"}
+                  </option>
+                `;
+              }).join("")
+            }
+          </select>
+        </label>
+
+        <label>
+          Üretilecek Ürün
+          <select id="productionProduct">
+            ${
+              state.products.map(function(p,i){
+                return `
+                  <option value="${i}">
+                    ${p.name} — ${p.package_size}
+                  </option>
+                `;
+              }).join("")
+            }
+          </select>
+        </label>
+
+        <div class="row">
+
+          <label class="grow">
+            Üretilecek Adet
+            <input
+              id="productionQty"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Örn: 100"
+            >
+          </label>
+
+          <label class="grow">
+            Paket Gramajı
+            <input
+              id="productionGram"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Örn: 40"
+            >
+          </label>
+
+        </div>
+
+        <div
+          class="card"
+          style="background:#f4f8f5;margin-top:15px"
+        >
+          <b>Hammadde tüketimi</b>
+
+          <div
+            id="productionInfo"
+            class="muted"
+          >
+            Üretim miktarı girildiğinde hesaplanır.
+          </div>
+
+        </div>
+
+        <button
+          class="primary big"
+          onclick="saveProduction()"
+        >
+          ÜRETİMİ KAYDET
+        </button>
+
+      </div>
+    `;
+
+    const qty =
+      document.getElementById("productionQty");
+
+    const gram =
+      document.getElementById("productionGram");
+
+    if(qty){
+      qty.addEventListener("input", calculateProduction);
+    }
+
+    if(gram){
+      gram.addEventListener("input", calculateProduction);
+    }
+
+    return;
+  }
+
   renderStock();
 }
 
 
 function renderStock(){
 
-  stockTable.innerHTML=state.products.map(p=>{
+  /*
+    HAMMADDE EKRANI
+  */
 
-    const rows=state.stock.filter(
-      x=>
-        String(x.product_id)===String(p.id) &&
-        x.location===stockLoc
-    );
+  if(stockLoc === "raw"){
 
-    const quantity=rows.reduce(
-      (sum,x)=>sum+Number(x.quantity||0),
-      0
-    );
+    if(!state.rawMaterials.length){
 
-    return `
-      <div class="stockRow">
+      stockTable.innerHTML =
+        '<p class="muted">Henüz hammadde yok.</p>';
 
-        <div>
-          <b>${p.name}</b>
-          <small>${p.package_size||""}</small>
+      return;
+
+    }
+
+    stockTable.innerHTML =
+      state.rawMaterials.map(raw => {
+
+        const quantity =
+          Number(raw.quantity || 0);
+
+        return `
+          <div class="stockRow">
+
+            <div>
+              <b>${raw.name}</b>
+              <small>Hammadde</small>
+            </div>
+
+            <div>
+              <b>
+                ${quantity.toLocaleString(
+                  "tr-TR",
+                  {
+                    minimumFractionDigits:0,
+                    maximumFractionDigits:3
+                  }
+                )}
+              </b>
+            </div>
+
+            <div>
+              ${raw.unit || "kg"}
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+
+    return;
+  }
+
+
+  /*
+    DEPO / ARAÇ EKRANI
+  */
+
+  stockTable.innerHTML =
+    state.products.map(p => {
+
+      const rows =
+        state.stock.filter(
+          x =>
+            String(x.product_id) === String(p.id) &&
+            x.location === stockLoc
+        );
+
+      const quantity =
+        rows.reduce(
+          (sum,x) =>
+            sum + Number(x.quantity || 0),
+          0
+        );
+
+      return `
+        <div class="stockRow">
+
+          <div>
+            <b>${p.name}</b>
+            <small>
+              ${p.package_size || ""}
+            </small>
+          </div>
+
+          <div>
+            <b>
+              ${quantity.toLocaleString(
+                "tr-TR",
+                {
+                  maximumFractionDigits:3
+                }
+              )}
+            </b>
+          </div>
+
+          <div>
+            ${
+              p.sale_price == null
+              ? "Fiyat yok"
+              : money(p.sale_price)
+            }
+          </div>
+
         </div>
+      `;
 
-        <div>
-          <b>${quantity}</b>
-        </div>
-
-        <div>
-          ${p.sale_price==null
-            ?"Fiyat yok"
-            :money(p.sale_price)}
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
+    }).join("");
 
 }
 
 
 async function newStock(){
 
-if(!state.products.length){
+  /*
+    HAMMADDE SEKmesindeysek
+    hammadde girişi aç
+  */
 
-toast("Ürünler henüz yüklenmedi");
+  if(stockLoc === "raw"){
 
-return;
+    const old =
+      document.getElementById("rawStockModal");
+
+    if(old) old.remove();
+
+    const modal =
+      document.createElement("div");
+
+    modal.id = "rawStockModal";
+
+    modal.style.cssText = `
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    `;
+
+    modal.innerHTML = `
+      <div style="
+        background:#fff;
+        width:100%;
+        max-width:450px;
+        border-radius:16px;
+        padding:20px;
+      ">
+
+        <h2 style="margin-top:0">
+          Hammadde Girişi
+        </h2>
+
+        <label>
+          Hammadde
+
+          <select id="rawEntryProduct">
+
+            ${
+              state.rawMaterials.map((r,i)=>`
+                <option value="${i}">
+                  ${r.name}
+                </option>
+              `).join("")
+            }
+
+          </select>
+
+        </label>
+
+        <label>
+          Miktar
+
+          <input
+            id="rawEntryQty"
+            type="number"
+            min="0"
+            step="0.001"
+            placeholder="Örn: 25"
+          >
+
+        </label>
+
+        <label>
+          Birim
+
+          <select id="rawEntryUnit">
+            <option value="kg">kg</option>
+            <option value="gr">gr</option>
+          </select>
+
+        </label>
+
+        <div style="
+          display:flex;
+          gap:10px;
+          margin-top:15px;
+        ">
+
+          <button
+            style="flex:1"
+            onclick="
+              document
+                .getElementById('rawStockModal')
+                .remove()
+            "
+          >
+            İptal
+          </button>
+
+          <button
+            class="primary"
+            style="flex:1"
+            onclick="confirmRawEntry()"
+          >
+            HAMMADDE EKLE
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    return;
+  }
+
+  /*
+    NORMAL ÜRÜN STOK GİRİŞİ
+  */
+
+  if(!state.products.length){
+
+    toast("Ürünler henüz yüklenmedi");
+
+    return;
+  }
+
+  const old =
+    document.getElementById("stockModal");
+
+  if(old){
+    old.remove();
+  }
+
+  const modal =
+    document.createElement("div");
+
+  modal.id = "stockModal";
+
+  modal.style.cssText = `
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:#fff;
+      width:100%;
+      max-width:450px;
+      border-radius:16px;
+      padding:20px;
+    ">
+
+      <h2 style="margin-top:0">
+        Stok Girişi
+      </h2>
+
+      <label>
+        Ürün
+
+        <select id="newStockProduct">
+
+          ${
+            state.products.map((p,i)=>`
+              <option value="${i}">
+                ${p.name} — ${p.package_size}
+              </option>
+            `).join("")
+          }
+
+        </select>
+
+      </label>
+
+      <label>
+        Miktar
+
+        <input
+          id="newStockQty"
+          type="number"
+          step="0.001"
+          min="0"
+          placeholder="Örn: 10"
+        >
+
+      </label>
+
+      <label>
+        Yer
+
+        <select id="newStockLocation">
+
+          <option value="warehouse">
+            Depo
+          </option>
+
+          <option value="vehicle">
+            Araç
+          </option>
+
+        </select>
+
+      </label>
+
+      <div style="
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+      ">
+
+        <button
+          style="flex:1"
+          onclick="
+            document
+              .getElementById('stockModal')
+              .remove()
+          "
+        >
+          İptal
+        </button>
+
+        <button
+          class="primary"
+          style="flex:1"
+          onclick="confirmNewStock()"
+        >
+          STOK EKLE
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+  async function newRawMaterial(){
+
+  const name = prompt("Hammadde adı:");
+
+  if(name === null) return;
+
+  if(!name.trim()){
+
+    toast("Hammadde adı boş olamaz");
+
+    return;
+  }
+
+
+  const qty = Number(
+    prompt("Miktar (kg):", "1")
+  );
+
+  if(!Number.isFinite(qty) || qty <= 0){
+
+    toast("Geçerli bir miktar girin");
+
+    return;
+  }
+
+
+  try{
+
+    const existing = state.rawMaterials.find(
+      r =>
+        String(r.name || "")
+          .trim()
+          .toLocaleLowerCase("tr-TR")
+        ===
+        name.trim()
+          .toLocaleLowerCase("tr-TR")
+    );
+
+
+    if(existing){
+
+      const newQty =
+        Number(existing.quantity || 0) + qty;
+
+
+      await sb(
+        "raw_materials?id=eq." +
+        encodeURIComponent(existing.id),
+        {
+          method:"PATCH",
+
+          body:JSON.stringify({
+            quantity:newQty,
+            unit:"kg"
+          })
+        }
+      );
+
+      toast(
+        name.trim() +
+        " stoğuna " +
+        qty +
+        " kg eklendi"
+      );
+
+    }else{
+
+      await sb(
+        "raw_materials",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            name:name.trim(),
+            quantity:qty,
+            unit:"kg"
+          })
+        }
+      );
+
+      toast(
+        name.trim() +
+        " hammaddesi eklendi"
+      );
+
+    }
+
+
+    await loadData();
+
+    stockTab("raw");
+
+
+  }catch(e){
+
+    console.error(
+      "HAMMADDE HATASI:",
+      e
+    );
+
+    toast(
+      e.message ||
+      "Hammadde kaydedilemedi"
+    );
+
+  }
 
 }
+  async function confirmRawEntry(){
 
+  try{
 
-const old=
-document.getElementById("stockModal");
+    const index =
+      Number(
+        document.getElementById(
+          "rawEntryProduct"
+        ).value
+      );
 
-if(old){
-old.remove();
-}
+    const qty =
+      Number(
+        document.getElementById(
+          "rawEntryQty"
+        ).value
+      );
 
+    const unit =
+      document.getElementById(
+        "rawEntryUnit"
+      ).value;
 
-const modal=
-document.createElement("div");
+    const raw =
+      state.rawMaterials[index];
 
-modal.id="stockModal";
+    if(!raw){
 
-modal.style.cssText=`
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.45);
-z-index:100;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px;
-`;
+      toast("Hammadde seçin");
 
+      return;
+    }
 
-modal.innerHTML=`
+    if(!qty || qty <= 0){
 
-<div style="
-background:#fff;
-width:100%;
-max-width:450px;
-border-radius:16px;
-padding:20px;
-box-shadow:0 10px 40px rgba(0,0,0,.25)
-">
+      toast("Miktar girin");
 
-<h2 style="margin-top:0">
-Stok Girişi
-</h2>
+      return;
+    }
 
-<label>
-Ürün
+    /*
+      Eğer gr girilmişse kg'a çevir
+    */
 
-<select id="newStockProduct">
+    let addKg = qty;
 
-${state.products.map(
-(p,i)=>
-`
-<option value="${i}">
-${p.name} — ${p.package_size}
-</option>
-`
-).join("")}
+    if(unit === "gr"){
+      addKg = qty / 1000;
+    }
 
-</select>
+    const current =
+      Number(raw.quantity || 0);
 
-</label>
+    const next =
+      current + addKg;
 
+    await sb(
+      "raw_materials?id=eq." + raw.id,
+      {
+        method:"PATCH",
 
-<label>
-Miktar
+        body:JSON.stringify({
+          quantity:next,
+          unit:"kg"
+        })
+      }
+    );
 
-<input
-id="newStockQty"
-type="number"
-step="0.001"
-min="0"
-placeholder="Örn: 10">
+    /*
+      Hammadde giriş hareketi
+    */
 
-</label>
+    toast(
+      raw.name +
+      " stoğuna " +
+      addKg.toLocaleString("tr-TR", {
+        maximumFractionDigits:3
+      }) +
+      " kg eklendi"
+    );
 
+    const modal =
+      document.getElementById(
+        "rawStockModal"
+      );
 
-<label>
-Yer
+    if(modal){
+      modal.remove();
+    }
 
-<select id="newStockLocation">
+    await loadData();
 
-<option value="warehouse">
-Depo
-</option>
+    stockTab("raw");
 
-<option value="vehicle">
-Araç
-</option>
+  }catch(e){
 
-</select>
+    console.error(
+      "HAMMADDE GİRİŞ HATASI:",
+      e
+    );
 
-</label>
+    toast(
+      e.message ||
+      "Hammadde eklenemedi"
+    );
 
-
-<div style="
-display:flex;
-gap:10px;
-margin-top:15px
-">
-
-<button
-style="flex:1"
-onclick="document.getElementById('stockModal').remove()">
-
-İptal
-
-</button>
-
-
-<button
-class="primary"
-style="flex:1"
-onclick="confirmNewStock()">
-
-STOK EKLE
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-
-document.body.appendChild(modal);
+  }
 
 }
 
@@ -1720,15 +2895,202 @@ function updateTransferDirection(){
 
   }
 }
-async function loadRawMaterials(){
-  try{const rows=await sb("raw_materials?select=*&order=name");renderRawMaterials(rows||[]);const sel=document.getElementById("productionRawMaterial");if(sel)sel.innerHTML=(rows||[]).map(r=>`<option value="${r.id}">${r.name} — ${Number(r.quantity||0).toLocaleString("tr-TR")} ${r.unit||"kg"}</option>`).join("");calculateProduction();}
-  catch(e){console.error("HAMMADDE HATASI:",e);const box=document.getElementById("rawMaterialList");if(box)box.innerHTML='<p class="muted">Hammaddeler yüklenemedi.</p>';}}
-function renderRawMaterials(rows){const box=document.getElementById("rawMaterialList");if(!box)return;box.innerHTML=rows.map(r=>`<div class="rawRow"><div><b>${r.name}</b></div><div>${Number(r.quantity||0).toLocaleString("tr-TR")}</div><div>${r.unit||"kg"}</div><button class="small" onclick="editRawMaterial(${r.id})">Düzenle</button></div>`).join("")||'<p class="muted">Henüz hammadde yok.</p>';}
-async function newRawMaterial(){const name=prompt("Hammadde adı:");if(!name||!name.trim())return;const unit=prompt("Birim (kg/adet):","kg");if(!unit||!unit.trim())return;const qty=Number(prompt("Mevcut miktar:","0"));if(!Number.isFinite(qty)||qty<0){toast("Geçerli miktar girin");return;}try{await sb("raw_materials",{method:"POST",body:JSON.stringify({name:name.trim(),unit:unit.trim(),quantity:qty})});toast("Hammadde eklendi");await loadRawMaterials();}catch(e){console.error(e);toast(e.message||"Hammadde eklenemedi");}}
-async function editRawMaterial(id){try{const rows=await sb("raw_materials?id=eq."+encodeURIComponent(id)+"&select=*");const r=rows[0];if(!r)return;const name=prompt("Hammadde adı:",r.name||"");if(name===null)return;const qty=Number(prompt("Miktar:",r.quantity||0));if(!Number.isFinite(qty)||qty<0){toast("Geçerli miktar girin");return;}await sb("raw_materials?id=eq."+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({name:name.trim(),quantity:qty})});toast("Hammadde güncellendi");await loadRawMaterials();}catch(e){console.error(e);toast(e.message||"Hammadde güncellenemedi");}}
-function calculateProduction(){const q=Number(document.getElementById("productionQty")?.value||0);const gram=Number(document.getElementById("productionGram")?.value||0);const result=document.getElementById("productionResult");if(!result)return;const consumedKg=q*gram/1000;result.innerHTML="<b>Üretim özeti</b><br>Ürün: "+(document.getElementById("productionProduct")?.selectedOptions?.[0]?.textContent||"-")+"<br>Miktar: "+q.toLocaleString("tr-TR")+" adet<br>Hammadde tüketimi: "+consumedKg.toLocaleString("tr-TR",{maximumFractionDigits:3})+" kg";}
-async function saveProduction(){try{const rawId=Number(document.getElementById("productionRawMaterial").value);const productIndex=Number(document.getElementById("productionProduct").value);const qty=Number(document.getElementById("productionQty").value);const gram=Number(document.getElementById("productionGram").value);const finishedProduct=state.products[productIndex];if(!rawId||!finishedProduct){toast("Hammadde ve ürün seçin");return;}if(!qty||qty<=0||!gram||gram<=0){toast("Üretim miktarını kontrol edin");return;}const rawRows=await sb("raw_materials?id=eq."+encodeURIComponent(rawId)+"&select=*");const raw=rawRows[0];if(!raw)throw new Error("Hammadde bulunamadı");const consumedKg=qty*gram/1000;const current=Number(raw.quantity||0);if(String(raw.unit||"kg").toLowerCase()==="kg"&&current<consumedKg)throw new Error("Yetersiz hammadde");await sb("raw_materials?id=eq."+encodeURIComponent(rawId),{method:"PATCH",body:JSON.stringify({quantity:current-consumedKg})});await sb("productions",{method:"POST",body:JSON.stringify({raw_material_id:rawId,product_id:finishedProduct.id,quantity:qty,used_quantity:consumedKg,unit:"adet"})});await upsertStock(finishedProduct.id,"warehouse",qty);await sb("stock_movements",{method:"POST",body:JSON.stringify({product_id:finishedProduct.id,movement_type:"production",to_location:"warehouse",quantity:qty,notes:"Üretim"})});toast("Üretim kaydedildi");await loadData();await loadRawMaterials();}catch(e){console.error(e);toast(e.message||"Üretim kaydedilemedi");}}
+function calculateProduction(){
 
+  const qtyInput = document.getElementById("productionQty");
+  const gramInput = document.getElementById("productionGram");
+  const info = document.getElementById("productionInfo");
+
+  if (!qtyInput || !gramInput || !info) return;
+
+  const qty = Number(
+    String(qtyInput.value || "").replace(",", ".")
+  );
+
+  const gram = Number(
+    String(gramInput.value || "").replace(",", ".")
+  );
+
+  if (qty <= 0 || gram <= 0) {
+    info.textContent =
+      "Üretim miktarı girildiğinde hesaplanır.";
+    return;
+  }
+
+  const kg = (qty * gram) / 1000;
+
+  info.innerHTML =
+    `${qty.toLocaleString("tr-TR")} adet × ` +
+    `${gram.toLocaleString("tr-TR")} gr = ` +
+    `<b>${kg.toLocaleString("tr-TR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 3
+    })} kg</b> hammadde tüketilecek.`;
+}
+  if(productionQty){
+  productionQty.addEventListener(
+    "input",
+    calculateProduction
+  );
+}
+
+if(productionGram){
+  productionGram.addEventListener(
+    "input",
+    calculateProduction
+  );
+}
+  calculateProduction();
+  async function saveProduction(){
+  try {
+    // Elemanları her tıklamada yeniden bul
+    const rawSelect = document.getElementById("productionRawProduct");
+    const productSelect = document.getElementById("productionProduct");
+    const qtyInput = document.getElementById("productionQty");
+    const gramInput = document.getElementById("productionGram");
+
+    if (!rawSelect || !productSelect || !qtyInput || !gramInput) {
+      throw new Error("Üretim alanları bulunamadı");
+    }
+
+    const rawIndex = Number(rawSelect.value);
+    const productIndex = Number(productSelect.value);
+
+    const qty = Number(String(qtyInput.value).replace(",", "."));
+    const gram = Number(String(gramInput.value).replace(",", "."));
+
+    const raw = state.rawMaterials[rawIndex];
+    const product = state.products[productIndex];
+
+    console.log("ÜRETİM:", {
+      raw,
+      product,
+      qty,
+      gram
+    });
+
+    if (!raw) {
+      toast("Hammadde seçin");
+      return;
+    }
+
+    if (!product) {
+      toast("Üretilecek ürünü seçin");
+      return;
+    }
+
+    if (!qty || qty <= 0) {
+      toast("Üretilecek adet girin");
+      return;
+    }
+
+    if (!gram || gram <= 0) {
+      toast("Paket gramajını girin");
+      return;
+    }
+
+    // Tüketilecek hammadde kg
+    const consumed = (qty * gram) / 1000;
+    const current = Number(raw.quantity || 0);
+
+    if (current < consumed) {
+      toast(
+        "Yetersiz hammadde! " +
+        raw.name +
+        " mevcut: " +
+        current +
+        " " +
+        (raw.unit || "kg")
+      );
+      return;
+    }
+
+    // 1. HAMMADDE STOĞUNDAN DÜŞ
+    const rawResult = await sb(
+      "raw_materials?id=eq." + encodeURIComponent(raw.id),
+      {
+        method: "PATCH",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          quantity: current - consumed
+        })
+      }
+    );
+
+    console.log("HAMMADDE GÜNCELLEME:", rawResult);
+
+    if (!Array.isArray(rawResult) || rawResult.length === 0) {
+      throw new Error(
+        "Hammadde stoğu güncellenemedi. Supabase UPDATE/RLS politikasını kontrol edin."
+      );
+    }
+
+    // 2. ÜRÜNÜ DEPO STOĞUNA EKLE
+    await upsertStock(
+      product.id,
+      "warehouse",
+      qty
+    );
+
+    // 3. ÜRETİM HAREKETİNİ KAYDET
+    const movementResult = await sb(
+      "stock_movements",
+      {
+        method: "POST",
+        headers: {
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify({
+          product_id: product.id,
+          movement_type: "production",
+          to_location: "warehouse",
+          quantity: qty,
+          notes:
+            "Üretim: " +
+            qty +
+            " adet × " +
+            gram +
+            " gr | " +
+            consumed +
+            " kg " +
+            raw.name +
+            " hammaddesi tüketildi"
+        })
+      }
+    );
+
+    console.log("ÜRETİM HAREKETİ:", movementResult);
+
+    if (!Array.isArray(movementResult) || movementResult.length === 0) {
+      console.warn("stock_movements kayıt döndürmedi:", movementResult);
+    }
+
+    // 4. BAŞARILI
+    toast(
+      qty +
+      " adet " +
+      product.name +
+      " üretimi kaydedildi"
+    );
+
+    qtyInput.value = "";
+    gramInput.value = "";
+
+    calculateProduction();
+
+    // Verileri yeniden çek
+    await loadData();
+
+    // Üretim ekranında kal
+    stockTab("production");
+
+  } catch (e) {
+    console.error("ÜRETİM HATASI:", e);
+    toast(e.message || "Üretim kaydedilemedi");
+  }
+}
 async function saveTransfer(){
 
   const i = Number(
@@ -2099,85 +3461,7 @@ function renderProducts(){
 }
 
 
-async function login(email,password){
-  const btn=document.getElementById("loginButton");
-  const err=document.getElementById("loginError");
-  err.style.display="none";
-  btn.disabled=true;
-  btn.textContent="GİRİŞ YAPILIYOR...";
-
-  try{
-    const r=await fetch(SB_URL+"/auth/v1/token?grant_type=password",{
-      method:"POST",
-      headers:{"apikey":SB_KEY,"Content-Type":"application/json"},
-      body:JSON.stringify({email,password})
-    });
-    const data=await r.json();
-    if(!r.ok){
-      throw new Error(data.error_description||data.msg||"E-posta veya şifre hatalı.");
-    }
-
-    localStorage.setItem("bahcem_access_token",data.access_token);
-    if(data.refresh_token) localStorage.setItem("bahcem_refresh_token",data.refresh_token);
-    if(data.user) localStorage.setItem("bahcem_user",JSON.stringify(data.user));
-
-    document.getElementById("loginScreen").hidden=true;
-    document.getElementById("appShell").hidden=false;
-    document.getElementById("appShell").style.display="";
-    await loadData();
-  }catch(e){
-    err.textContent=e.message||"Giriş yapılamadı.";
-    err.style.display="block";
-  }finally{
-    btn.disabled=false;
-    btn.textContent="GİRİŞ YAP";
-  }
-}
-
-async function restoreSession(){
-  const token=localStorage.getItem("bahcem_access_token");
-  if(!token){
-    document.getElementById("loginScreen").hidden=false;
-    return;
-  }
-
-  try{
-    const r=await fetch(SB_URL+"/auth/v1/user",{
-      headers:{"apikey":SB_KEY,"Authorization":"Bearer "+token}
-    });
-    if(!r.ok) throw new Error("session");
-    const user=await r.json();
-    localStorage.setItem("bahcem_user",JSON.stringify(user));
-    document.getElementById("loginScreen").hidden=true;
-    document.getElementById("appShell").hidden=false;
-    document.getElementById("appShell").style.display="";
-    await loadData();
-  }catch(e){
-    localStorage.removeItem("bahcem_access_token");
-    localStorage.removeItem("bahcem_refresh_token");
-    localStorage.removeItem("bahcem_user");
-    document.getElementById("loginScreen").hidden=false;
-  }
-}
-
-function logout(){
-  localStorage.removeItem("bahcem_access_token");
-  localStorage.removeItem("bahcem_refresh_token");
-  localStorage.removeItem("bahcem_user");
-  document.getElementById("appShell").hidden=true;
-  document.getElementById("loginScreen").hidden=false;
-  document.getElementById("loginPassword").value="";
-}
-
-document.getElementById("loginForm").addEventListener("submit",function(e){
-  e.preventDefault();
-  login(
-    document.getElementById("loginEmail").value.trim(),
-    document.getElementById("loginPassword").value
-  );
-});
-
-restoreSession();
+initAuth();
 
 </script>
 
