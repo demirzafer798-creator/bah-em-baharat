@@ -2228,9 +2228,15 @@ function renderStock(){
           <div class="stockRow">
 
             <div>
-              <b>${raw.name}</b>
-              <small>Hammadde</small>
-            </div>
+  <b>${raw.name}</b>
+  <small>Hammadde</small>
+
+  <button
+    class="small"
+    onclick="editStockQuantity('raw', ${raw.id}, ${quantity})">
+    DÜZELT
+  </button>
+</div>
 
             <div>
               <b>
@@ -2287,7 +2293,11 @@ function renderStock(){
               ${p.package_size || ""}
             </small>
           </div>
-
+<button
+  class="small"
+  onclick="editStockQuantity('${stockLoc}', ${p.id}, ${quantity})">
+  DÜZELT
+</button>
           <div>
             <b>
               ${quantity.toLocaleString(
@@ -2312,6 +2322,91 @@ function renderStock(){
 
     }).join("");
 
+}
+  async function editStockQuantity(type, id, current){
+
+  const value = prompt(
+    "STOK DÜZELTME\n\n" +
+    "Mevcut stok: " + current + "\n\n" +
+    "Yeni stok miktarını girin:",
+    current
+  );
+
+  if(value === null) return;
+
+  const newQty = Number(
+    String(value).replace(",", ".")
+  );
+
+  if(!Number.isFinite(newQty) || newQty < 0){
+    toast("Geçerli bir stok miktarı girin");
+    return;
+  }
+
+  try{
+
+    if(type === "raw"){
+
+      const result = await sb(
+        "raw_materials?id=eq." +
+        encodeURIComponent(id),
+        {
+          method:"PATCH",
+          headers:{
+            "Prefer":"return=representation"
+          },
+          body:JSON.stringify({
+            quantity:newQty
+          })
+        }
+      );
+
+      if(!Array.isArray(result) || !result.length){
+        throw new Error("Hammadde stoğu güncellenemedi");
+      }
+
+    }else{
+
+      const rows = await sb(
+        "stock?product_id=eq." +
+        encodeURIComponent(id) +
+        "&location=eq." +
+        encodeURIComponent(type)
+      );
+
+      const oldQty =
+        rows.length
+          ? Number(rows[0].quantity || 0)
+          : 0;
+
+      const delta = newQty - oldQty;
+
+      if(delta !== 0){
+        await upsertStock(
+          id,
+          type,
+          delta
+        );
+      }
+
+    }
+
+    toast("Stok güncellendi");
+
+    await loadData();
+
+    stockTab(type);
+
+  }catch(e){
+
+    console.error("STOK DÜZELTME HATASI:",e);
+
+    toast(
+      e.message ||
+      "Stok güncellenemedi"
+    );
+
+  }
 }
 
 
