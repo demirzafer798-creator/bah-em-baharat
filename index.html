@@ -214,7 +214,10 @@ body.locked>header,body.locked>main,body.locked>nav,body.locked>#toast{visibilit
 <div class="brand">BAHÇEM BAHARAT</div>
 <div class="sub">MUHTEŞEM TAT · STOK & CARİ</div>
 </div>
+<div style="display:flex;align-items:center;gap:8px">
 <div class="mode" id="mode">BAĞLANIYOR</div>
+<button id="logoutButton" class="small" onclick="signOut()" style="display:none">ÇIKIŞ YAP</button>
+</div>
 </header>
 
 <main>
@@ -3274,6 +3277,24 @@ async function sb(path,opts={},retry=true){
   }
 }
 
+function signOut(){
+  localStorage.removeItem("bahcem_access_token");
+  localStorage.removeItem("bahcem_refresh_token");
+
+  document.body.classList.add("locked");
+  loginScreen.classList.remove("hidden");
+
+  if(loginPassword) loginPassword.value = "";
+  if(loginError) loginError.textContent = "";
+
+  const logoutButton = document.getElementById("logoutButton");
+  if(logoutButton) logoutButton.style.display = "none";
+
+  if(typeof mode !== "undefined" && mode){
+    mode.textContent = "GİRİŞ BEKLENİYOR";
+  }
+}
+
 async function signIn(){
   loginError.textContent="";
   loginButton.disabled=true;
@@ -3309,6 +3330,8 @@ async function signIn(){
 
     document.body.classList.remove("locked");
     loginScreen.classList.add("hidden");
+    const logoutButton = document.getElementById("logoutButton");
+    if(logoutButton) logoutButton.style.display = "inline-block";
     await loadData();
 
   }catch(e){
