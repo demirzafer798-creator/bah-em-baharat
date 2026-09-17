@@ -336,8 +336,15 @@ document.addEventListener('click',function(e){
 body.authLocked > header, body.authLocked > aside, body.authLocked > main { display:none !important; }
 #authScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#f5f7f6;padding:20px;}
 #authScreen.hidden{display:none;}
-.authCard{width:min(420px,100%);background:#fff;border-radius:18px;padding:30px;box-shadow:0 12px 40px rgba(0,0,0,.12);border:1px solid #e5e9e6;}
-.authCard h1{margin:0 0 6px;font-size:28px;}
+.authCard{
+  width:min(340px,90%);
+  background:#fff;
+  border-radius:16px;
+  padding:22px;
+  box-shadow:0 12px 40px rgba(0,0,0,.12);
+  border:1px solid #e5e9e6;
+}
+.authCard h1{margin:0 0 6px;font-size:24px;}
 .authCard p{margin:0 0 24px;color:#6b746e;}
 .authCard label{display:block;margin:14px 0 6px;font-weight:600;}
 .authCard input{width:100%;box-sizing:border-box;padding:13px;border:1px solid #ccd5cf;border-radius:10px;font-size:16px;}
