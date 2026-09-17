@@ -550,7 +550,28 @@ const detailBalance=document.getElementById("detailBalance");
 const detailMovements=document.getElementById("detailMovements");
 
 
-async function sb(path,opts={}){
+async function refreshAccessToken(){
+  const refreshToken=localStorage.getItem("bahcem_refresh_token");
+  if(!refreshToken) return false;
+  try{
+    const r=await fetch(SB_URL+"/auth/v1/token?grant_type=refresh_token",{
+      method:"POST",
+      headers:{"apikey":SB_KEY,"Content-Type":"application/json"},
+      body:JSON.stringify({refresh_token:refreshToken})
+    });
+    const data=await r.json();
+    if(!r.ok || !data.access_token) return false;
+    localStorage.setItem("bahcem_access_token",data.access_token);
+    if(data.refresh_token) localStorage.setItem("bahcem_refresh_token",data.refresh_token);
+    if(data.user) localStorage.setItem("bahcem_user",JSON.stringify(data.user));
+    return true;
+  }catch(e){
+    console.error("TOKEN YENİLEME HATASI:",e);
+    return false;
+  }
+}
+
+async function sb(path,opts={},retried=false){
   const token=localStorage.getItem("bahcem_access_token");
   const headers={
     "apikey":SB_KEY,
@@ -558,41 +579,22 @@ async function sb(path,opts={}){
     ...(token ? {"Authorization":"Bearer "+token} : {}),
     ...(opts.headers||{})
   };
-
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),8000);
-
   try{
-    const r=await fetch(
-      SB_URL+"/rest/v1/"+path,
-      {
-        ...opts,
-        headers,
-        signal:controller.signal
-      }
-    );
-
+    const r=await fetch(SB_URL+"/rest/v1/"+path,{...opts,headers,signal:controller.signal});
     const t=await r.text();
-
-    if(r.status===401){
-      logout();
+    if(r.status===401 && !retried){
+      const refreshed=await refreshAccessToken();
+      if(refreshed) return await sb(path,opts,true);
       throw new Error("Oturum süresi doldu. Lütfen tekrar giriş yapın.");
     }
-
-    if(!r.ok){
-      throw new Error(t||"HTTP "+r.status);
-    }
-
+    if(!r.ok) throw new Error(t||"HTTP "+r.status);
     return t?JSON.parse(t):[];
-
   }catch(e){
-    if(e.name==="AbortError"){
-      throw new Error("Supabase bağlantısı 8 saniyede yanıt vermedi");
-    }
+    if(e.name==="AbortError") throw new Error("Supabase bağlantısı 8 saniyede yanıt vermedi");
     throw e;
-  }finally{
-    clearTimeout(timer);
-  }
+  }finally{ clearTimeout(timer); }
 }
 
 
@@ -1362,7 +1364,7 @@ async function renderDetail(){
 
       });
 
-    }
+    });
 
 
     // Tarihe göre sırala
