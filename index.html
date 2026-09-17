@@ -1883,40 +1883,36 @@ function shareCustomerCari(){
     return;
   }
 
-  const name =
-    customer.name || "Müşteri";
+  const name = customer.name || "Müşteri";
 
   const balance =
-    detailBalance?.textContent || "0,00 TL";
+    document.getElementById("detailBalance")?.innerText || "0,00 TL";
 
   const movements =
-    detailMovements?.innerText?.trim() || "Hareket yok.";
+    document.getElementById("detailMovements")?.innerText?.trim()
+    || "Hareket yok.";
 
   const message =
 `BAHÇEM BAHARAT
+
 CARİ HESAP
 
 Müşteri: ${name}
 
-------------------------
-
 ${movements}
 
-------------------------
-
+--------------------
 GÜNCEL CARİ BAKİYE:
 ${balance}
 
 Bilginize sunulur.`;
 
-  const whatsappUrl =
-    "https://wa.me/?text=" +
+  const whatsapp =
+    "https://web.whatsapp.com/send?text=" +
     encodeURIComponent(message);
 
-  window.open(
-    whatsappUrl,
-    "_blank"
-  );
+  window.open(whatsapp, "_blank");
+
 }
 
 
