@@ -537,7 +537,17 @@ TOPLAM
 
 <div class="sectionHead">
 <h1 id="detailName">Müşteri</h1>
-<button class="ghost" onclick="go('customer')">← Geri</button>
+
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+  <button class="small" onclick="shareCustomerCari()">
+    📤 CARİYİ GÖNDER
+  </button>
+
+  <button class="ghost" onclick="go('customer')">
+    ← Geri
+  </button>
+</div>
+
 </div>
 
 <div class="card detailTop">
@@ -1857,7 +1867,57 @@ detailId=id;
 go("customerDetail");
 
 }
+function shareCustomerCari(){
 
+  if(!detailId){
+    toast("Müşteri seçilmedi");
+    return;
+  }
+
+  const customer = state.customers.find(
+    c => String(c.id) === String(detailId)
+  );
+
+  if(!customer){
+    toast("Müşteri bulunamadı");
+    return;
+  }
+
+  const name =
+    customer.name || "Müşteri";
+
+  const balance =
+    detailBalance?.textContent || "0,00 TL";
+
+  const movements =
+    detailMovements?.innerText?.trim() || "Hareket yok.";
+
+  const message =
+`BAHÇEM BAHARAT
+CARİ HESAP
+
+Müşteri: ${name}
+
+------------------------
+
+${movements}
+
+------------------------
+
+GÜNCEL CARİ BAKİYE:
+${balance}
+
+Bilginize sunulur.`;
+
+  const whatsappUrl =
+    "https://wa.me/?text=" +
+    encodeURIComponent(message);
+
+  window.open(
+    whatsappUrl,
+    "_blank"
+  );
+}
 
 
 async function renderDetail(){
